@@ -3,6 +3,7 @@
 <details>
 <summary><strong>Giới thiệu & Tổng quan</strong></summary>
 
+-   [ORM là gì? (Object-Relational Mapping) – Khái niệm, ưu nhược điểm, các ORM phổ biến](./ORM.md)
 -   [Giới thiệu Hibernate – Khái niệm, ưu điểm, so sánh với JDBC](./introduce.md)
 
 </details>
@@ -17,14 +18,14 @@
 <details>
 <summary><strong>Kiến trúc & Thành phần</strong></summary>
 
--   [Kiến trúc Hibernate – Thành phần, luồng xử lý, mapping](./architecture.md)
+-   [Kiến trúc Hibernate JPA – Thành phần, luồng xử lý, mapping](./architecture.md)
 
 </details>
 
 <details>
-<summary><strong>Annotation & Mapping trong Hibernate/JPA</strong></summary>
+<summary><strong>Annotation & Mapping trong Hibernate JPA</strong></summary>
 
--   [Annotation trong Hibernate/JPA – Các annotation phổ biến, ví dụ sử dụng](./annotations.md)
+-   [Annotation trong Hibernate JPA – Các annotation phổ biến, ví dụ sử dụng](./annotations.md)
 
 </details>
 

@@ -14,37 +14,6 @@ Java Persistence API (JPA) là một đặc tả Java cho việc ánh xạ giữ
 -   Tách biệt logic nghiệp vụ khỏi chi tiết kỹ thuật của CSDL
 -   Cung cấp tính portable giữa các ORM implementation khác nhau
 
-### 2. Tầng Persistence trong Kiến Trúc Ứng Dụng
-
-Trong kiến trúc 3-tier phổ biến:
-
--   **Presentation Layer**: Giao diện người dùng
--   **Business Logic Layer**: Logic nghiệp vụ
--   **Persistence Layer**: Quản lý dữ liệu và trạng thái
-
-Tầng Persistence chịu trách nhiệm:
-
--   Lưu trữ và truy xuất dữ liệu
--   Đảm bảo tính toàn vẹn dữ liệu
--   Quản lý trạng thái của các đối tượng nghiệp vụ
-
-### 3. Object-Relational Mapping (ORM)
-
-ORM là kỹ thuật tự động chuyển đổi dữ liệu giữa hệ thống hướng đối tượng và cơ sở dữ liệu quan hệ:
-
--   **Đối tượng Java (Java Objects)**: Đại diện cho thực thể trong logic nghiệp vụ.
--   **Bảng CSDL (Database Tables)**: Nơi lưu trữ dữ liệu trong cơ sở dữ liệu quan hệ.
-
-ORM giúp ánh xạ các đối tượng Java tới các bảng CSDL, cho phép thực hiện các thao tác CRUD (Create, Read, Update, Delete) một cách trực quan thông qua các phương thức của đối tượng.
-
-### 4. Java Persistence API (JPA): Định nghĩa và Vai trò Chuẩn hóa
-
-Java Persistence API (JPA) là một đặc tả (specification) của Java, không phải là một framework ORM cụ thể. Nó định nghĩa một tập hợp các API chuẩn để thực hiện ánh xạ đối tượng-quan hệ và quản lý các đối tượng bền vững (persistent objects).
-
-Vai trò chính của JPA là đơn giản hóa công nghệ cho tầng persistence, giúp nhà phát triển không bị phụ thuộc vào một framework ORM độc quyền nào. Bằng cách sử dụng JPA, mã nguồn Java có thể tương thích với bất kỳ nhà cung cấp triển khai JPA nào (JPA Implementation) mà không cần thay đổi cấu trúc cơ bản. JPA đóng vai trò nền tảng trong cả môi trường Java EE/Jakarta EE và hệ sinh thái Spring hiện đại.
-
----
-
 ## Kiến Trúc JPA và Các Thành Phần Cốt Lõi
 
 ### 1. Kiến trúc JPA: Đặc tả và Giao diện API
@@ -188,6 +157,22 @@ List<User> users = query.getResultList();
 ```
 
 #### 7. DATABASE LAYER
+
+**Vai trò:** Nơi lưu trữ vật lý dữ liệu
+
+-   JPA che giấu sự khác biệt giữa các database
+-   Hibernate Dialect xử lý sự khác biệt cú pháp SQL
+
+---
+
+### 📊 SO SÁNH ĐẶC ĐIỂM QUAN TRỌNG
+
+| Thành phần           | Số lượng               | Thread-safe | Thời gian sống   | Tài nguyên |
+| -------------------- | ---------------------- | ----------- | ---------------- | ---------- |
+| EntityManagerFactory | 1 per Persistence Unit | ✅ CÓ       | Toàn bộ ứng dụng | NẶNG       |
+| EntityManager        | N (mỗi request 1 cái)  | ❌ KHÔNG    | Một request      | NHẸ        |
+| Persistence Context  | 1 per EntityManager    | ❌ KHÔNG    | Một request      | TRUNG BÌNH |
+| Entity               | N (tùy dữ liệu)        | ❌ KHÔNG    | Managed/Detached | NHẸ        |
 
 **Vai trò:** Nơi lưu trữ vật lý dữ liệu
 
