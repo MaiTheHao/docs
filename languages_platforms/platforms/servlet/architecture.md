@@ -2,7 +2,7 @@
 
 ## **Servlet là gì?**
 
-### **Khái niệm Kiến trúc (Architectural Concept)**
+### **Khái niệm Kiến trúc**
 
 **Servlet** là một **thành phần logic phía server** được định nghĩa bởi đặc tả Servlet, chịu trách nhiệm **xử lý các yêu cầu HTTP và tạo nội dung động**. Ở mức kiến trúc, servlet đại diện cho một đơn vị xử lý (processing unit) với các trách nhiệm:
 
@@ -11,11 +11,9 @@
 -   **Tạo và trả về phản hồi HTTP** cho client
 -   **Quản lý vòng đời** thông qua các giai đoạn khởi tạo, xử lý, và hủy bỏ
 
-### **Triển khai Cụ thể (Implementation)**
+### **Triển khai Cụ thể**
 
 Trong thực tế, servlet thường được **triển khai dưới dạng lớp Java** kế thừa từ `HttpServlet` hoặc implement interface `javax.servlet.Servlet`, với các phương thức `init()`, `service()` (hoặc `doGet()`/`doPost()`), và `destroy()` để quản lý vòng đời.
-
-> **Lưu ý**: Việc tách rõ khái niệm kiến trúc và triển khai giúp hiểu rõ trách nhiệm của servlet và dễ dàng chuyển đổi công nghệ implementation khi cần thiết.
 
 ## **Các thành phần trong kiến trúc Servlet**
 
@@ -58,44 +56,6 @@ Trong thực tế, servlet thường được **triển khai dưới dạng lớ
 -   **Dễ cấu hình và triển khai**
 -   **Cộng đồng rộng lớn và ổn định**
 -   **Tích hợp engine HTTP** (Coyote) để xử lý request
-
-### **Luồng xử lý yêu cầu Servlet**
-
-#### **Mức Kiến trúc (Logical Flow)**
-
-1. **Client** gửi HTTP request
-2. **Web layer** nhận và định tuyến request
-3. **Servlet component** xử lý logic nghiệp vụ
-4. **Response** được tạo và trả về client
-
-#### **Mức Triển khai (Implementation Flow)**
-
-1. **Client gửi yêu cầu HTTP**.
-2. **Web server nhận yêu cầu và chuyển đến Servlet Container**.
-3. **Servlet Container xác định servlet** dựa trên URL pattern trong `web.xml` hoặc annotation.
-4. Nếu servlet chưa được khởi tạo, **Container sẽ tải servlet** và gọi phương thức `init()`.
-5. **Container tạo đối tượng HttpServletRequest và HttpServletResponse**.
-6. **Container gọi phương thức `service()`** của servlet, truyền vào các đối tượng request và response.
-7. **Phương thức `service()` phân phối yêu cầu** đến phương thức xử lý phù hợp (`doGet()`, `doPost()`, v.v.) dựa trên loại HTTP method.
-8. **Servlet xử lý logic nghiệp vụ** và tạo phản hồi.
-9. **Container gửi phản hồi về cho client**.
-10. Khi **server tắt**, Container gọi phương thức `destroy()` cho tất cả servlet.
-
-### **Ưu điểm**
-
--   **Độc lập nền tảng**: Servlet kế thừa tính di động của Java ("Write Once, Run Anywhere").
--   **Hiệu suất cao**: Không tạo tiến trình mới cho mỗi yêu cầu như CGI, thay vào đó sử dụng đa luồng (multi-threading).
--   **Độc lập giao thức**: Hỗ trợ đầy đủ các giao thức như **HTTP, HTTPS, FTP, SMTP**.
--   **Quản lý bộ nhớ hiệu quả**: Servlet được giữ trong bộ nhớ và có thể xử lý nhiều yêu cầu đồng thời.
--   **Tích hợp tốt**: Dễ dàng tích hợp với JSP, frameworks (Spring, Struts) và các công nghệ Java khác.
--   **Bảo mật**: Hỗ trợ các tính năng bảo mật của Java và web container.
-
-### **Nhược điểm**
-
--   **Phức tạp trong thiết kế**: Cần kiến thức sâu về Java và web development.
--   **Thread safety**: Cần cẩn thận xử lý đa luồng vì servlet instance được chia sẻ giữa các request.
--   **Yêu cầu kỹ năng**: Lập trình viên cần có kinh nghiệm với Java và các API servlet.
--   **Cấu hình phức tạp**: Đối với các ứng dụng lớn, việc cấu hình có thể trở nên phức tạp.
 
 **Servlet với khả năng xử lý đa luồng và tính di động** là lựa chọn tốt hơn so với CGI truyền thống. **Servlet xử lý yêu cầu và phản hồi một cách động**, phù hợp cho việc phát triển ứng dụng web cần **hỗ trợ đa giao thức** và **hiệu suất cao**.
 
