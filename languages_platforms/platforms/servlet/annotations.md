@@ -3,9 +3,6 @@
 -   [1. @WebServlet](#webservlet)
 -   [2. @WebFilter](#webfilter)
 -   [3. @WebListener](#weblistener)
--   [4. So sánh Annotation vs web.xml](#so-sanh-annotation-vs-webxml)
--   [5. Ưu điểm của Annotation](#uu-diem-cua-annotation)
--   [6. Lifecycle và Xử lý của Container](#lifecycle-va-xu-ly-cua-container)
 
 ---
 
@@ -193,53 +190,6 @@ public class AppLifecycleListener implements ServletContextListener,
 
     public void sessionDestroyed(HttpSessionEvent se) {
         System.out.println("Session destroyed: " + se.getSession().getId());
-    }
-}
-```
-
-## 4. Lifecycle và Xử lý của Container
-
-### Quá trình xử lý Annotation
-
-1. **Classpath Scanning**: Container quét tất cả class trong:
-
-    - `WEB-INF/classes/`
-    - JAR files trong `WEB-INF/lib/`
-
-2. **Annotation Processing**:
-
-    - Phát hiện các annotation @WebServlet, @WebFilter, @WebListener
-    - Validate cấu hình (URL patterns, tên trùng lặp)
-    - Tạo metadata tương ứng
-
-3. **Registration Order**:
-
-    ```
-    web.xml declarations → Annotation declarations → Programmatic declarations
-    ```
-
-4. **Conflict Resolution**:
-    - `metadata-complete="true"`: Bỏ qua annotation, chỉ dùng web.xml
-    - `metadata-complete="false"` (mặc định): Kết hợp cả hai
-    - Trùng mapping: web.xml có độ ưu tiên cao hơn
-
-### Lifecycle của các components
-
-```java
-@WebListener
-public class LifecycleDemo implements ServletContextListener {
-    // 1. Container khởi động
-    public void contextInitialized(ServletContextEvent sce) {
-        // 2. Tạo và cấu hình servlets (theo loadOnStartup)
-        // 3. Tạo filters
-        // 4. Application sẵn sàng nhận request
-    }
-
-    public void contextDestroyed(ServletContextEvent sce) {
-        // 1. Dừng nhận request mới
-        // 2. Hoàn thành request đang xử lý
-        // 3. Destroy servlets và filters
-        // 4. Container shutdown
     }
 }
 ```
