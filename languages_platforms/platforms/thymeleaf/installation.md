@@ -10,7 +10,7 @@
 -   [4. Tạo file template Thymeleaf](#4-tạo-file-template-thymeleaf)
 -   [5. Cấu trúc dự án mẫu](#5-cấu-trúc-dự-án-mẫu)
 -   [6. Chạy ứng dụng](#6-chạy-ứng-dụng)
--   [7. 📌 Ghi nhớ quan trọng](#7-ghi-nhớ-quan-trọng)
+-   [7. Giải thích chi tiết đoạn mã khởi tạo và render Thymeleaf](#7-giải-thích-chi-tiết-đoạn-mã-khởi-tạo-và-render-thymeleaf)
 
 ---
 
@@ -160,10 +160,58 @@ thymeleaf-servlet-demo/
 1. **Triển khai lên Tomcat 11**: Build dự án (`mvn clean package`) và deploy file WAR lên Tomcat 11.
 2. **Truy cập Servlet**: Mở trình duyệt và truy cập `http://localhost:8080/thymeleaf-demo/hello`.
 
+## 7. Giải thích chi tiết đoạn mã khởi tạo và render Thymeleaf
+
 ---
 
-## 7. 📌 Ghi nhớ quan trọng
+### 🛠️ Giải thích đoạn mã khởi tạo TemplateResolver
 
--   **Thymeleaf 3.1.3.RELEASE** hỗ trợ tốt cho namespace **Jakarta EE 9+** (`jakarta.*`) trên Tomcat 11.
--   Sử dụng `WebApplicationTemplateResolver` và `JakartaServletWebApplication` là cách cấu hình hiện đại cho Jakarta EE.
--   `TemplateEngine` chỉ khởi tạo một lần khi ứng dụng start để tối ưu hiệu năng.
+Đoạn mã sau cấu hình bộ giải quyết template (`TemplateResolver`), thành phần chịu trách nhiệm tìm kiếm và đọc các file template:
+
+```java
+WebApplicationTemplateResolver templateResolver = new WebApplicationTemplateResolver(application);
+templateResolver.setTemplateMode(TemplateMode.HTML); // 1
+templateResolver.setPrefix("/WEB-INF/templates/");   // 2
+templateResolver.setSuffix(".html");                 // 3
+templateResolver.setCharacterEncoding("UTF-8");      // 4
+templateResolver.setCacheable(true);                 // 5
+```
+
+| Phương thức                          | Ý nghĩa                                                                                                    |
+| :----------------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| `setTemplateMode(TemplateMode.HTML)` | Thiết lập chế độ xử lý template là HTML. Thymeleaf cũng hỗ trợ XML, TEXT, JAVASCRIPT, CSS.                 |
+| `setPrefix("/WEB-INF/templates/")`   | Đặt thư mục gốc chứa các file template. Thymeleaf sẽ tìm kiếm trong `WEB-INF/templates/`.                  |
+| `setSuffix(".html")`                 | Đặt phần mở rộng mặc định cho file template. Ví dụ: `hello` sẽ thành `hello.html`.                         |
+| `setCharacterEncoding("UTF-8")`      | Đặt mã hóa ký tự là UTF-8, đảm bảo hiển thị chính xác tiếng Việt và các ngôn ngữ khác.                     |
+| `setCacheable(true)`                 | Kích hoạt bộ nhớ đệm template để tăng hiệu suất. Production nên đặt `true`, phát triển có thể đặt `false`. |
+
+---
+
+### 🎯 Giải thích đoạn mã xử lý và render trong Servlet
+
+Đoạn mã dưới thực thi trong Servlet để xử lý yêu cầu, chuẩn bị dữ liệu và render template HTML về cho trình duyệt:
+
+```java
+// 1. Lấy TemplateEngine từ ServletContext
+TemplateEngine templateEngine = (TemplateEngine) getServletContext().getAttribute(ThymeleafConfig.TEMPLATE_ENGINE_ATTR);
+
+// 2. Tạo đối tượng IWebExchange
+IWebExchange webExchange = JakartaServletWebApplication.buildApplication(getServletContext()).buildExchange(request, response);
+
+// 3. Tạo WebContext và truyền dữ liệu
+WebContext context = new WebContext(webExchange);
+context.setVariable("name", "Ojou-sama");
+
+// 4. Render template
+templateEngine.process("hello", context, response.getWriter());
+```
+
+| Bước thực hiện                     | Giải thích                                                                                                |
+| :--------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| Lấy `TemplateEngine`               | Đối tượng trung tâm của Thymeleaf, thực hiện xử lý template. Được khởi tạo và lưu trong `ServletContext`. |
+| Tạo `IWebExchange`                 | Lớp trừu tượng hóa cho request/response HTTP, giúp Thymeleaf tương tác an toàn với các thành phần web.    |
+| Tạo `WebContext` và truyền dữ liệu | Chứa dữ liệu cho template, kết hợp `IWebExchange` và các biến do lập trình viên định nghĩa.               |
+| `setVariable("name", ...)`         | Đặt biến "name" vào ngữ cảnh, sử dụng trong template với cú pháp `${name}`.                               |
+| Render template                    | Kết hợp template với dữ liệu và xuất kết quả HTML về trình duyệt thông qua `response.getWriter()`.        |
+
+> 📌 **Ghi nhớ:** Cấu hình đúng TemplateResolver và truyền dữ liệu qua WebContext là bước quan trọng để Thymeleaf hoạt động chính xác trên Servlet.
