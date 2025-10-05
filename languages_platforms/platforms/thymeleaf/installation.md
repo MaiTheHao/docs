@@ -62,17 +62,6 @@ Thêm các dependency sau vào file `pom.xml`. Tomcat 11 sử dụng **Jakarta S
 Tạo class cấu hình để khởi tạo `TemplateEngine` khi ứng dụng start, lưu vào ServletContext.
 
 ```java
-package com.example.config;
-
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebListener;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
-import org.thymeleaf.web.IWebApplication;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
-
 @WebListener
 public class ThymeleafConfig implements ServletContextListener {
 
@@ -104,20 +93,6 @@ public class ThymeleafConfig implements ServletContextListener {
 Tạo servlet sử dụng `TemplateEngine` để xử lý và render template Thymeleaf.
 
 ```java
-package com.example.web;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.web.IWebExchange;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
-
-import java.io.IOException;
-
 @WebServlet("/hello")
 public class HelloServlet extends HttpServlet {
 
@@ -192,5 +167,3 @@ thymeleaf-servlet-demo/
 -   **Thymeleaf 3.1.3.RELEASE** hỗ trợ tốt cho namespace **Jakarta EE 9+** (`jakarta.*`) trên Tomcat 11.
 -   Sử dụng `WebApplicationTemplateResolver` và `JakartaServletWebApplication` là cách cấu hình hiện đại cho Jakarta EE.
 -   `TemplateEngine` chỉ khởi tạo một lần khi ứng dụng start để tối ưu hiệu năng.
-
-> Đây là nền tảng vững chắc để phát triển ứng dụng Servlet thuần với Thymeleaf. Có thể mở rộng thêm logic, xử lý form, nhiều template khác.
