@@ -4,9 +4,6 @@ Thymeleaf là một template engine hiện đại Server-side-rendering cho Java
 
 Mục tiêu chính của Thymeleaf là mang lại các template tự nhiên, thanh lịch vào quy trình phát triển — HTML có thể hiển thị đúng trên trình duyệt và đồng thời hoạt động như prototype tĩnh, giúp tăng cường hợp tác giữa các thành viên trong nhóm.
 
-Thymeleaf cung cấp module cho Spring Framework, tích hợp với nhiều công cụ phổ biến, và khả năng mở rộng chức năng tùy chỉnh, phù hợp cho phát triển web HTML5 trên JVM hiện đại — và còn nhiều hơn thế nữa.
-Các template HTML viết bằng Thymeleaf vẫn giữ nguyên cú pháp HTML, cho phép template chạy trong ứng dụng vừa là artifact thiết kế hữu ích.
-
 ## Mẫu code Thymeleaf
 
 ```html
@@ -33,5 +30,13 @@ Các template HTML viết bằng Thymeleaf vẫn giữ nguyên cú pháp HTML, c
 -   `${...}`: Biểu thức truy xuất giá trị từ model hoặc context.
 -   `#{...}`: Truy xuất message từ file resource (i18n).
 -   `#numbers.formatDecimal(...)`: Hàm tiện ích để định dạng số thập phân.
+
+#### Mở rộng cú pháp
+
+-   `[[${...}]]`: Chèn giá trị động vào nội dung hoặc thuộc tính HTML, tự động escape ký tự đặc biệt.
+-   `[(${...})]`: Chèn giá trị động mà không escape ký tự đặc biệt, phù hợp với dữ liệu JSON hoặc HTML thô.
+-   `th:if`, `th:unless`: Điều kiện hiển thị phần tử dựa trên biểu thức. Ví dụ: `<span th:if="${user.active}">Active</span>`.
+-   `th:attr`: Gán giá trị động cho một hoặc nhiều thuộc tính HTML. Ví dụ: `<a th:attr="href=${link.url}">Link</a>`.
+-   `th:replace`, `th:include`: Chèn hoặc thay thế nội dung từ template khác. Ví dụ: `<div th:replace="fragments/header :: header"></div>`.
 
 > [Xem thêm: Trang chủ Thymeleaf](https://www.thymeleaf.org/)

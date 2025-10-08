@@ -125,7 +125,7 @@ Tạo file template tại `src/main/webapp/WEB-INF/templates/hello.html`:
 	</head>
 	<body>
 		<h1>Hello, <span th:text="${name}">User</span>!</h1>
-		<p>Đây là template Thymeleaf đầu tiên trên môi trường Servlet thuần.</p>
+		<p>Đây là template Thymeleaf đầu tiên á hí hí.</p>
 	</body>
 </html>
 ```

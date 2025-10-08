@@ -1,492 +1,197 @@
-# Bố cục Template
+# Thymeleaf Fragments
 
-## 1 Bao gồm các đoạn template
+Trong bất kỳ website nào, việc lặp lại mã nguồn cho các thành phần chung như **Header, Footer, hay Menu** là điều không thể tránh khỏi. Thymeleaf cung cấp một giải pháp cho vấn đề này thông qua **Fragments**.
 
-Định nghĩa và tham chiếu fragment  
-Trong các template, chúng ta thường muốn bao gồm các phần từ template khác, như footer, header, menu...
+Hiểu đơn giản, **Fragment** là một "mảnh ghép" mà bạn có thể định nghĩa một lần và tái sử dụng ở nhiều nơi.
 
-Để làm được điều này, Thymeleaf yêu cầu chúng ta định nghĩa các phần này, gọi là “fragment”, để chèn vào, sử dụng thuộc tính `th:fragment`.
+---
 
-Giả sử muốn thêm một footer bản quyền chuẩn cho tất cả các trang grocery, ta tạo file `/WEB-INF/templates/footer.html` với nội dung:
+## 1. Các khái niệm cơ bản
+
+### a. Định nghĩa một Fragment
+
+Để đánh dấu một đoạn HTML là một fragment, ta sử dụng thuộc tính `th:fragment`.
+
+Giả sử, ta tạo file `templates/fragments/common.html` để chứa các thành phần chung:
 
 ```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 	<body>
-		<div th:fragment="copy">&copy; 2011 The Good Thymes Virtual Grocery</div>
+		<footer th:fragment="footer">&copy; 2025 The Good Thymes Virtual Grocery</footer>
 	</body>
 </html>
 ```
 
-Đoạn code trên định nghĩa một fragment tên là `copy` có thể dễ dàng chèn vào trang chủ bằng thuộc tính `th:insert` hoặc `th:replace`:
+### b. Chèn Fragment vào trang
+
+Để sử dụng fragment vừa tạo, bạn dùng thuộc tính `th:insert` hoặc `th:replace` với cú pháp biểu thức đặc biệt `~{...}`.
 
 ```html
 <body>
-	...
-	<div th:insert="~{footer :: copy}"></div>
+	<h1>Welcome to our Grocery!</h1>
+
+	<div th:insert="~{fragments/common :: footer}"></div>
 </body>
 ```
 
-📌 **Ghi nhớ:** `th:insert` yêu cầu một biểu thức fragment (`~{...}`), là biểu thức trả về một fragment.
+**Phân tích cú pháp `~{fragments/common :: footer}`:**
 
-### Cú pháp chỉ định fragment
+-   `~{...}`: Dấu hiệu để Thymeleaf biết đây là một biểu thức fragment.
+-   `fragments/common`: Đường dẫn đến file template chứa fragment (không cần `.html`).
+-   `::`: Dấu phân cách.
+-   `footer`: Tên của `th:fragment` mà bạn muốn chèn.
 
-Cú pháp biểu thức fragment khá đơn giản, có ba dạng:
+### c. `th:insert` vs. `th:replace` - Sự khác biệt cốt lõi
 
--   `~{templatename::selector}`: Bao gồm fragment kết quả từ selector trên template `templatename`. Selector có thể là tên fragment, ví dụ: `~{footer :: copy}`.
--   `~{templatename}`: Bao gồm toàn bộ template tên `templatename`.
--   `~{::selector}` hoặc `~{this::selector}`: Chèn fragment từ chính template hiện tại, khớp selector.
+Đây là điểm cực kỳ quan trọng cần phân biệt rõ:
 
-Cả `templatename` và `selector` đều có thể là biểu thức đầy đủ (kể cả điều kiện):
+-   `th:insert`: **Chèn** fragment vào **bên trong** thẻ chủ. Thẻ chủ được giữ lại.
+-   `th:replace`: **Thay thế** hoàn toàn thẻ chủ bằng fragment. Thẻ chủ bị loại bỏ.
+
+**Ví dụ trực quan:**
 
 ```html
-<div th:insert="~{ footer :: (${user.isAdmin}? #{footer.admin} : #{footer.normaluser}) }"></div>
+<div th:insert="~{fragments/common :: footer}"></div>
+<div th:replace="~{fragments/common :: footer}"></div>
 ```
 
-Fragment có thể chứa bất kỳ thuộc tính `th:*`. Các thuộc tính này sẽ được đánh giá khi fragment được chèn vào template đích và có thể truy cập biến context của template đích.
-
-💡 **Mẹo:** Fragment có thể viết trong trang hoàn chỉnh, hợp lệ với trình duyệt, vẫn có thể chèn vào template khác bằng Thymeleaf.
-
-### Tham chiếu fragment không dùng th:fragment
-
-Nhờ Markup Selector, có thể chèn fragment không dùng thuộc tính `th:fragment`, thậm chí là markup từ ứng dụng khác:
+**Kết quả HTML sau khi Thymeleaf xử lý:**
 
 ```html
-<div id="copy-section">&copy; 2011 The Good Thymes Virtual Grocery</div>
+<div>
+	<footer>&copy; 2025 The Good Thymes Virtual Grocery</footer>
+</div>
+
+<footer>&copy; 2025 The Good Thymes Virtual Grocery</footer>
 ```
 
-Chỉ cần tham chiếu bằng id như CSS selector:
+> Trong hầu hết các trường hợp, `th:replace` thường hữu ích hơn vì nó giữ cho cấu trúc HTML cuối cùng gọn gàng hơn.
+
+### d. Chèn Fragment không cần `th:fragment`
+
+Bạn cũng có thể chèn bất kỳ phần nào của một file template bằng cách sử dụng **CSS selector** (như `id`, `class`).
+
+**Ví dụ:** `fragments/common.html`
 
 ```html
-<body>
-	...
-	<div th:insert="~{footer :: #copy-section}"></div>
-</body>
+<div id="copy-section">&copy; 2025 The Good Thymes Virtual Grocery</div>
 ```
 
-### Phân biệt th:insert và th:replace
-
--   `th:insert`: Chèn fragment làm nội dung của thẻ chủ.
--   `th:replace`: Thay thế thẻ chủ bằng fragment.
-
-Ví dụ:
+**Cách chèn:**
 
 ```html
-<footer th:fragment="copy">&copy; 2011 The Good Thymes Virtual Grocery</footer>
-```
-
-Chèn hai lần:
-
-```html
-<body>
-	...
-	<div th:insert="~{footer :: copy}"></div>
-	<div th:replace="~{footer :: copy}"></div>
-</body>
-```
-
-Kết quả:
-
-```html
-<body>
-	...
-	<div>
-		<footer>&copy; 2011 The Good Thymes Virtual Grocery</footer>
-	</div>
-	<footer>&copy; 2011 The Good Thymes Virtual Grocery</footer>
-</body>
+<div th:replace="~{fragments/common :: #copy-section}"></div>
 ```
 
 ---
 
-## 2 Chữ ký fragment có thể truyền tham số
+## 2. Fragment như một hàm (Truyền tham số)
 
-Để tạo fragment giống hàm, có thể định nghĩa tham số trong `th:fragment`:
+Fragments cực kỳ mạnh mẽ khi bạn có thể truyền tham số cho chúng, y hệt như gọi một hàm trong lập trình.
+
+### a. Định nghĩa Fragment với tham số
+
+Bạn khai báo các tham số ngay trong thuộc tính `th:fragment`.
+
+**Ví dụ:** File `fragments/common.html`
 
 ```html
-<div th:fragment="frag (onevar,twovar)">
-	<p th:text="${onevar} + ' - ' + ${twovar}">...</p>
+<div th:fragment="alert(type, message)">
+	<div th:class="'alert alert-' + ${type}">
+		<p th:text="${message}">Default message</p>
+	</div>
 </div>
 ```
 
-Gọi fragment bằng hai cách:
+### b. Gọi Fragment và truyền tham số
+
+Bạn có thể truyền giá trị cho tham số khi gọi fragment.
 
 ```html
-<div th:replace="~{ ::frag (${value1},${value2}) }">...</div>
-<div th:replace="~{ ::frag (onevar=${value1},twovar=${value2}) }">...</div>
-```
+<div th:replace="~{fragments/common :: alert('success', 'Đăng ký thành công!')}"></div>
 
-Thứ tự không quan trọng:
-
-```html
-<div th:replace="~{ ::frag (twovar=${value2},onevar=${value1}) }">...</div>
-```
-
-#### Biến cục bộ fragment không có tham số
-
-Fragment không có tham số vẫn có thể truyền biến cục bộ:
-
-```html
-<div th:fragment="frag">...</div>
-<div th:replace="~{::frag (onevar=${value1},twovar=${value2})}"></div>
-```
-
-Tương đương với:
-
-```html
-<div th:replace="~{::frag}" th:with="onevar=${value1},twovar=${value2}"></div>
-```
-
-📌 **Ghi nhớ:** Truyền biến cục bộ không làm rỗng context, fragment vẫn truy cập được biến context của template gọi.
-
-#### th:assert kiểm tra điều kiện trong template
-
-`th:assert` nhận danh sách biểu thức, tất cả phải trả về true, nếu không sẽ báo lỗi:
-
-```html
-<div th:assert="${onevar},(${twovar} != 43)">...</div>
-```
-
-Áp dụng kiểm tra tham số:
-
-```html
-<header th:fragment="contentheader(title)" th:assert="${!#strings.isEmpty(title)}">...</header>
+<div th:replace="~{fragments/common :: alert(message='Nội dung đã được cập nhật.', type='info')}"></div>
 ```
 
 ---
 
-## 3 Bố cục linh hoạt: hơn cả chèn fragment
+## 3. Kỹ thuật Layout linh hoạt
 
-Nhờ biểu thức fragment, có thể truyền tham số là fragment markup.
+Đây là kỹ thuật nâng cao nhưng cực kỳ hữu dụng: **truyền một fragment làm tham số cho một fragment khác**. Điều này cho phép bạn tạo ra các layout có cấu trúc chung nhưng nội dung có thể tùy biến linh hoạt.
 
-Ví dụ sử dụng biến `title` và `links`:
-
-```html
-<head th:fragment="common_header(title,links)">
-	<title th:replace="${title}">The awesome application</title>
-	<!-- Common styles and scripts -->
-	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/awesomeapp.css}" />
-	<link rel="shortcut icon" th:href="@{/images/favicon.ico}" />
-	<script type="text/javascript" th:src="@{/sh/scripts/codebase.js}"></script>
-	<!--/* Placeholder cho các link bổ sung */-->
-	<th:block th:replace="${links}" />
-</head>
-```
-
-Gọi fragment:
+Hãy tưởng tượng bạn tạo một layout chung `base.html`
 
 ```html
-<head th:replace="~{ base :: common_header(~{::title},~{::link}) }">
-	<title>Awesome - Main</title>
-	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-	<link rel="stylesheet" th:href="@{/themes/smoothness/jquery-ui.css}" />
-</head>
-```
-
-Kết quả:
-
-```html
-<head>
-	<title>Awesome - Main</title>
-	<!-- Common styles and scripts -->
-	<link rel="stylesheet" type="text/css" media="all" href="/awe/css/awesomeapp.css" />
-	<link rel="shortcut icon" href="/awe/images/favicon.ico" />
-	<script type="text/javascript" src="/awe/sh/scripts/codebase.js"></script>
-	<link rel="stylesheet" href="/awe/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="/awe/themes/smoothness/jquery-ui.css" />
-</head>
-```
-
-#### Sử dụng fragment rỗng
-
-Fragment đặc biệt `~{}` dùng để chỉ không có markup:
-
-```html
-<head th:replace="~{ base :: common_header(~{::title},~{}) }">
-	<title>Awesome - Main</title>
-</head>
-```
-
-Kết quả:
-
-```html
-<head>
-	<title>Awesome - Main</title>
-	<!-- Common styles and scripts -->
-	<link rel="stylesheet" type="text/css" media="all" href="/awe/css/awesomeapp.css" />
-	<link rel="shortcut icon" href="/awe/images/favicon.ico" />
-	<script type="text/javascript" src="/awe/sh/scripts/codebase.js"></script>
-</head>
-```
-
-#### Sử dụng token no-operation
-
-Token no-op (`_`) dùng để giữ nguyên markup mặc định của fragment:
-
-```html
-<head th:replace="~{base :: common_header(_,~{::link})}">
-	<title>Awesome - Main</title>
-	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-	<link rel="stylesheet" th:href="@{/themes/smoothness/jquery-ui.css}" />
-</head>
-```
-
-Kết quả:
-
-```html
-<head>
-	<title>The awesome application</title>
-	<!-- Common styles and scripts -->
-	<link rel="stylesheet" type="text/css" media="all" href="/awe/css/awesomeapp.css" />
-	<link rel="shortcut icon" href="/awe/images/favicon.ico" />
-	<script type="text/javascript" src="/awe/sh/scripts/codebase.js"></script>
-	<link rel="stylesheet" href="/awe/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="/awe/themes/smoothness/jquery-ui.css" />
-</head>
-```
-
-#### Chèn fragment có điều kiện
-
-Kết hợp fragment rỗng và no-op để chèn fragment theo điều kiện:
-
-```html
-<div th:insert="${user.isAdmin()} ? ~{common :: adminhead} : ~{}">...</div>
-```
-
-Hoặc giữ nguyên markup nếu điều kiện không thỏa:
-
-```html
-<div th:insert="${user.isAdmin()} ? ~{common :: adminhead} : _">Welcome [[${user.name}]], click <a th:href="@{/support}">here</a> for help-desk support.</div>
-```
-
-Kiểm tra tồn tại fragment:
-
-```html
-<div th:insert="~{common :: salutation} ?: _">Welcome [[${user.name}]], click <a th:href="@{/support}">here</a> for help-desk support.</div>
-```
-
----
-
-## 4 Loại bỏ fragment template
-
-Ví dụ template danh sách sản phẩm:
-
-```html
-<table>
-	<tr>
-		<th>NAME</th>
-		<th>PRICE</th>
-		<th>IN STOCK</th>
-		<th>COMMENTS</th>
-	</tr>
-	<tr th:each="prod : ${prods}" th:class="${prodStat.odd}? 'odd'">
-		<td th:text="${prod.name}">Onions</td>
-		<td th:text="${prod.price}">2.41</td>
-		<td th:text="${prod.inStock}? #{true} : #{false}">yes</td>
-		<td>
-			<span th:text="${#lists.size(prod.comments)}">2</span> comment/s
-			<a href="comments.html" th:href="@{/product/comments(prodId=${prod.id})}" th:unless="${#lists.isEmpty(prod.comments)}">view</a>
-		</td>
-	</tr>
-</table>
-```
-
-Nếu mở trực tiếp bằng trình duyệt, chỉ có một dòng dữ liệu mẫu. Để prototype thực tế hơn, thêm vài dòng:
-
-```html
-<table>
-	<tr>
-		<th>NAME</th>
-		<th>PRICE</th>
-		<th>IN STOCK</th>
-		<th>COMMENTS</th>
-	</tr>
-	<tr th:each="prod : ${prods}" th:class="${prodStat.odd}? 'odd'">
-		<td th:text="${prod.name}">Onions</td>
-		<td th:text="${prod.price}">2.41</td>
-		<td th:text="${prod.inStock}? #{true} : #{false}">yes</td>
-		<td>
-			<span th:text="${#lists.size(prod.comments)}">2</span> comment/s
-			<a href="comments.html" th:href="@{/product/comments(prodId=${prod.id})}" th:unless="${#lists.isEmpty(prod.comments)}">view</a>
-		</td>
-	</tr>
-	<tr class="odd">
-		<td>Blue Lettuce</td>
-		<td>9.55</td>
-		<td>no</td>
-		<td><span>0</span> comment/s</td>
-	</tr>
-	<tr>
-		<td>Mild Cinnamon</td>
-		<td>1.99</td>
-		<td>yes</td>
-		<td>
-			<span>3</span> comment/s
-			<a href="comments.html">view</a>
-		</td>
-	</tr>
-</table>
-```
-
-Khi Thymeleaf xử lý, hai dòng cuối vẫn còn vì chỉ dòng đầu có lặp.
-
-Để loại bỏ, dùng thuộc tính `th:remove` trên hai dòng cuối:
-
-```html
-<tr class="odd" th:remove="all">
-	<td>Blue Lettuce</td>
-	<td>9.55</td>
-	<td>no</td>
-	<td><span>0</span> comment/s</td>
-</tr>
-<tr th:remove="all">
-	<td>Mild Cinnamon</td>
-	<td>1.99</td>
-	<td>yes</td>
-	<td>
-		<span>3</span> comment/s
-		<a href="comments.html">view</a>
-	</td>
-</tr>
-```
-
-Kết quả sau xử lý:
-
-```html
-<table>
-	<tr>
-		<th>NAME</th>
-		<th>PRICE</th>
-		<th>IN STOCK</th>
-		<th>COMMENTS</th>
-	</tr>
-	<tr>
-		<td>Fresh Sweet Basil</td>
-		<td>4.99</td>
-		<td>yes</td>
-		<td><span>0</span> comment/s</td>
-	</tr>
-	<tr class="odd">
-		<td>Italian Tomato</td>
-		<td>1.25</td>
-		<td>no</td>
-		<td>
-			<span>2</span> comment/s
-			<a href="/gtvg/product/comments?prodId=2">view</a>
-		</td>
-	</tr>
-	<tr>
-		<td>Yellow Bell Pepper</td>
-		<td>2.50</td>
-		<td>yes</td>
-		<td><span>0</span> comment/s</td>
-	</tr>
-	<tr class="odd">
-		<td>Old Cheddar</td>
-		<td>18.75</td>
-		<td>yes</td>
-		<td>
-			<span>1</span> comment/s
-			<a href="/gtvg/product/comments?prodId=4">view</a>
-		</td>
-	</tr>
-</table>
-```
-
-#### Ý nghĩa giá trị thuộc tính th:remove
-
-`th:remove` có 5 giá trị:
-
-| Giá trị         | Ý nghĩa                               |
-| --------------- | ------------------------------------- |
-| `all`           | Xóa cả thẻ chứa và toàn bộ con        |
-| `body`          | Giữ thẻ chứa, xóa toàn bộ con         |
-| `tag`           | Xóa thẻ chứa, giữ nguyên con          |
-| `all-but-first` | Xóa toàn bộ con trừ phần tử đầu tiên  |
-| `none`          | Không làm gì (dùng cho đánh giá động) |
-
-💡 **Mẹo:** `all-but-first` giúp tiết kiệm khi prototype:
-
-```html
-<tbody th:remove="all-but-first">
-	<tr th:each="prod : ${prods}" th:class="${prodStat.odd}? 'odd'">
-		<td th:text="${prod.name}">Onions</td>
-		<td th:text="${prod.price}">2.41</td>
-		<td th:text="${prod.inStock}? #{true} : #{false}">yes</td>
-		<td>
-			<span th:text="${#lists.size(prod.comments)}">2</span> comment/s
-			<a href="comments.html" th:href="@{/product/comments(prodId=${prod.id})}" th:unless="${#lists.isEmpty(prod.comments)}">view</a>
-		</td>
-	</tr>
-	<tr class="odd">
-		<td>Blue Lettuce</td>
-		<td>9.55</td>
-		<td>no</td>
-		<td><span>0</span> comment/s</td>
-	</tr>
-	<tr>
-		<td>Mild Cinnamon</td>
-		<td>1.99</td>
-		<td>yes</td>
-		<td>
-			<span>3</span> comment/s
-			<a href="comments.html">view</a>
-		</td>
-	</tr>
-</tbody>
-```
-
-`th:remove` nhận bất kỳ biểu thức Thymeleaf Standard Expression trả về giá trị hợp lệ (`all`, `tag`, `body`, `all-but-first`, `none`):
-
-```html
-<a href="/something" th:remove="${condition}? tag : none">Link text not to be removed</a>
-```
-
-Nếu trả về `null`, sẽ tương đương với `none`:
-
-```html
-<a href="/something" th:remove="${condition}? tag">Link text not to be removed</a>
-```
-
----
-
-## 5 Kế thừa bố cục
-
-Để có một file làm layout, dùng fragment. Ví dụ layout đơn giản với `title` và `content`:
-
-```html
-<!DOCTYPE html>
-<html th:fragment="layout (title, content)" xmlns:th="http://www.thymeleaf.org">
+<html th:fragment="layout(pageTitle, content)">
 	<head>
-		<title th:replace="${title}">Layout Title</title>
+		<title th:replace="${pageTitle}">Default Title</title>
 	</head>
 	<body>
-		<h1>Layout H1</h1>
-		<div th:replace="${content}">
-			<p>Layout content</p>
-		</div>
-		<footer>Layout footer</footer>
+		<header>My Website Header</header>
+
+		<main th:replace="${content}">
+			<p>Default content goes here...</p>
+		</main>
+
+		<footer>My Website Footer</footer>
 	</body>
 </html>
 ```
 
-File kế thừa layout:
+Bây giờ, tại trang `product.html`, bạn "kế thừa" layout này:
 
 ```html
-<!DOCTYPE html>
-<html th:replace="~{layoutFile :: layout(~{::title}, ~{::section})}">
+<html th:replace="~{layouts/base :: layout(~{::title}, ~{::section})}">
 	<head>
-		<title>Page Title</title>
+		<title>Danh sách sản phẩm</title>
 	</head>
 	<body>
 		<section>
-			<p>Page content</p>
-			<div>Included on page</div>
+			<h1>Đây là trang sản phẩm</h1>
+			<p>Nội dung chi tiết...</p>
 		</section>
 	</body>
 </html>
 ```
 
-Thẻ `html` sẽ bị thay thế bởi layout, trong layout, `title` và `content` sẽ được thay bằng các block tương ứng.
+**Luồng hoạt động:**
 
-Có thể chia layout thành nhiều fragment như header, footer nếu muốn.
+1.  Thymeleaf thay thế toàn bộ thẻ `<html>` của `product.html` bằng fragment `layout` trong `base.html`.
+2.  Nó lấy fragment `~{::title}` (tức là thẻ `<title>...`) từ `product.html` và truyền vào biến `pageTitle`.
+3.  Nó lấy fragment `~{::section}` (tức là thẻ `<section>...`) từ `product.html` và truyền vào biến `content`.
+4.  Kết quả là một trang HTML hoàn chỉnh kết hợp từ layout chung và nội dung riêng.
+
+**Lưu ý**: Mặc dù kỹ thuật này rất mạnh, đối với việc quản lý layout toàn trang, **[Thymeleaf Layout Dialect](https://github.com/ultraq/thymeleaf-layout-dialect)** là một giải pháp chuyên dụng và cú pháp gọn gàng hơn.
+
+---
+
+## 4. Dọn dẹp mã nguồn mẫu với `th:remove`
+
+Khi thiết kế giao diện, chúng ta thường thêm các dòng dữ liệu tĩnh để xem trước. Tuy nhiên, những dòng này cần bị xóa đi khi Thymeleaf render dữ liệu thật. Thuộc tính `th:remove` được sinh ra cho mục đích này.
+
+**Ví dụ:** Bảng sản phẩm có dữ liệu mẫu.
+
+```html
+<table>
+	<thead>
+		...
+	</thead>
+	<tbody>
+		<tr th:each="prod : ${products}">
+			<td th:text="${prod.name}"></td>
+			<td th:text="${prod.price}"></td>
+		</tr>
+		<tr th:remove="all">
+			<td>Sample: Blue Lettuce</td>
+			<td>9.55</td>
+		</tr>
+		<tr th:remove="all">
+			<td>Sample: Mild Cinnamon</td>
+			<td>1.99</td>
+		</tr>
+	</tbody>
+</table>
+```
+
+Khi Thymeleaf xử lý, nó sẽ lặp qua danh sách `${products}` và **xóa hoàn toàn** hai thẻ `<tr>` có `th:remove="all"`, trả về một bảng HTML sạch chỉ chứa dữ liệu động.

@@ -27,21 +27,7 @@ templateResolver.setSuffix(".html");               // Đuôi file mặc định
 
 ## 3. Luồng xử lý template
 
-```
-Yêu cầu → TemplateEngine
-          │
-          ▼
-  TemplateResolver
-          │
-          ▼
-  /WEB-INF/templates/home/about.html
-          │
-          ▼
-  Parse HTML + xử lý th:*
-          │
-          ▼
-  Render + Output → Writer
-```
+REQ -> TemplateEngine -> TemplateResolver -> Relative Path -> Parse HTML -> Render -> ...
 
 ---
 
@@ -61,11 +47,6 @@ Yêu cầu → TemplateEngine
 ```html
 <main>
 	<div th:insert="${content} :: mainContent"></div>
-	<!--            │          │        │
-                    │          │        └─ Tên fragment  
-                    │          └─ Toán tử fragment
-                    └─ Tên template từ biến 
-    -->
 </main>
 ```
 

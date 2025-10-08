@@ -20,5 +20,13 @@
 
 -   [Thymeleaf Template Layout](./template-layout.md)
 -   [Bảng tổng hợp cú pháp Thymeleaf](./syntax.md)
+-   [Thymeleaf Layout Dialect](./layout-dialect.md)
+
+</details>
+
+<details>
+<summary><strong>JavaScript trong Thymeleaf</strong></summary>
+
+-   [Triển khai JavaScript vào Thymeleaf](./thymeleaf-js.md)
 
 </details>
