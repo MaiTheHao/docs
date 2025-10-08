@@ -1,34 +1,63 @@
-**Abstract Factory** là một mẫu thiết kế giúp tạo ra các nhóm đối tượng liên quan với nhau mà không cần chỉ rõ lớp cụ thể của chúng. Nó giống như một nhà máy sản xuất nhiều loại sản phẩm cùng lúc, giúp dễ dàng thay đổi nhóm sản phẩm mà không ảnh hưởng đến mã nguồn chính.
+# Abstract Factory Pattern
 
-Tuy nhiên, cần lưu ý rằng Abstract Factory **dễ mở rộng theo chiều ngang** (thêm hãng hoặc nhóm sản phẩm mới → tạo thêm concrete factory) nhưng **khó mở rộng theo chiều dọc** (thêm loại sản phẩm mới trong nhóm → phải sửa interface và tất cả concrete factory hiện có).
+`Abstract Factory` giúp tạo ra **họ các sản phẩm** liên quan thông qua `Concrete Factory`.
 
-Ví dụ:  
-Giả sử Abstract Factory hiện tạo ra hai loại sản phẩm:
+> Nó khác với `Factory Method` ở chỗ **"tạo ra họ sản phẩm"** chứ không phải một sản phẩm cụ thể.
 
--   `Instance` (máy chủ ảo)
--   `Storage` (dịch vụ lưu trữ)
+---
 
-Mỗi concrete factory như `AWSFactory`, `AzureFactory`, `GCPFactory` sẽ triển khai hai phương thức:
-
-```ts
-createInstance(): Instance;
-createStorage(): Storage;
-```
-
-Nếu muốn thêm loại sản phẩm mới như `Network` (mạng ảo, load balancer, VPN), bạn sẽ phải:
-
--   Sửa interface của Abstract Factory để thêm phương thức:
-    ```ts
-    createNetwork(): Network;
-    ```
--   Cập nhật tất cả concrete factory để triển khai phương thức mới.
--   Điều chỉnh client code nếu cần sử dụng sản phẩm mới.
-
-Điều này thể hiện hạn chế của Abstract Factory:
-
--   Dễ thêm nhà cung cấp mới
--   Khó thêm loại sản phẩm mới
+## Sơ đồ UML
 
 ![alt text](image.png)
-![alt text](image-2.png)
-![alt text](image-1.png)
+
+---
+
+## Phân tích cấu trúc
+
+Giả sử bạn xây dựng một hệ thống quản lý **Cloud Service** cho nhiều nhà cung cấp như **AWS**, **Azure**, **GCP**.
+
+Mỗi nhà cung cấp sẽ có cách triển khai **tài nguyên** (**Product**) khác nhau:
+
+-   **Máy chủ** - **Server**
+-   **Dịch vụ lưu trữ** - **Storage**
+-   **Dịch vụ mạng** - **Network**
+
+Nếu sử dụng **Factory Method pattern**, bạn cần tạo nhiều **Concrete Factory** riêng biệt cho từng loại sản phẩm:
+
+-   `ServerFactory` → `AWSServerFactory`, `AzureServerFactory`, `GCPServerFactory`
+-   `StorageFactory` → `AWSStorageFactory`, `AzureStorageFactory`, `GCPStorageFactory`
+-   `NetworkFactory` → `AWSNetworkFactory`, `AzureNetworkFactory`, `GCPNetworkFactory`
+
+> Điều này làm tăng số lượng class và gây phức tạp khi muốn xây dựng hệ thống đồng nhất cho từng nhà cung cấp.
+
+Với **Abstract Factory pattern**, bạn chỉ cần một factory cho mỗi nhà cung cấp, giúp quản lý và mở rộng dễ dàng hơn.
+
+-   Tạo một `CloudFactory` đóng vai trò là `AbstractFactory`, gồm các phương thức: `createServer()`, `createStorage()`, `createNetwork()`.
+-   Tạo các `ConcreteFactory` như `AWSFactory`, `AzureFactory`, `GCPFactory` triển khai `CloudFactory`.
+-   Mỗi `ConcreteFactory` sẽ tạo ra một **họ sản phẩm** gồm nhiều loại sản phẩm liên quan thông qua các method:
+
+    -   `AWSFactory` → `AWSServer`, `AWSStorage`, `AWSNetwork`
+    -   `AzureFactory` → `AzureServer`, `AzureStorage`, `AzureNetwork`
+    -   `GCPFactory` → `GCPServer`, `GCPStorage`, `GCPNetwork`
+
+---
+
+## Ưu và nhược điểm
+
+### Ưu điểm
+
+-   **Dễ mở rộng theo chiều ngang:** Thêm hãng hoặc nhóm sản phẩm mới → tạo thêm concrete factory.
+-   **Đồng nhất sản phẩm:** Các sản phẩm trong cùng một họ được tạo bởi cùng một factory, đảm bảo tính tương thích.
+-   **Dễ bảo trì:** Thay đổi cách tạo sản phẩm trong một họ → chỉ cần sửa concrete factory tương ứng.
+
+### Nhược điểm
+
+-   **Khó mở rộng theo chiều dọc:** Thêm loại sản phẩm mới trong nhóm → phải sửa interface và tất cả concrete factory hiện có.
+-   **Số lượng class nhiều:** Mỗi nhóm sản phẩm cần một concrete factory riêng, làm tăng số lượng class.
+
+> Điểm chung dễ thấy giữa `Abstract Factory pattern` và `Factory Method pattern`:
+>
+> -   Dễ dàng mở rộng theo chiều ngang.
+> -   Dễ bảo trì do các `FactoryConcrete` tách biệt.
+> -   Số lượng `ConcreteClass` nhiều.
+> -   Khó mở rộng theo chiều dọc.

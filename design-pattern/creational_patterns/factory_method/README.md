@@ -1,16 +1,18 @@
+# Factory Method Pattern
+
 ## Giới thiệu về Simple Factory (Không phải design pattern)
 
-Có thể bạn đã biết về Simple Factory mà không để ý nó là kiểu này nè:
+**Có thể bạn đã biết về Simple Factory mà không để ý:**
 
-> Có 1 con chó nhưng có nhiều giống khác nhau:
->
-> -   Giống Đức thì chim ngắn
-> -   Giống Mỹ thì chân ngắn
-> -   Giống Nhật thì đẹp gái
+Có một hệ thống quản lý chó, trong đó có nhiều giống chó khác nhau:
+
+-   Giống Đức thì thông minh
+-   Giống Mỹ thì mạnh mẽ
+-   Giống Nhật thì đẹp gái
 
 Khi tạo con chó chỉ cần:
 
-```plaintext
+```js
 if type == Đức => chó Đức
 else if type == Mỹ => chó Mỹ
 else if type == Nhật => chó Nhật
@@ -20,27 +22,20 @@ Nhưng với Simple Factory, nó không đáp ứng được **Open/Closed Princ
 
 ---
 
-## Factory Method đáp ứng SOLID hơn
+## Factory Method (Design Pattern)
 
-Đến với **Factory Method**, nó sẽ hoạt động đáp ứng SOLID hơn.
+Đến với **Factory Method**, nó sẽ hoạt động đáp ứng SOLID hơn và sẽ giải quyết được vấn đề của `Simple Factory`.
 
-### Vấn đề đặt ra
-
--   **Product** là chó
--   Chó Đức, chó Mỹ, chó Nhật gọi là **Concrete Product** (Sản phẩm cụ thể)
-
-![](image.png)
+![alt text](image.png)
 
 ### Sơ đồ UML
 
-Nhìn vào sơ đồ UML thì thấy gì?  
-Có 1 thằng **Creator** nữa, chính nó là Factory đó.
+### Phân tích các thành phần trong Factory Method
 
--   Factory thì có hành động tạo sản phẩm: `createProduct(): Product`
--   Với DogFactory: `createDog(): Dog`
-
-Tại sao lại phân nhánh từ 1 Dog -> nhiều Concrete?  
-Trong UML nghĩa là **kế thừa** hoặc **triển khai** (implement) tức là **mối quan hệ "is-a"**.
+-   **Product**: Interface chung cho các sản phẩm được tạo bởi Creator.
+-   **Concrete Products**: Các lớp triển khai Product, đại diện cho từng loại sản phẩm cụ thể.
+-   **Creator**: Khai báo phương thức factory (`createProduct()`), trả về Product. Creator có thể chứa logic nghiệp vụ liên quan đến sản phẩm.
+-   **Concrete Creators**: Ghi đè phương thức factory để trả về sản phẩm cụ thể, có thể tạo mới hoặc lấy từ cache/object pool.
 
 ---
 
@@ -52,42 +47,27 @@ Trong UML nghĩa là **kế thừa** hoặc **triển khai** (implement) tức l
     -   Chó Mỹ: `AmericanDogFactory`
     -   Chó Nhật: `JapaneseDogFactory`
 
-Hiện tại ta có 1 hệ thống dựa trên **Factory Method pattern** như trong hình luôn.
+Hiện tại ta có 1 hệ thống dựa trên **Factory Method pattern**.
 
 ---
 
-## Tóm tắt
+## Ưu và nhược điểm
 
--   Creator ---> Product
--   Factory tạo ra sản phẩm thông qua `createProduct()` (ở đây là `createDog()`).
--   Mỗi sản phẩm được tạo ra bởi Factory, mỗi loại cụ thể do mỗi phân xưởng xử lý (Concrete Creator).
+## Ưu điểm
 
-### Các phân xưởng:
+-   **Mở rộng theo chiều ngang**: Khi thêm loại chó mới, chỉ cần tạo thêm một lớp `Concrete Factory` và một lớp sản phẩm mới, không ảnh hưởng đến các lớp hiện tại.
+-   **Dễ bảo trì và quản lý**: Các nhà máy (factory) độc lập, mỗi nhà máy chỉ chịu trách nhiệm tạo một loại chó, giúp mã nguồn rõ ràng và dễ kiểm soát.
+-   **Linh hoạt trong tích hợp**: Có thể dễ dàng kết hợp các loại factory khác nhau bằng cách sử dụng chung interface `DogFactory`.
 
--   `GermanDogFactory`
--   `AmericanDogFactory`
--   `JapaneseDogFactory`
+## Nhược điểm
 
----
-
-## Điểm hay của Factory Method so với Simple Factory
-
-### 1. Đáp ứng Open/Closed Principle (OCP)
-
--   Mỗi khi thêm loại chó, chỉ cần tạo file mới code cho từng Concrete Product - Concrete Creator là xong.
--   Không cần sửa đổi mã nguồn của các Factory đã có.
-
-### 2. Tích hợp dễ hình dung hơn
-
--   Các phân xưởng (Concrete Creator) chịu trách nhiệm tạo ra sản phẩm cụ thể (Concrete Product) của mình, giúp mở rộng và bảo trì hệ thống dễ dàng hơn.
--   Mỗi phân xưởng chỉ cần quan tâm đến sản phẩm của mình mà không cần biết đến các sản phẩm khác.
--   Chỉ cần khai báo kiểu là Creator hay DogFactory, rồi truyền giá trị là các Concrete Creator là xong bởi dù là thực thể khác nhưng chỉ cần thể hiện bởi 1 kiểu là Creator.
+-   **Số lượng Class nhiều**: Khi số lượng loại chó tăng, số lượng lớp factory và sản phẩm cũng tăng theo, dẫn đến hệ thống có nhiều lớp hơn, phức tạp hơn.
+-   **Hạn chế mở rộng theo chiều dọc**: Nếu cần thay đổi cách tạo chó hoặc thêm method, phải sửa `Creator` và tất cả các `Concrete Creator`.
+-   **Cấu trúc phân tầng sâu**: Việc sử dụng kế thừa (`Inheritance`) có thể tạo ra hierarchy nhiều tầng, gây khó khăn trong việc hiểu và bảo trì hệ thống.
 
 ---
 
-Đó là cách mà **Factory Method pattern** giúp cho việc mở rộng và bảo trì hệ thống trở nên dễ dàng hơn.
-
-**Ví dụ code:**
+## Ví dụ code:
 
 ```java
 // Product
@@ -158,14 +138,5 @@ public class Main {
         americanDog.bark();
         japaneseDog.bark();
     }
-}
-```
-
-Giờ ở trên chổ Simple Factory kia thay vì truyền type rồi mỗi lần có thêm type lại thêm `if-else` hay `switch-case` thì giờ chỉ cần tạo thêm 1 Concrete Creator mới là xong.
-Magic nè:
-
-```java
-Dog getDog(DogFactory concreteFactory) {
-    return concreteFactory.createDog();
 }
 ```
