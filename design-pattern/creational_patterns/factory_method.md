@@ -26,9 +26,9 @@ Nhưng với Simple Factory, nó không đáp ứng được **Open/Closed Princ
 
 Đến với **Factory Method**, nó sẽ hoạt động đáp ứng SOLID hơn và sẽ giải quyết được vấn đề của `Simple Factory`.
 
-![alt text](image.png)
-
 ### Sơ đồ UML
+
+![alt text](imgs/factory_method_uml.png)
 
 ### Phân tích các thành phần trong Factory Method
 
