@@ -6,8 +6,14 @@
 -   [IP Address, Subnet, và Default Gateway](./internet_protocol/the_ip_building_blocks.md)
 -   [IP Packet – Cấu trúc và các trường quan trọng](./internet_protocol/ip_packet.md)
 -   [ICMP – Giao thức điều khiển và báo lỗi](./internet_protocol/icmp.md)
--   [ARP – Address Resolution Protocol](./internet_protocol/arp.md)
+-   [IPv4 và IPv6: Tại Sao Phải Chuyển Đổi?](./internet_protocol/ipv4_ipv6.md)
+</details>
 
+<details>
+<summary><strong>Routing & Network Layer</strong></summary>
+
+-   [ARP – Address Resolution Protocol](./routing/arp.md)
+-   [NAT – Network Address Translation](./routing/nat.md)
 </details>
 
 <details>

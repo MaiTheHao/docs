@@ -1,10 +1,18 @@
-# **Ưu và Nhược điểm của UDP**
+# Ưu và Nhược điểm của UDP
 
 UDP nổi bật với triết lý thiết kế "gửi và quên" (fire-and-forget), tập trung vào tốc độ và hiệu quả. Tuy nhiên, sự đơn giản này cũng mang lại những hạn chế về độ tin cậy.
 
 ---
 
-## **Ưu điểm của UDP**
+# Mục lục
+
+-   [1. Ưu điểm của UDP](#1-ưu-điểm-của-udp)
+-   [2. Nhược điểm của UDP](#2-nhược-điểm-của-udp)
+-   [3. Tóm tắt](#3-tóm-tắt)
+
+---
+
+## 1. Ưu điểm của UDP
 
 | Đặc điểm                 | Mô tả                                                                                                                |
 | :----------------------- | :------------------------------------------------------------------------------------------------------------------- |
@@ -17,7 +25,7 @@ UDP nổi bật với triết lý thiết kế "gửi và quên" (fire-and-forge
 
 ---
 
-## **Nhược điểm của UDP**
+## 2. Nhược điểm của UDP
 
 | Đặc điểm                      | Mô tả                                                                                                     |
 | :---------------------------- | :-------------------------------------------------------------------------------------------------------- |
@@ -28,7 +36,7 @@ UDP nổi bật với triết lý thiết kế "gửi và quên" (fire-and-forge
 
 ---
 
-## **Tóm tắt**
+## 3. Tóm tắt
 
 -   UDP lý tưởng cho ứng dụng cần tốc độ, độ trễ thấp, chấp nhận mất mát dữ liệu nhỏ.
 -   Header nhỏ gọn, không lưu trạng thái, hỗ trợ broadcast/multicast.
