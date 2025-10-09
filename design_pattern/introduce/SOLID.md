@@ -2,11 +2,11 @@
 
 **SOLID** là một nguyên tắc thiết kế gồm 5 nguyên tắc cụ thể:
 
--   [**S** - **Single Responsibility Principle (SRP)**](#srp)
--   [**O** - **Open Closed Principle (OCP)**](#ocp)
--   [**L** - **Liskov Substitution Principle (LSP)**](#lsp)
--   [**I** - **Interface Segregation Principle (ISP)**](#isp)
--   [**D** - **Dependency Inversion Principle (DIP)**](#dip)
+-   [**S** - **Single Responsibility Principle (SRP)**](#srp-một-lớp-chỉ-nên-có-một-lý-do-để-thay-đổi-tức-là-nó-chỉ-nên-có-một-trách-nhiệm-duy-nhất)
+-   [**O** - **Open Closed Principle (OCP)**](#ocp-một-thực-thể-phần-mềm-nên-được-mở-để-mở-rộng-nhưng-đóng-để-sửa-đổi)
+-   [**L** - **Liskov Substitution Principle (LSP)**](#lsp-các-đối-tượng-lớp-con-có-thể-thay-thế-lớp-cha-mà-không-làm-thay-đổi-tính-đúng-đắn-của-chương-trình)
+-   [**I** - **Interface Segregation Principle (ISP)**](#isp-client-không-nên-bị-buộc-phải-phụ-thuộc-vào-các-interface-mà-nó-không-sử-dụng)
+-   [**D** - **Dependency Inversion Principle (DIP)**](#dip-module-cấp-cao-không-nên-phụ-thuộc-vào-module-cấp-thấp-cả-hai-nên-phụ-thuộc-vào-abstraction--abstraction-không-nên-phụ-thuộc-vào-chi-tiết-chi-tiết-nên-phụ-thuộc-vào-abstraction)
 
 ## Ý nghĩa của từng nguyên tắc
 
