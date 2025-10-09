@@ -1,7 +1,6 @@
 # IP Packet
 
 ![IP Packet Structure](./imgs/ip_packet.png)
-Dưới đây là các thành phần chính và khái niệm quan trọng từ tài liệu, được trình bày để bạn dễ dàng nắm bắt và áp dụng.
 
 ## **1. Payload vs. Header (Dữ Liệu so với Phần Đầu)**
 
@@ -9,7 +8,7 @@ Dưới đây là các thành phần chính và khái niệm quan trọng từ t
 -   **Payload (Dữ Liệu):** Là phần dữ liệu thực tế mà ứng dụng của bạn gửi đi. Đây là phần chúng ta quan tâm nhất.
 -   **Chi phí (Overhead):** Header tạo ra một "chi phí" cho việc truyền tin. Ví dụ, header IP tiêu chuẩn là 20 byte. Nếu các tùy chọn (options) được bật, nó có thể lên đến 60 byte. Đây là phần dữ liệu phụ trội, không phải dữ liệu của bạn.
 
-> **💡 Cho Developer:** Khi tính toán kích thước dữ liệu hoặc băng thông, hãy nhớ rằng kích thước thực tế truyền đi = `Payload + Header` (thường +20 đến +60 byte).
+> Khi tính toán kích thước dữ liệu hoặc băng thông, kích thước thực tế truyền đi = `Payload + Header` (thường +20 đến +60 byte).
 
 ## **2. MTU, Phân Mảnh (Fragmentation) và TTL**
 
@@ -22,7 +21,7 @@ Dưới đây là các thành phần chính và khái niệm quan trọng từ t
     -   **Mục đích:** Ngăn chặn các gói tin bị mắc kẹt trong vòng lặp vô hạn trên mạng do định tuyến sai.
     -   **Cách hoạt động:** Khi gửi gói tin, máy nguồn đặt một giá trị TTL (ví dụ: 64, 128, 255). Mỗi khi gói tin đi qua một router (một "bước nhảy"), router đó sẽ **giảm giá trị TTL đi 1**. Khi TTL đạt đến 0, gói tin sẽ bị hủy.
 
-> **💡 Cho Developer:** TTL không liên quan đến thời gian (giây), mà là số bước nhảy (hops). Nó là một cơ chế an toàn cơ bản của mạng.
+> TTL không liên quan đến thời gian (giây), mà là số bước nhảy (hops). Nó là một cơ chế an toàn cơ bản của mạng.
 
 ## **3. Trường Protocol (Giao thức)**
 
@@ -33,7 +32,7 @@ Dưới đây là các thành phần chính và khái niệm quan trọng từ t
     -   `17` = UDP
 -   **Ghi chú:** Bạn có thể sử dụng các giá trị khác cho các giao thức tùy chỉnh của mình, nhưng cả hai đầu đều phải hiểu và đồng ý về ý nghĩa của nó.
 
-> **💡 Cho Developer:** Hệ điều hành sử dụng trường này để chuyển gói tin đến đúng xử lý (TCP stack, UDP stack, v.v.). Nếu bạn tạo một giao thức mới, bạn cần đăng ký một số protocol number cho nó.
+> Hệ điều hành sử dụng trường này để chuyển gói tin đến đúng xử lý (TCP stack, UDP stack, v.v.). Nếu bạn tạo một giao thức mới, bạn cần đăng ký một số protocol number cho nó.
 
 ## **4. Địa chỉ IP Nguồn/Đích (Source/Destination IP) và Spoofing**
 
@@ -44,7 +43,7 @@ Dưới đây là các thành phần chính và khái niệm quan trọng từ t
     -   **Lý do:** Nhà cung cấp dịch vụ Internet (ISP) của bạn sử dụng **Bộ lọc thoát (Egress Filtering)**. Họ kiểm tra và chặn các gói tin có địa chỉ IP nguồn không thuộc về mạng của họ. Vì vậy, bạn không thể giả mạo một địa chỉ IP hợp lệ của người khác và gửi nó ra ngoài Internet.
     -   **Hệ quả:** Ngay cả khi bạn spoof thành công, tất cả các phản hồi sẽ được gửi đến địa chỉ IP đã bị giả mạo, không phải về máy của bạn. Điều này làm cho các cuộc tấn công dạng "one-way" (như DDoS) có thể thực hiện được, nhưng không thể thiết lập một kết nối hai chiều.
 
-> **🔒 Cho Developer:** Đừng tin tưởng hoàn toàn vào địa chỉ IP nguồn từ phía client cho các chức năng bảo mật quan trọng, vì spoofing vẫn có thể xảy ra trong các mạng nội bộ được kiểm soát kém.
+> Đừng tin tưởng hoàn toàn vào địa chỉ IP nguồn từ phía client cho các chức năng bảo mật quan trọng, vì spoofing vẫn có thể xảy ra trong các mạng nội bộ được kiểm soát kém.
 
 ## **5. ECN (Explicit Congestion Notification - Thông báo tắc nghẽn rõ ràng)**
 

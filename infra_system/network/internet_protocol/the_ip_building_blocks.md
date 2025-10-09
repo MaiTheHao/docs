@@ -1,7 +1,5 @@
 # IP Address, Subnet, và Default Gateway
 
----
-
 ## 1. IP Address
 
 -   Thuộc tính tầng 3 (Layer 3) trong mô hình OSI/TCP-IP
