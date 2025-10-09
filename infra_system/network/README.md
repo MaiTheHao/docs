@@ -13,8 +13,8 @@
 <details>
 <summary><strong>User Datagram Protocol (UDP)</strong></summary>
 
--   [UDP là gì? Đặc điểm và ứng dụng](./network/udp/what_is_udp.md)
--   [Ưu và Nhược điểm của UDP](./network/udp/pros_cons.md)
--   [Cấu trúc của UDP Datagram](./network/udp/user_datagram_structure.md)
+-   [UDP là gì? Đặc điểm và ứng dụng](./udp/what_is_udp.md)
+-   [Ưu và Nhược điểm của UDP](./udp/pros_cons.md)
+-   [Cấu trúc của UDP Datagram](./udp/user_datagram_structure.md)
 
 </details>
