@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>AdminLTE 3 | Inputs</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css" />
+	</head>
+	<body class="hold-transition sidebar-mini layout-fixed">
+		<div class="wrapper">
+			<aside class="main-sidebar sidebar-dark-primary elevation-4">
+				<a href="#" class="brand-link">
+					<img src="https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: 0.8" />
+					<span class="brand-text font-weight-light">AdminLTE 3</span>
+				</a>
+				<div class="sidebar">
+					<div class="user-panel mt-3 pb-3 mb-3 d-flex">
+						<div class="image">
+							<img src="https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" />
+						</div>
+						<div class="info">
+							<a href="./index.html" class="d-block">Your Name</a>
+						</div>
+					</div>
+					<nav class="mt-2">
+						<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+							<li class="nav-item">
+								<a href="./index.html" class="nav-link">
+									<i class="nav-icon fas fa-tachometer-alt"></i>
+									<p>Dashboard</p>
+								</a>
+							</li>
+							<li class="nav-item has-treeview menu-open">
+								<a href="#" class="nav-link active">
+									<i class="nav-icon fas fa-th-large"></i>
+									<p>
+										Components
+										<i class="right fas fa-angle-left"></i>
+									</p>
+								</a>
+								<ul class="nav nav-treeview">
+									<li class="nav-item">
+										<a href="./component_button.html" class="nav-link">
+											<i class="far fa-circle nav-icon"></i>
+											<p>Button</p>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="./component_input.html" class="nav-link active">
+											<i class="far fa-circle nav-icon"></i>
+											<p>Input</p>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="./component_chart.html" class="nav-link">
+											<i class="far fa-circle nav-icon"></i>
+											<p>Chart</p>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="./component_card.html" class="nav-link">
+											<i class="far fa-circle nav-icon"></i>
+											<p>Card</p>
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</aside>
+
+			<div class="content-wrapper">
+				<section class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0">Inputs</h1>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section class="content">
+					<div class="container-fluid">
+						<!-- Text Inputs -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Text Inputs</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-group">
+											<label>Text Input</label>
+											<input type="text" class="form-control" placeholder="Enter text..." />
+										</div>
+										<div class="form-group">
+											<label>Email Input</label>
+											<input type="email" class="form-control" placeholder="Enter email..." />
+										</div>
+										<div class="form-group">
+											<label>Password Input</label>
+											<input type="password" class="form-control" placeholder="Enter password..." />
+										</div>
+										<div class="form-group">
+											<label>Disabled Input</label>
+											<input type="text" class="form-control" placeholder="Disabled" disabled />
+										</div>
+										<div class="form-group">
+											<label>Readonly Input</label>
+											<input type="text" class="form-control" value="Readonly value" readonly />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Input Sizes -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Input Sizes</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-group">
+											<label>Large Input</label>
+											<input type="text" class="form-control form-control-lg" placeholder="Large input..." />
+										</div>
+										<div class="form-group">
+											<label>Normal Input</label>
+											<input type="text" class="form-control" placeholder="Normal input..." />
+										</div>
+										<div class="form-group">
+											<label>Small Input</label>
+											<input type="text" class="form-control form-control-sm" placeholder="Small input..." />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Textarea -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Textarea</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-group">
+											<label>Normal Textarea</label>
+											<textarea class="form-control" rows="3" placeholder="Enter text..."></textarea>
+										</div>
+										<div class="form-group">
+											<label>Textarea with Character Counter</label>
+											<textarea class="form-control" rows="3" maxlength="100" placeholder="Max 100 characters..."></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Select Inputs -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Select Inputs</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-group">
+											<label>Single Select</label>
+											<select class="form-control">
+												<option>Option 1</option>
+												<option>Option 2</option>
+												<option>Option 3</option>
+												<option>Option 4</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label>Multiple Select</label>
+											<select class="form-control" multiple>
+												<option>Option 1</option>
+												<option>Option 2</option>
+												<option>Option 3</option>
+												<option>Option 4</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Checkboxes & Radio Buttons -->
+						<div class="row">
+							<div class="col-md-6">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Checkboxes</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" value="" id="check1" />
+											<label class="form-check-label" for="check1">Checkbox 1</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" value="" id="check2" checked />
+											<label class="form-check-label" for="check2">Checkbox 2 (checked)</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" value="" id="check3" disabled />
+											<label class="form-check-label" for="check3">Checkbox 3 (disabled)</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Radio Buttons</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="radio1" id="radio1" value="option1" />
+											<label class="form-check-label" for="radio1">Radio 1</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="radio1" id="radio2" value="option2" checked />
+											<label class="form-check-label" for="radio2">Radio 2 (checked)</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="radio1" id="radio3" value="option3" disabled />
+											<label class="form-check-label" for="radio3">Radio 3 (disabled)</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Input Groups -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Input Groups</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-group">
+											<label>With Icon (Left)</label>
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text"><i class="fas fa-user"></i></span>
+												</div>
+												<input type="text" class="form-control" placeholder="Username" />
+											</div>
+										</div>
+										<div class="form-group">
+											<label>With Icon (Right)</label>
+											<div class="input-group">
+												<input type="text" class="form-control" placeholder="Search..." />
+												<div class="input-group-append">
+													<span class="input-group-text"><i class="fas fa-search"></i></span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label>With Button</label>
+											<div class="input-group">
+												<input type="text" class="form-control" placeholder="Enter text..." />
+												<div class="input-group-append">
+													<button class="btn btn-primary" type="button">Go!</button>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label>With Dropdown</label>
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Action</button>
+													<div class="dropdown-menu">
+														<a class="dropdown-item" href="#">Action</a>
+														<a class="dropdown-item" href="#">Another action</a>
+														<a class="dropdown-item" href="#">Something else here</a>
+													</div>
+												</div>
+												<input type="text" class="form-control" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- File Input -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">File Input</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-group">
+											<label for="fileInput">File input</label>
+											<div class="input-group">
+												<div class="custom-file">
+													<input type="file" class="custom-file-input" id="fileInput" />
+													<label class="custom-file-label" for="fileInput">Choose file</label>
+												</div>
+												<div class="input-group-append">
+													<span class="input-group-text">Upload</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Validation States -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Validation States</h3>
+									</div>
+									<div class="card-body">
+										<div class="form-group">
+											<label>Valid Input</label>
+											<input type="text" class="form-control is-valid" value="Valid input" />
+											<div class="valid-feedback">Looks good!</div>
+										</div>
+										<div class="form-group">
+											<label>Invalid Input</label>
+											<input type="text" class="form-control is-invalid" value="Invalid input" />
+											<div class="invalid-feedback">Please provide a valid input.</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+	</body>
+</html>

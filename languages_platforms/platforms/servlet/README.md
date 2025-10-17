@@ -20,6 +20,7 @@
 <summary><strong>Apache Tomcat</strong></summary>
 
 -   [Apache Tomcat: Định nghĩa, Vai trò và Kiến trúc](apache_tomcat.md)
+-   [Hướng dẫn thiết lập Apache Tomcat với VS Code và Eclipse](installation.md)
 
 </details>
 

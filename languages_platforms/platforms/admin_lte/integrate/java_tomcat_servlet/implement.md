@@ -168,14 +168,6 @@ Trong thư mục `/WEB-INF/templates/fragments/`, hãy tạo 3 file sau:
 </html>
 ```
 
--   **Giải thích:**
-
-    -   `th:fragment="layout(content)"`: Biến file này thành một "hàm layout" có thể tái sử dụng, với một tham số đầu vào là content.
-
-    -   `th:replace="~{fragments/header :: header-css}"`: Cú pháp này có nghĩa là "tìm file header.html trong thư mục fragments, lấy ra mảnh tên là header-css và thay thế hoàn toàn thẻ hiện tại (<head>) bằng mảnh đó".
-
-    -   `th:replace="${content}"`: Đây là vị trí "động". Nó sẽ được lấp đầy bởi nội dung cụ thể của từng trang (ví dụ: dashboard.html, users.html) khi chúng sử dụng layout này.
-
 #### 2.3. Áp dụng Layout cho trang dashboard.html
 
 Bây giờ, hãy chỉnh sửa file dashboard.html để nó "kế thừa" từ layout.html bạn vừa tạo.
