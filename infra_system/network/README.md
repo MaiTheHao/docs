@@ -24,3 +24,12 @@
 -   [Cấu trúc của UDP Datagram](./udp/user_datagram_structure.md)
 
 </details>
+
+<details>
+<summary><strong>Transmission Control Protocol (TCP)</strong></summary>
+
+-   [TCP là gì? Đặc điểm và ứng dụng](./tcp/what_is_tcp.md)
+-   [Ưu và Nhược điểm của TCP](./tcp/pros_cons.md)
+-   [TCP Segment – Cấu trúc và các trường quan trọng](./tcp/tcp_segment.md)
+
+</details>
