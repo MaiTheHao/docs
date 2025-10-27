@@ -27,7 +27,18 @@ templateResolver.setSuffix(".html");               // Đuôi file mặc định
 
 ## 3. Luồng xử lý template
 
-REQ -> TemplateEngine -> TemplateResolver -> Relative Path -> Parse HTML -> Render -> ...
+Khi bạn yêu cầu Thymeleaf render một trang, đây là các bước xảy ra:
+
+1. **Controller (Java):** Controller của bạn xử lý request và trả về một tên View (dạng String).
+2. **TemplateEngine:** TemplateEngine nhận tên View là `"home"`.
+3. **TemplateResolver:** TemplateResolver áp dụng công thức đã cấu hình ở trên:
+    - **Prefix:** `/WEB-INF/templates/`
+    - **Tên View:** `home`
+    - **Suffix:** `.html`
+    - **Kết quả:** `/WEB-INF/templates/home.html`
+4. **Render:** Thymeleaf tìm, đọc, và xử lý file `home.html` tại đường dẫn đó, chèn biến `userName` vào, và gửi kết quả HTML cuối cùng về cho trình duyệt.
+
+> **Lưu ý với Spring Boot:** Spring Boot rất thông minh. Nó tự động cấu hình một TemplateResolver cho bạn với prefix mặc định là `classpath:/templates/` và suffix là `.html`. Bạn không cần cấu hình thủ công trừ khi muốn thay đổi.
 
 ---
 

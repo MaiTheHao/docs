@@ -1,83 +1,97 @@
-Triển khai js vào Thymeleaf gồm 3 cách chính:
-inline, internal và external.
-Dưới đây là hướng dẫn chi tiết từng cách.
+## Hướng dẫn tích hợp JavaScript với Thymeleaf
+
+Tài liệu này hướng dẫn cách **truyền dữ liệu từ Backend (Java/Spring Model) sang JavaScript** ở phía Client, dành cho người đã biết JavaScript.
+
+Có hai phương pháp chính:
+
+1. **Inline JavaScript**: Viết JS trực tiếp trong file HTML, dùng cú pháp Thymeleaf để inject biến từ server.
+2. **External JavaScript (qua Data Attributes)**: Tách biệt file `.js`, truyền dữ liệu qua thuộc tính `data-*` của HTML, JS sẽ đọc từ các thuộc tính này.
 
 ---
 
-### **1. Inline JavaScript**
+### 1. Inline JavaScript (`th:inline="javascript"`)
 
-> Cách này giúp bạn nhúng trực tiếp mã JS vào trong thẻ `<script>`.
+Dùng Thymeleaf để sinh mã JavaScript ngay trong thẻ `<script>`.
+
+**Khi dùng**: Khởi tạo biến JS bằng dữ liệu từ server cho các script nhỏ.
+
+**Cách thực hiện**:
 
 ```html
 <script th:inline="javascript">
 	/*<![CDATA[*/
-	var username = /*[[${user.name}]]*/ 'Guest';
-	alert('Hello, ' + username + '!');
+
+	// Lấy biến String
+	var username = /*[[${username}]]*/ 'Guest';
+	console.log('Hello, ' + username);
+
+	// Lấy Object/Array (serialize thành JSON)
+	var user = /*[(${user})]*/ {};
+	console.log('User ID:', user.id);
+	console.log('User Roles:', user.roles);
+
 	/*]]>*/
 </script>
 ```
 
-Sử dụng cách trên Thymeleaf sẽ gen ra mã JS chuẩn.
-Note:
+**Giải thích cú pháp:**
 
--   `/*<![CDATA[*/` và `/*]]>*/` giúp tránh lỗi khi có ký tự đặc biệt trong JS. Ví dụ như `<` hoặc `&`.
--   `/*[[${user.name}]]*/` là cú pháp Thymeleaf để chèn giá trị biến `user.name` vào JS.
--   `'Guest'` là giá trị mặc định nếu biến `user.name` không tồn tại.
--   Lưu ý với `/*[[${user.name}]]*/` là HTML Expression, nên nếu giá trị có dấu nháy đơn `'` thì cần escape đúng cách. Còn `/*[(${user.name})]*/` là JavaScript Expression, sẽ không cần escape.
+| Cú pháp                     | Ý nghĩa                           | Khi dùng                               |
+| --------------------------- | --------------------------------- | -------------------------------------- |
+| `/*[(${...})]*/`            | Serialize Object/Array thành JSON | Dùng cho kiểu phức tạp                 |
+| `/*[[${...}]]*/`            | Serialize String/Number/Boolean   | Dùng cho kiểu đơn giản                 |
+| `/*<![CDATA[*/ ... /*]]>*/` | Bảo vệ ký tự đặc biệt JS          | Luôn dùng với `th:inline="javascript"` |
 
-Ví dụ truyền `users` từ controller:
+---
+
+### 2. External JavaScript (Data Attributes)
+
+Tách biệt logic, truyền dữ liệu qua thuộc tính HTML.
+
+**Khi dùng**: Hầu hết trường hợp, giúp code dễ bảo trì và test.
+
+**Bước 1: Gắn dữ liệu vào `data-*`**
 
 ```html
-<script th:inline="javascript">
-	/*<![CDATAp[*/
-	var users = /*[[${users}]]*/ [];
-	console.log(users);
-	/*]]>*/
-</script>
+<div id="user-info" th:data-user-id="${userId}" th:data-username="${username}" th:data-user-json="/*[(${user})]*/">Xin chào, <span th:text="${username}">Guest</span></div>
 ```
 
-Kết quả:
-
--   Nếu `users` là danh sách rỗng, JS sẽ nhận `var users = [];`
--   Nếu `users` có phần tử, ví dụ `["Alice", "Bob"]`, JS sẽ nhận `var users = ["Alice", "Bob"];`
-
-### **2. Internal JavaScript**
-
-> Cách này giúp bạn viết mã JS bên trong thẻ `<script>` nhưng không inline.
+**Bước 2: Link file JS**
 
 ```html
 <script th:src="@{/js/app.js}"></script>
 ```
 
-Trong file `app.js`:
+**Bước 3: Đọc dữ liệu trong JS**
 
 ```javascript
+// /js/app.js
 document.addEventListener('DOMContentLoaded', function () {
-	var username = /*[[${user.name}]]*/ 'Guest';
-	alert('Hello, ' + username + '!');
+	const el = document.getElementById('user-info');
+	if (el) {
+		const userId = el.dataset.userId;
+		const username = el.dataset.username;
+		console.log('User ID:', userId);
+		console.log('Username:', username);
+
+		try {
+			const userObj = JSON.parse(el.dataset.userJson);
+			console.log('User Object:', userObj);
+			console.log('User Roles:', userObj.roles);
+		} catch (e) {
+			console.error('Parse user JSON failed', e);
+		}
+	}
 });
 ```
 
-Lưu ý: Cách này không hỗ trợ trực tiếp Thymeleaf expressions trong file JS. Bạn cần truyền dữ liệu từ HTML sang JS qua các biến toàn cục hoặc data attributes.
+---
 
-Tại sao không đơn giản `<script src="/js/app.js"></script>`?
+### Tổng kết
 
--   Sử dụng `th:src` giúp Thymeleaf xử lý đường dẫn đúng với cấu hình ứng dụng, ví dụ khi có context path.
--   Khi nào không cần dùng `th:src`? Khi bạn chắc chắn đường dẫn tĩnh và không cần Thymeleaf xử lý.
+| Phương pháp            | Ưu điểm                   | Nhược điểm                |
+| ---------------------- | ------------------------- | ------------------------- |
+| **Inline**             | Nhanh, tiện cho logic nhỏ | Trộn JS/HTML, khó bảo trì |
+| **External (Data-\*)** | Sạch, dễ bảo trì, test    | Cần đọc dữ liệu từ DOM    |
 
-### **3. External JavaScript**
-
-> Cách này giúp bạn tách biệt hoàn toàn mã JS ra file riêng và không sử dụng Thymeleaf trong file JS.
-
-```html
-<script src="/js/app.js"></script>
-<!-- hoặc CDN link -->
-```
-
-Trong file `app.js`:
-
-```javascript
-document.addEventListener('DOMContentLoaded', function () {
-	alert('Hello, World!');
-});
-```
+> **Khuyến nghị:** Ưu tiên External/Data Attributes cho mọi tác vụ. Inline chỉ dùng cho biến cấu hình nhỏ.

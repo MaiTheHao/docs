@@ -1,32 +1,25 @@
 # Mục lục
 
 <details>
-<summary><strong>Giới thiệu & Tổng quan Thymeleaf</strong></summary>
+<summary><strong>Nhập môn</strong></summary>
 
 -   [Giới thiệu về Thymeleaf](./introduce.md)
+-   [Cách Thymeleaf tìm và xử lý Template](./template-resolution.md)
 
 </details>
 
 <details>
-<summary><strong>Cài đặt, Khởi tạo & Template Resolution trên Servlet</strong></summary>
+<summary><strong>Cú pháp & Kỹ thuật</strong></summary>
 
--   [Hướng dẫn cài đặt Thymeleaf 3.1 với Java Servlet & Maven](./installation.md)
--   [Cách Thymeleaf xác định và xử lý template](./template-resolution.md)
-
-</details>
-
-<details>
-<summary><strong>Template, Layout & Cú pháp Thymeleaf</strong></summary>
-
--   [Thymeleaf Template Layout](./template-layout.md)
 -   [Bảng tổng hợp cú pháp Thymeleaf](./syntax.md)
--   [Thymeleaf Layout Dialect](./layout-dialect.md)
+-   [Sử dụng JavaScript với Thymeleaf](./thymeleaf-js.md)
 
 </details>
 
 <details>
-<summary><strong>JavaScript trong Thymeleaf</strong></summary>
+<summary><strong>Layout & Tái sử dụng</strong></summary>
 
--   [Triển khai JavaScript vào Thymeleaf](./thymeleaf-js.md)
+-   [Kỹ thuật Layout cơ bản (Fragments)](./template-layout.md)
+-   [Kỹ thuật Layout chuyên nghiệp (Layout Dialect)](./layout-dialect.md)
 
 </details>

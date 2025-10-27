@@ -1,147 +1,203 @@
-# Thymeleaf Layout Dialect
+# Hướng Dẫn Thymeleaf Layout Dialect (Tái Sử Dụng Layout)
 
-Layout Dialect là một phần mở rộng (dialect) cho Thymeleaf, giúp bạn giải quyết triệt để bài toán **tái sử dụng layout** một cách chuyên nghiệp. Nó cho phép bạn tạo một "khung sườn" chung và chỉ cần thay đổi phần nội dung chính cho từng trang.
+Thymeleaf Layout Dialect giúp bạn tái sử dụng layout website một cách chuyên nghiệp, tránh lặp lại header/footer ở mọi file HTML. Bạn chỉ cần tạo một "khung sườn" chung, các trang con sẽ tự động "lắp" nội dung của mình vào đó.
 
 ---
 
-## 1. Cài đặt
+## 1. Cài Đặt
 
-### Thêm dependency vào `pom.xml` (Maven)
+### Với Spring Boot
+
+Chỉ cần thêm dependency vào `pom.xml`, Spring Boot sẽ tự động nhận diện và kích hoạt:
 
 ```xml
 <dependency>
-    <groupId>nz.net.ultraq.thymeleaf</groupId>
-    <artifactId>thymeleaf-layout-dialect</artifactId>
-    <version>3.3.0</version>
+	<groupId>nz.net.ultraq.thymeleaf</groupId>
+	<artifactId>thymeleaf-layout-dialect</artifactId>
+	<version>3.3.0</version>
 </dependency>
 ```
 
-### Kích hoạt
+### Không dùng Spring Boot
 
--   **Với Spring Boot**: Spring Boot sẽ tự động nhận diện và cấu hình Layout Dialect cho bạn.
--   **Không dùng Spring Boot**: Bạn phải tự thêm dialect vào `TemplateEngine`.
+Thêm dependency và tự cấu hình Dialect vào `TemplateEngine`:
 
-    ```java
-    import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+```java
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 
-    TemplateEngine templateEngine = new TemplateEngine();
-    templateEngine.addDialect(new LayoutDialect());
-    ```
+TemplateEngine templateEngine = new TemplateEngine();
+templateEngine.addDialect(new LayoutDialect());
+```
 
 ---
 
-## 2. Nguyên tắc hoạt động và Cú pháp chính
+## 2. Nguyên Tắc Hoạt Động
 
-Layout Dialect hoạt động dựa trên **Decorator Pattern**:
+Layout Dialect dựa trên **Decorator Pattern**:
 
-1.  **`layout.html` (Layout cha)**: Là một cái "khung" rỗng, định nghĩa các phần chung (header, footer) và xác định "ô trống" để các trang con lấp vào.
-2.  **`home.html` (Trang con)**: Là mảnh nội dung độc nhất, nó sẽ được "lắp" vào "ô trống" của layout cha.
+-   **Layout Cha (`main.html`)**: Định nghĩa các phần chung (header, footer), có "ô trống" để trang con lấp vào.
+-   **Trang Con (`home.html`)**: Chỉ chứa nội dung riêng, sẽ được "bọc" bởi layout cha.
 
-### Các thuộc tính
+---
 
-#### 1. `layout:decorate="~{path/to/layout}"`
+## 3. Hướng Dẫn Từng Bước
 
-Đây là thuộc tính quan trọng nhất, dùng trong **trang con** để chỉ định file layout cha mà nó muốn dùng.
+**Cấu trúc thư mục mẫu:**
 
-**Ví dụ:** `home.html`
-
-```html
-<!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layouts/main}">
-	<body></body>
-</html>
+```
+templates/
+├── layouts/
+│   └── main.html
+├── home.html
+└── products.html
 ```
 
-#### 2. `layout:fragment="fragment-name"`
+### Bước 1: Tạo Layout Cha
 
-Thuộc tính này có hai vai trò:
-
--   **Trong layout cha**: Đánh dấu một vùng là "ô trống" có thể được ghi đè bởi trang con.
--   **Trong trang con**: Đánh dấu đâu là phần nội dung sẽ được "bơm" vào "ô trống" tương ứng của layout cha.
-
-**Ví dụ:** `/layouts/main.html`
+**`layouts/main.html`**
 
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>My Website</title>
+	</head>
 	<body>
 		<header>
-			<h1>Đây là Header chung</h1>
+			<h1>Đây là HEADER chung của website</h1>
 		</header>
-
 		<main layout:fragment="content">
-			<p>Nếu trang con không định nghĩa fragment 'content', nội dung này sẽ hiện ra.</p>
+			<p>Đây là nội dung mặc định nếu trang con không cung cấp.</p>
 		</main>
-
 		<footer>
-			<p>Đây là Footer chung</p>
+			<p>Đây là FOOTER chung của website</p>
 		</footer>
 	</body>
 </html>
 ```
 
-**File trang con:** `home.html`
+> `layout:fragment="content"` là "ô trống" để trang con lấp vào.
+
+### Bước 2: Tạo Trang Con
+
+**`home.html`**
 
 ```html
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layouts/main}">
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layouts/main}">
+	<head>
+		<title>Trang Chủ</title>
+	</head>
 	<body>
 		<div layout:fragment="content">
-			<h1>Chào mừng đến Trang Chủ!</h1>
-			<p>Đây là nội dung độc nhất của trang chủ sẽ được lắp vào layout.</p>
+			<h2>Chào mừng đến Trang Chủ</h2>
+			<p>Đây là nội dung riêng biệt của trang chủ.</p>
 		</div>
 	</body>
 </html>
 ```
 
-**Kết quả cuối cùng khi render `home.html`:** Header và Footer từ `main.html` sẽ bao bọc nội dung từ `home.html`.
+### Bước 3: Kết Quả
+
+Khi render, nội dung của `home.html` sẽ được lắp vào "ô trống" của layout cha:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Trang Chủ</title>
+	</head>
+	<body>
+		<header>
+			<h1>Đây là HEADER chung của website</h1>
+		</header>
+		<main>
+			<div>
+				<h2>Chào mừng đến Trang Chủ</h2>
+				<p>Đây là nội dung riêng biệt của trang chủ.</p>
+			</div>
+		</main>
+		<footer>
+			<p>Đây là FOOTER chung của website</p>
+		</footer>
+	</body>
+</html>
+```
 
 ---
 
-### Các thuộc tính bổ trợ
-
-#### 3. `layout:title-pattern`
-
-Dùng cho việc tạo các tiêu đề linh hoạt theo từng trang.
+## 4. Tùy Chỉnh Tiêu Đề `<title>`
 
 **Trong layout cha:**
 
 ```html
 <head>
-	<title layout:title-pattern="$CONTENT_TITLE - $DECORATOR_TITLE">My Website</title>
+	<title layout:title-pattern="$CONTENT_TITLE | $DECORATOR_TITLE">My App</title>
 </head>
 ```
-
--   `$CONTENT_TITLE`: Tiêu đề của trang con.
--   `$DECORATOR_TITLE`: Tiêu đề của trang cha.
 
 **Trong trang con:**
 
 ```html
-<html layout:decorate="~{/layouts/main}">
+<head>
+	<title>Trang Chủ</title>
+</head>
+```
+
+> Kết quả: `Trang Chủ | My App`
+
+---
+
+## 5. Kết Hợp layout:decorate và th:replace
+
+Nên quản lý các fragment (header/footer) ở file riêng và chèn vào layout bằng `th:replace`.
+
+**`fragments/common.html`**
+
+```html
+<header th:fragment="page-header">
+	<h1>Đây là Header từ file fragment</h1>
+</header>
+<footer th:fragment="page-footer">
+	<p>Đây là Footer từ file fragment</p>
+</footer>
+```
+
+**`layouts/main.html`**
+
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 	<head>
-		<title>Sản phẩm</title>
+		<title layout:title-pattern="$CONTENT_TITLE | $DECORATOR_TITLE">My App</title>
 	</head>
-	...
+	<body>
+		<div th:replace="~{/fragments/common :: page-header}"></div>
+		<main layout:fragment="content">
+			<p>Nội dung mặc định</p>
+		</main>
+		<div th:replace="~{/fragments/common :: page-footer}"></div>
+	</body>
 </html>
 ```
 
-**Kết quả tiêu đề trên trình duyệt:** `Sản phẩm - My Website`
-
-#### 4. `layout:replace` và `layout:include`
-
-Hai thuộc tính này tương tự `th:replace` và `th:include` của Thymeleaf, dùng để chèn các mảnh HTML nhỏ (fragments) vào trang. Tuy nhiên, trong thực tế, bạn nên **ưu tiên dùng `th:replace` và `th:insert`** vì chúng là cú pháp lõi của Thymeleaf và đã đủ mạnh mẽ.
-
-**Ví dụ (dùng cú pháp Thymeleaf chuẩn):**
-
-Trong file `main.html`:
+**`home.html`** (không thay đổi)
 
 ```html
-<body>
-	<div th:replace="~{/fragments/header :: header}"></div>
-
-	<main layout:fragment="content"></main>
-
-	<div th:replace="~{/fragments/footer :: footer}"></div>
-</body>
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layouts/main}">
+	<head>
+		<title>Trang Chủ</title>
+	</head>
+	<body>
+		<div layout:fragment="content">
+			<h2>Nội dung chính của trang chủ</h2>
+		</div>
+	</body>
+</html>
 ```
+
+---
+
+> **Tham khảo:** [Thymeleaf Layout Dialect Documentation](https://ultraq.github.io/thymeleaf-layout-dialect/)

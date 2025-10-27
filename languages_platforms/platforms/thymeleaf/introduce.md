@@ -1,42 +1,54 @@
 # Giới thiệu về Thymeleaf
 
-Thymeleaf là một template engine hiện đại Server-side-rendering cho Java, hỗ trợ cả môi trường web và standalone.
+Thymeleaf là một "template engine" (bộ máy tạo mẫu) hiện đại phía máy chủ (server-side) cho các ứng dụng Java, được thiết kế để tạo ra các trang HTML động.
 
-Mục tiêu chính của Thymeleaf là mang lại các template tự nhiên, thanh lịch vào quy trình phát triển — HTML có thể hiển thị đúng trên trình duyệt và đồng thời hoạt động như prototype tĩnh, giúp tăng cường hợp tác giữa các thành viên trong nhóm.
+Mục tiêu chính của Thymeleaf là cung cấp một cách thanh lịch để tích hợp dữ liệu động vào HTML. Điểm đặc biệt của nó là các file template Thymeleaf vẫn là các file HTML hợp lệ, có thể mở và hiển thị trực tiếp trên trình duyệt (giúp designer dễ dàng xem trước giao diện) mà không bị lỗi.
 
-## Mẫu code Thymeleaf
+---
+
+## Ví dụ về cú pháp Thymeleaf
+
+Hãy xem một đoạn mã HTML đơn giản hiển thị danh sách sản phẩm.
 
 ```html
 <table>
 	<thead>
 		<tr>
-			<th th:text="#{msgs.headers.name}">Name</th>
-			<th th:text="#{msgs.headers.price}">Price</th>
+			<th th:text="#{product.name}">Tên Sản Phẩm</th>
+			<th th:text="#{product.price}">Giá</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr th:each="prod: ${allProducts}">
-			<td th:text="${prod.name}">Oranges</td>
+		<tr th:each="prod : ${allProducts}">
+			<td th:text="${prod.name}">Cam sành</td>
 			<td th:text="${#numbers.formatDecimal(prod.price, 1, 2)}">0.99</td>
 		</tr>
 	</tbody>
 </table>
 ```
 
-### Phân tích sơ lược cú pháp
+## Phân tích cú pháp
 
--   `th:text`: Thay thế nội dung của thẻ bằng giá trị động (biến, biểu thức, hoặc message).
--   `th:each`: Lặp qua một collection (ở đây là `allProducts`), tạo một dòng cho mỗi phần tử.
--   `${...}`: Biểu thức truy xuất giá trị từ model hoặc context.
--   `#{...}`: Truy xuất message từ file resource (i18n).
--   `#numbers.formatDecimal(...)`: Hàm tiện ích để định dạng số thập phân.
+### `th:each="prod : ${allProducts}"`
 
-#### Mở rộng cú pháp
+Đây là một vòng lặp. Nó sẽ lặp qua từng đối tượng `prod` trong danh sách `allProducts` (danh sách này được gửi từ Java Controller). Thẻ `<tr>` này sẽ được nhân bản cho mỗi sản phẩm.
 
--   `[[${...}]]`: Chèn giá trị động vào nội dung hoặc thuộc tính HTML, tự động escape ký tự đặc biệt.
--   `[(${...})]`: Chèn giá trị động mà không escape ký tự đặc biệt, phù hợp với dữ liệu JSON hoặc HTML thô.
--   `th:if`, `th:unless`: Điều kiện hiển thị phần tử dựa trên biểu thức. Ví dụ: `<span th:if="${user.active}">Active</span>`.
--   `th:attr`: Gán giá trị động cho một hoặc nhiều thuộc tính HTML. Ví dụ: `<a th:attr="href=${link.url}">Link</a>`.
--   `th:replace`, `th:include`: Chèn hoặc thay thế nội dung từ template khác. Ví dụ: `<div th:replace="fragments/header :: header"></div>`.
+### `th:text="${prod.name}"`
 
-> [Xem thêm: Trang chủ Thymeleaf](https://www.thymeleaf.org/)
+Thuộc tính `th:text` sẽ thay thế toàn bộ nội dung văn bản bên trong thẻ `<td>` bằng giá trị của `prod.name`. Nội dung "Cam sành" chỉ là dữ liệu mẫu để xem trước. Khi chạy, nó sẽ bị thay thế.s
+
+### `th:text="${#numbers.formatDecimal(...)}"`
+
+`#numbers` là một đối tượng tiện ích (utility object) của Thymeleaf, cho phép bạn thực hiện các thao tác định dạng số. Biểu thức này định dạng lại giá sản phẩm theo mẫu (ví dụ: 15.50).
+
+### `th:text="#{product.name}"`
+
+Dấu `#{...}` được sử dụng để lấy văn bản từ các file `messages.properties`. Đây là kỹ thuật dùng cho đa ngôn ngữ (i18n). Nếu không tìm thấy, nó sẽ hiển thị "Tên Sản Phẩm".
+
+---
+
+Tóm lại: Thymeleaf thêm các thuộc tính đặc biệt (bắt đầu bằng `th:`) vào HTML. Máy chủ sẽ đọc các thuộc tính này, xử lý chúng, và trả về một file HTML "sạch" (không còn `th:`) với dữ liệu động đã được chèn vào.
+
+**Xem thêm:** [Bảng tổng hợp cú pháp Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#standard-expression-syntax)
+
+> 📌 **Ghi nhớ công thức:** Vị trí file thực tế = PREFIX + Tên View + SUFFIX
