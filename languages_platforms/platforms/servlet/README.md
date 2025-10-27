@@ -1,13 +1,6 @@
 # Mục lục
 
 <details>
-<summary><strong>Web Server & Application Server</strong></summary>
-
--   [Tổng hợp kiến thức về Web Server và App Server](web_app_server.md)
-
-</details>
-
-<details>
 <summary><strong>Kiến trúc & Vòng đời Servlet</strong></summary>
 
 -   [Kiến trúc Servlet: Khái niệm và Triển khai](architecture.md)
