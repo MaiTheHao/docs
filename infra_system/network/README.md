@@ -41,5 +41,6 @@
 -   [TLS (Bảo mật tầng truyền tải)](./overview_of_popular_networking_protocols/tls.md)
 -   [DNS (Hệ thống tên miền)](./overview_of_popular_networking_protocols/dns.md)
 -   [Chứng chỉ số (Digital Certificates)](./overview_of_popular_networking_protocols/certificates.md)
+-   [HTTPS – HTTP qua TLS](./overview_of_popular_networking_protocols/https.md)
 
 </details>
