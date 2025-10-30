@@ -1,8 +1,6 @@
 # REPO: Docs
 
-Chào mừng đến với kho lưu trữ tài liệu của tui :v
-
-Đây là nơi tui giấu bí kíp sống sót qua deadline.
+Chào mừng đến với kho lưu trữ tài liệu cá nhân, nơi mình tổng hợp các kiến thức kỹ thuật về lập trình, bảo mật, và các chủ đề công nghệ khác mà mình quan tâm và học hỏi được (Toàn bộ tài liệu đều được thu thập và process từ các nguồn mở trên Internet).
 
 > **Lưu ý:** Đây là **tài liệu cá nhân** của mình, không phải hướng dẫn chính thức. Mọi nội dung đều dựa trên trải nghiệm và nhu cầu riêng.
 

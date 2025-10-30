@@ -56,16 +56,3 @@ Trước khi có OAuth, các phương pháp xác thực API phổ biến như x�
 ## 6. Tiếp theo là gì?
 
 Sau khi nắm vững các vai trò, bạn sẽ tìm hiểu về các luồng OAuth 2.0 (ví dụ: Authorization Code flow) và cách các loại ứng dụng khách khác nhau (web, mobile) tương tác với máy chủ ủy quyền.
-
----
-
-## 7. Ghi chú về thuật ngữ và dịch thuật
-
--   Sử dụng các thuật ngữ chuẩn tiếng Việt: “Chủ sở hữu tài nguyên,” “Tác nhân người dùng,” “Ứng dụng khách OAuth,” “Máy chủ tài nguyên,” “Máy chủ ủy quyền.”
--   Ưu tiên “mã truy cập” thay cho “token” để rõ ràng, đúng chuẩn kỹ thuật.
--   Giữ các từ như “API” vì phổ biến trong ngành.
--   Ngôn ngữ tự nhiên, mạch lạc, phù hợp tài liệu kỹ thuật và giáo dục.
-
----
-
-> Nếu bạn cần bổ sung ví dụ mã, hình minh họa, hoặc dịch các phần khác, hãy để lại yêu cầu!
