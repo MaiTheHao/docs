@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>AdminLTE v4 | Dashboard Phân Tích</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+		<!-- CSS của AdminLTE và DataTables -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/4.0.0-beta1/css/adminlte.min.css" />
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css" />
+
+		<!-- === CSS THƯ VIỆN BIỂU ĐỒ & LỌC NGÀY === -->
+		<!-- Daterangepicker (Bộ lọc thời gian) -->
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+		<!-- Tải 'bootstrap-icons' cho AdminLTE (thường được nạp bởi adminlte.js nhưng ta nạp trước cho chắc) -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.min.css" />
+
+		<style>
+			/* Ẩn card biểu đồ và bộ lọc ban đầu */
+			#chart-analysis-section {
+				display: none;
+			}
+			/* Đảm bảo các biểu đồ con có chiều cao */
+			.chart-container {
+				position: relative;
+				height: 250px; /* Giảm chiều cao cho từng biểu đồ */
+				width: 100%;
+				margin-bottom: 20px; /* Khoảng cách giữa các biểu đồ */
+			}
+		</style>
+	</head>
+	<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+		<div class="app-wrapper">
+			<main class="app-main">
+				<div class="app-content-header">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-6">
+								<h3 class="mb-0">Smart Room</h3>
+							</div>
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-end">
+									<li class="breadcrumb-item"><a href="#">Home</a></li>
+									<li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--begin::App Content-->
+				<div class="app-content">
+					<div class="container-fluid">
+						<!-- === HÀNG 1: BẢNG THIẾT BỊ === -->
+						<div class="row">
+							<div class="col-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Danh Sách Thiết Bị</h3>
+									</div>
+									<!-- /.card-header -->
+									<div class="card-body">
+										<table id="example2" class="table table-bordered table-hover dataTable dtr-inline" style="width: 100%">
+											<thead>
+												<tr>
+													<th>Tên Thiết Bị</th>
+													<th>Tên Phòng</th>
+													<th>Tầng</th>
+													<th>Wh Trung Bình</th>
+													<th>Trạng Thái</th>
+													<th class="text-center" style="width: 10px">
+														<input type="checkbox" class="form-check-input" id="select-all" />
+													</th>
+												</tr>
+											</thead>
+											<tbody>
+												<!-- JavaScript sẽ điền dữ liệu vào đây -->
+											</tbody>
+										</table>
+									</div>
+									<!-- /.card-body -->
+								</div>
+								<!-- /.card -->
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+
+						<!-- === HÀNG 2: NÚT VẼ BIỂU ĐỒ (MỚI) === -->
+						<div class="row mt-3">
+							<div class="col-12 d-flex align-items-center">
+								<button id="show-chart-btn" class="btn btn-primary">
+									<i class="bi bi-graph-up me-2"></i>
+									Vẽ Biểu Đồ
+								</button>
+								<span id="selected-count-span" class="ms-3 text-muted fw-bold"> Số thiết bị đã chọn: 0 </span>
+							</div>
+						</div>
+
+						<!-- === HÀNG 3: BIỂU ĐỒ VÀ BỘ LỌC (MỚI) === -->
+						<div class="row mt-3" id="chart-analysis-section">
+							<div class="col-12">
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-title">Dữ Liệu Cảm Biến</h3>
+										<div class="card-tools">
+											<!-- BỘ LỌC THỜI GIAN (SẾP YÊU CẦU) -->
+											<div id="reportrange-container" style="display: inline-block">
+												<input type="text" id="date-filter-input" class="form-control" style="width: 280px" />
+											</div>
+										</div>
+									</div>
+									<div class="card-body">
+										<!--
+                                            THAY ĐỔI LỚN:
+                                            Tách thành 4 biểu đồ riêng biệt (theo yêu cầu)
+                                        -->
+										<!-- Biểu đồ 1: Nhiệt độ -->
+										<h5>Nhiệt độ (Temperature °C)</h5>
+										<div class="chart-container">
+											<canvas id="sensorChartTemp"></canvas>
+										</div>
+
+										<!-- Biểu đồ 2: Công suất -->
+										<h5>Công suất (Watt)</h5>
+										<div class="chart-container">
+											<canvas id="sensorChartWatt"></canvas>
+										</div>
+
+										<!-- Biểu đồ 3: Điện áp -->
+										<h5>Điện áp (Volt)</h5>
+										<div class="chart-container">
+											<canvas id="sensorChartVolt"></canvas>
+										</div>
+
+										<!-- Biểu đồ 4: Dòng điện -->
+										<h5>Dòng điện (Ampe)</h5>
+										<div class="chart-container">
+											<canvas id="sensorChartAmpe"></canvas>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--end::Container-->
+				</div>
+				<!--end::App Content-->
+			</main>
+		</div>
+		<!-- === TẤT CẢ SCRIPT PHÍA CUỐI === -->
+		<!-- Script Core: jQuery, Bootstrap (AdminLTE cần) -->
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+		<!-- Script DataTables -->
+		<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+
+		<!-- Script AdminLTE -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/4.0.0-beta1/js/adminlte.min.js"></script>
+
+		<!-- === SCRIPT CHO BIỂU ĐỒ VÀ LỌC NGÀY === -->
+		<!-- Moment.js (Daterangepicker cần) -->
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+		<!-- Daterangepicker (Bộ lọc thời gian) -->
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+		<!-- Chart.js (Thư viện biểu đồ) -->
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<!-- date-fns (Adapter thời gian cho Chart.js) -->
+		<script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.1/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+		<!-- Application Script -->
+		<script src="./index.js"></script>
+	</body>
+</html>

@@ -1,6 +1,5 @@
-# Cấu hình workspace cho copilot (Tối giản)
+# Cấu hình workspace
 workspace:
-    # Cấu trúc thư mục đại diện (Cấp 1)
     structure:
         '01_foundations':
             - 'design_patterns/'
@@ -26,7 +25,6 @@ workspace:
             - 'quick_guides/'
         '_archive': []
 
-    # Logic phân loại thư mục gốc
     logic:
         - { dir: '01_foundations', intent: 'Lý thuyết, nền tảng, bất biến' }
         - { dir: '02_backend', intent: 'Công nghệ backend' }
