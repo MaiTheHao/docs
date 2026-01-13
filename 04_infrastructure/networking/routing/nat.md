@@ -190,6 +190,87 @@ Chúng ta có STUN (nhanh, rẻ, nhưng có thể thất bại) và TURN (chậm
 
 Bằng cách này, ICE đảm bảo rằng kết nối P2P luôn được thiết lập bằng con đường hiệu quả nhất có thể.
 
+```mermaid
+flowchart LR
+    subgraph ICE_Framework["ICE Framework (Bộ điều phối thông minh)"]
+        direction TB
+        GetLocal["1. Lấy Local IP<br>(Host Candidate)"]
+        Phase1["Giai đoạn 1: ICE Candidate Gathering<br>(Thu thập địa chỉ ứng cử viên)"]
+        QuerySTUN["2. Hỏi máy chủ STUN:<br>'Tôi là ai trên Internet?'"]
+        CheckNAT{"Phân tích loại NAT"}
+        
+        FullCone("Full Cone NAT<br>(Thoáng nhất)")
+        ResCone("Restricted Cone<br>(Chặn IP lạ)")
+        PortResCone("Port Restricted<br>(Chặn IP/Port lạ)")
+        SymNAT("Symmetric NAT<br>(Hạn chế nhất)")
+        
+        STUN_Success["STUN Thành công<br>(Server Reflexive Candidate)"]
+        STUN_Fail["STUN Thất bại<br>(Do Port thay đổi liên tục)"]
+        ExchSDP["Trao đổi ứng cử viên<br>(Qua Signaling Server)"]
+        UseTURN["3. Kích hoạt TURN Server<br>(Relay Candidate)"]
+    end
+
+    subgraph Priority["Thứ tự ưu tiên đường truyền"]
+        direction TB
+        TryDirect{"1. Thử Direct?"}
+        Phase2["Giai đoạn 2: Connectivity Checks<br>(Kiểm tra khả năng kết nối)"]
+        ConnDirect(["Kết nối Trực tiếp<br>LAN/VLAN"])
+        TryHolePunch{"2. Thử Hole Punching?"}
+        ConnP2P(["Kết nối P2P trực tiếp<br>Vượt qua NAT"])
+        TryRelay{"3. Dùng Relay?"}
+        ConnRelay(["Kết nối qua TURN<br>Chậm nhưng ổn định"])
+        ConnFail(["Kết nối thất bại"])
+    end
+
+    %% Flow connections
+    Start(["Bắt đầu: Peer A muốn kết nối P2P với Peer B"]) --> Phase1
+    Phase1 --> GetLocal
+    GetLocal --> QuerySTUN
+    QuerySTUN --> CheckNAT
+    
+    CheckNAT -- "IP:Port giữ nguyên" --> FullCone
+    CheckNAT -- "Chặn IP lạ" --> ResCone
+    CheckNAT -- "Chặn IP:Port lạ" --> PortResCone
+    CheckNAT -- "Đổi Port liên tục" --> SymNAT
+    
+    FullCone --> STUN_Success
+    ResCone --> STUN_Success
+    PortResCone --> STUN_Success
+    SymNAT --> STUN_Fail
+    
+    STUN_Success --> ExchSDP
+    STUN_Fail --> UseTURN
+    UseTURN --> ExchSDP
+    
+    ExchSDP --> Phase2
+    Phase2 --> TryDirect
+    
+    TryDirect -- "Thành công" --> ConnDirect
+    TryDirect -- "Thất bại" --> TryHolePunch
+    TryHolePunch -- "Thành công" --> ConnP2P
+    TryHolePunch -- "Thất bại" --> TryRelay
+    TryRelay -- "Thành công" --> ConnRelay
+    TryRelay -- "Thất bại" --> ConnFail
+
+    %% Phối màu tối ưu hóa (Professional Dark/Soft Palette)
+    classDef startNode fill:#f8f9fa,stroke:#343a40,stroke-width:2px,color:#212529,font-weight:bold
+    classDef processNode fill:#e7f3ff,stroke:#007bff,stroke-width:2px,color:#004085
+    classDef decisionNode fill:#fff9db,stroke:#fab005,stroke-width:2px,color:#664d03
+    classDef natTypeNode fill:#f3f0ff,stroke:#845ef7,stroke-width:1px,stroke-dasharray: 5 5,color:#3b116b
+    classDef stunNode fill:#ebfbee,stroke:#40c057,stroke-width:2px,color:#095113
+    classDef turnNode fill:#fff5f5,stroke:#fa5252,stroke-width:2px,color:#910606
+    classDef endNode fill:#212529,stroke:#adb5bd,stroke-width:2px,color:#ffffff,font-weight:bold
+
+    %% Apply Classes
+    class Start startNode
+    class Phase1,GetLocal,QuerySTUN,ExchSDP,Phase2 processNode
+    class CheckNAT,TryDirect,TryHolePunch,TryRelay decisionNode
+    class FullCone,ResCone,PortResCone,SymNAT natTypeNode
+    class STUN_Success stunNode
+    class STUN_Fail,UseTURN turnNode
+    class ConnDirect,ConnP2P,ConnRelay,ConnFail endNode
+```
+
 ---
 
 ## 7. Các ứng dụng nâng cao của NAT
