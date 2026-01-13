@@ -59,6 +59,41 @@ Vì ARP hoạt động dựa trên sự tin tưởng và không có cơ chế x�
 -   **Hậu quả:** Máy A tin tưởng và cập nhật Bảng ARP của mình. Từ thời điểm đó, tất cả lưu lượng mà máy A muốn gửi ra Internet sẽ được gửi đến máy của kẻ tấn công thay vì Gateway thật.
 -   Điều này cho phép kẻ tấn công thực hiện một cuộc tấn công **Man-in-the-Middle (MITM)**, có thể đọc, sửa đổi, hoặc chặn toàn bộ dữ liệu của nạn nhân.
 
+```mermaid
+sequenceDiagram
+    autonumber
+
+    participant Host as Nạn nhân (Target Host)
+    participant Attacker as Kẻ tấn công (Threat Actor)
+    participant Router as Gateway mặc định
+
+    Note over Host, Router: TRẠNG THÁI GIAO TIẾP HỢP LỆ
+    Host->>Router: Gửi gói tin IP (Địa chỉ MAC đích: Router)
+    Router-->>Host: Phản hồi IP (Địa chỉ MAC đích: Host)
+
+    Note over Host, Attacker: GIAI ĐOẠN ĐẦU ĐỘC (ARP POISONING)
+    Attacker->>Host: ARP Reply giả mạo (Unsolicited)
+    Note right of Attacker: Nội dung: IP Gateway .1 là MAC của Hacker
+    
+    Note left of Host: LỖ HỔNG:<br/>Cập nhật ARP Cache sai lệch<br/>(IP Gateway -> MAC Hacker)
+
+    Note over Host, Router: GIAI ĐOẠN CHIẾM QUYỀN KIỂM SOÁT (MITM)
+    Host->>Attacker: Gửi dữ liệu Internet (MAC đích: Hacker)
+    
+    activate Attacker
+    Note over Attacker: Phân tích/Sửa đổi gói tin (Packet Inspection)
+    Attacker->>Router: Chuyển tiếp gói tin (Packet Forwarding)
+    deactivate Attacker
+
+    Router-->>Attacker: Phản hồi từ Internet
+    
+    activate Attacker
+    Attacker-->>Host: Chuyển tiếp phản hồi (Duy trì kết nối giả)
+    deactivate Attacker
+    
+    Note over Host, Router: Nạn nhân bị đánh chặn toàn bộ lưu lượng
+```
+
 ---
 
 ## Tóm tắt
