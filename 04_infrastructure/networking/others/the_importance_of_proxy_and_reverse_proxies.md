@@ -122,16 +122,63 @@ Tại sao chúng ta lại cần "người quản gia" này?
 
 ## 6. Tổng kết
 
-Cách đơn giản nhất để ghi nhớ:
+```mermaid
+sequenceDiagram
+    autonumber
 
--   **Proxy (Người Quản gia):**
+    %% --- KỊCH BẢN 1: FORWARD PROXY ---
+    %% Định nghĩa vùng mạng
+    box "Mạng Nội Bộ (Internal Network)"
+        participant Client as Internal Client
+        participant FProxy as Forward Proxy
+    end
+    participant Origin as Origin Server<br/>(Internet)
 
-    -   Là đại diện cho **Client**.
-    -   Client _biết_ đích đến cuối cùng.
-    -   Máy chủ _không biết_ Client gốc.
-    -   Thường dùng để: Ẩn danh, Chặn web, Gỡ lỗi, Giám sát (Sidecar).
+    Note over Client, Origin: CASE 1: FORWARD PROXY (Kiểm soát Outbound Traffic)
 
--   **Reverse Proxy (Người Lễ tân):**
-    -   Là đại diện cho **Server**.
-    -   Client _không biết_ đích đến thực sự (chỉ biết Lễ tân).
-    -   Thường dùng để: Cân bằng tải, API Gateway, Caching (CDN), Xác thực.
+    Client->>FProxy: 1. Khởi tạo Request (Target: Origin)
+    
+    activate FProxy
+    Note right of FProxy: Action: Masking Client IP<br/>Filtering / Caching
+    
+    FProxy->>Origin: 2. Chuyển tiếp (Source IP: Proxy)
+    deactivate FProxy
+
+    activate Origin
+    Note left of Origin: Visibility: Chỉ thấy IP Proxy<br/>(Client ẩn danh)
+    Origin-->>FProxy: 3. Phản hồi Response
+    deactivate Origin
+
+    activate FProxy
+    FProxy-->>Client: 4. Trả về Client
+    deactivate FProxy
+
+    %% --- KHOẢNG CÁCH ---
+    Note over Client, Origin:  
+
+    %% --- KỊCH BẢN 2: REVERSE PROXY ---
+    participant ExtUser as External Client<br/>(Internet)
+    box "Hạ Tầng Backend (Internal/DMZ)"
+        participant RProxy as Reverse Proxy<br/>(Gateway)
+        participant Upstream as Upstream Server
+    end
+
+    Note over ExtUser, Upstream: CASE 2: REVERSE PROXY (Kiểm soát Inbound Traffic)
+
+    ExtUser->>RProxy: 1. Gửi Request (Target: Public IP)
+    
+    activate RProxy
+    Note left of RProxy: Visibility: Client chỉ thấy Proxy<br/>(Topology Server ẩn)
+    Note right of RProxy: Action: Load Balancing<br/>SSL Termination / Routing
+    
+    RProxy->>Upstream: 2. Điều phối Request
+    deactivate RProxy
+
+    activate Upstream
+    Upstream-->>RProxy: 3. Xử lý & Phản hồi
+    deactivate Upstream
+
+    activate RProxy
+    RProxy-->>ExtUser: 4. Trả về Client
+    deactivate RProxy
+```
