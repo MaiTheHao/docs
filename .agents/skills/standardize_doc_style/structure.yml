@@ -1,0 +1,10 @@
+# Cấu hình workspace
+workspace:
+  structure:
+
+  logic:
+
+  conventions:
+    folders:
+      root: '##_snake_case (ví dụ: 01_foundations)'
+      child: 'snake_case hoặc kebab-case (ví dụ: spring_boot)'
