@@ -3,8 +3,7 @@
 <details>
 <summary><strong>Giới thiệu Design Pattern</strong></summary>
 
--   [Design Pattern là gì?](./introduce/what_is_design_pattern.md)
--   [SOLID principles](./introduce/SOLID.md)
+-   [Giới thiệu Design Pattern & SOLID Principles](./solid/README.md)
 
 </details>
 

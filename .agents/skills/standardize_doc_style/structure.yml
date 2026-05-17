@@ -1,10 +1,25 @@
-# Cấu hình workspace
+# Cấu hình chuẩn hóa Workspace tài liệu kỹ thuật
 workspace:
+  # Cấu trúc tổ chức phân cấp tài liệu
   structure:
+    root_naming: "##_snake_case (ví dụ: 03_design_patterns)"
+    child_naming: "snake_case viết thường toàn bộ (ví dụ: open_closed_principle.md)"
+    asset_directory: "assets/ (nằm trong thư mục con tương ứng)"
 
+  # Các quy tắc nghiệp vụ/phong cách bắt buộc
   logic:
+    language: "Tiếng Việt kỹ thuật chuyên ngành"
+    h1_limit: 1  # Chỉ cho phép duy nhất 1 tiêu đề H1 mỗi trang
+    table_of_contents: true  # Bắt buộc phải có Mục lục ngay dưới H1
+    footer_navigation: true  # Bắt buộc phải có liên kết quay lại README.md ở cuối trang
 
+  # Tiêu chuẩn định dạng kỹ thuật (Conventions)
   conventions:
-    folders:
-      root: '##_snake_case (ví dụ: 01_foundations)'
-      child: 'snake_case hoặc kebab-case (ví dụ: spring_boot)'
+    code_blocks:
+      language_tag_required: true  # Bắt buộc chỉ định tag ngôn ngữ (java, bash, yaml...)
+    mermaid:
+      hardcoded_theme_allowed: false  # Tuyệt đối cấm %%{init: {'theme': '...'}}%%
+      color_profile: "pastel_neutral"  # Dùng màu pastel trung tính có độ tương phản cao
+      custom_styles: "only stroke/stroke-width (no inline hardcoded colors for texts)"
+    alerts:
+      format: "GitHub Markdown Alerts (> [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING])"
