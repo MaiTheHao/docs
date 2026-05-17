@@ -1,125 +1,84 @@
-[Về root](../README.md)
+# Định danh Ứng dụng (Application Identity) trong OAuth 2.0
 
-# Mục lục
+Tài liệu này phân tích sâu khái niệm định danh ứng dụng (**Application Identity** / **Client Identity**), cách thức xác thực danh tính ứng dụng thông qua Client Secret, giải pháp bảo vệ luồng cho Public Client bằng PKCE, và vai trò tối mật của Redirect URIs.
 
--   [Khái niệm về danh tính ứng dụng](#khái-niệm-về-danh-tính-ứng-dụng)
--   [Tóm tắt các bước của Authorization Code flow](#tóm-tắt-các-bước-của-authorization-code-flow)
--   [Giải pháp cho ứng dụng không có client secret: PKCE](#giải-pháp-cho-ứng-dụng-không-có-client-secret-pkce)
--   [Vai trò của redirect URI trong danh tính ứng dụng](#vai-trò-của-redirect-uri-trong-danh-tính-ứng-dụng)
--   [Kết luận](#kết-luận)
+## Mục lục
+
+1. [Khái niệm về Định danh Ứng dụng](#1-khái-niệm-về-định-danh-ứng-dụng)
+2. [Cơ chế Định danh trong Authorization Code Flow](#2-cơ-chế-định-danh-trong-authorization-code-flow)
+3. [Giải pháp cho Public Client: PKCE](#3-giải-pháp-cho-public-client-pkce)
+4. [Vai trò bảo mật tối mật của Redirect URI](#4-vai-trò-bảo-mật-tối-mật-của-redirect-uri)
+5. [Tổng kết](#5-tổng-kết)
 
 ---
 
-## Khái niệm về danh tính ứng dụng
+## 1. Khái niệm về Định danh Ứng dụng
 
-Khái niệm cuối cùng tôi muốn giới thiệu trước khi đi sâu vào chi tiết của một OAuth flow là ý tưởng về danh tính ứng dụng.
+Trong đặc tả tiêu chuẩn OAuth 2.0, mỗi ứng dụng khách (**OAuth Client**) đăng ký vào hệ thống là một thực thể riêng biệt. Định danh này giúp người dùng nhìn thấy rõ ràng trên màn hình Consent Screen: *"Ứng dụng X muốn truy cập vào tài khoản của bạn"*.
 
-Các ứng dụng -- hay trong thuật ngữ OAuth, cụ thể hơn là client -- là một thực thể riêng biệt. Bạn sẽ thấy điều này khi đăng nhập vào một app và được trình bày với màn hình ủy quyền nói rằng "ứng dụng này muốn truy cập vào tài khoản của bạn".
+Mỗi ứng dụng sau khi đăng ký sẽ được cấp một cặp thông tin mật mã:
+*   `**client_id**` (Định danh Client): Là một chuỗi công khai (Public String) được sử dụng để xác định ứng dụng trong suốt các luồng đi qua mạng.
+*   `**client_secret**` (Khóa bí mật Client): Hoạt động như mật khẩu của ứng dụng. Nó được sử dụng để chứng thực danh tính thực sự của Client với máy chủ Authorization Server.
 
-Ứng dụng nào? Chính là ứng dụng này.
+> [!IMPORTANT]
+> Nếu một ứng dụng là **Public Client** (như ReactJS SPA, iOS/Android App) và không thể bảo vệ được `client_secret` (không có secret), thì về mặt mật mã học, **hệ thống hoàn toàn không có cách nào xác thực chắc chắn danh tính thực sự của ứng dụng đó** chỉ thông qua `client_id` (vì `client_id` là công khai, bất kỳ ai cũng có thể copy để tạo request giả mạo).
 
-Và quan trọng là, bạn có thể cấp quyền truy cập khác nhau cho từng ứng dụng. Mỗi ứng dụng có một định danh riêng gọi là client ID, và ứng dụng sử dụng nó để xác định chính mình trong suốt quá trình OAuth flow.
+---
 
-Điều này liên quan chặt chẽ đến phần trước về client công khai và client bảo mật. Trong bài học đó, chúng ta đã tìm hiểu loại app nào có thể sử dụng client secret, thực chất là mật khẩu của ứng dụng.
+## 2. Cơ chế Định danh trong Authorization Code Flow
 
-Nếu không có mật khẩu, hoặc không có client secret, thì không có gì đảm bảo rằng ứng dụng sử dụng client ID thực sự là ứng dụng đó.
+Hãy phân tích cách thức Client Secret bảo vệ danh tính ứng dụng trong luồng Authorization Code Flow tiêu chuẩn (dành cho Confidential Client):
 
-## Tóm tắt các bước của Authorization Code flow
+1.  **Giai đoạn 1 (Front Channel):** Ứng dụng gửi `client_id` cùng redirect URI qua trình duyệt của người dùng đến Auth Server. Người dùng đăng nhập và Auth Server trả về một **Authorization Code** tạm thời (hiệu lực dưới 1 phút) qua thanh địa chỉ trình duyệt.
+2.  **Giai đoạn 2 (Back Channel):** Ứng dụng lấy Authorization Code nhận được, thực hiện gửi POST request trực tiếp từ Backend Server của mình đến Auth Server để đổi lấy Access Token. Lúc này, ứng dụng gửi kèm `client_secret` để xác thực danh tính.
 
-Hãy cùng điểm qua các bước của Authorization Code flow.
+> [!NOTE]
+> **Vai trò của Client Secret tại Giai đoạn 2:**
+> Nếu kẻ tấn công bằng cách nào đó đã nghe lén và đánh cắp được Authorization Code ở Giai đoạn 1 (Front Channel), hắn vẫn hoàn toàn **thất bại** ở Giai đoạn 2 vì hắn không thể có `client_secret` của ứng dụng thật để vượt qua bước xác thực đối khớp trên Auth Server.
 
-Như đã thấy, đây là một cải tiến so với Implicit flow vì access token sẽ được gửi qua back channel.
+---
 
-Flow này bắt đầu khi ứng dụng xây dựng một URL để chuyển hướng trình duyệt của người dùng đến authorization server.
+## 3. Giải pháp cho Public Client: PKCE
 
-Trong URL này sẽ có nhiều tham số mô tả yêu cầu mà app đưa ra, như scope của request, redirect URI để báo cho authorization server biết nơi gửi người dùng quay lại, và cả client ID để xác định app nào đang thực hiện request này. App tạo liên kết này và chuyển hướng trình duyệt người dùng đến đó, đưa họ đến authorization server.
+Đối với các ứng dụng công khai (Public Client) như Mobile App hay SPA, do hoàn toàn không có `client_secret`, nếu chúng ta áp dụng luồng Authorization Code Flow truyền thống, kẻ tấn công đánh cắp được Authorization Code sẽ lập tức đổi được Access Token mà không gặp bất kỳ chốt chặn nào.
 
-Người dùng đăng nhập tại authorization server, phê duyệt yêu cầu của app, và authorization server cần chuyển hướng họ quay lại app.
+Để giải quyết triệt để lỗ hổng này, đặc tả **PKCE (Proof Key for Code Exchange - RFC 7636)** ra đời:
 
-Lưu ý, các bước chuyển hướng này là các request qua front channel, nghĩa là lý tưởng thì không quan trọng nếu ai đó có thể chặn hoặc sửa đổi request.
+*   **Cơ chế:** Trước khi bắt đầu luồng, Client tự tạo một khóa bí mật ngẫu nhiên dùng một lần gọi là `Code Verifier` và tính hash SHA256 của nó gọi là `Code Challenge`.
+*   **Giai đoạn 1:** Client gửi `Code Challenge` kèm theo request ban đầu qua Front Channel.
+*   **Giai đoạn 2:** Khi đổi Authorization Code lấy Access Token qua Back Channel, Client gửi kèm chuỗi gốc `Code Verifier`. Auth Server tự thực hiện băm SHA256 của `Code Verifier` này và đối chiếu với `Code Challenge` nhận được ở Giai đoạn 1.
 
-Mọi thứ vẫn sẽ hoạt động tốt và an toàn.
+> [!IMPORTANT]
+> **Vai trò thực sự của PKCE:**
+> PKCE không giúp xác thực danh tính thực của ứng dụng (nó không ngăn chặn kẻ tấn công tạo ra một ứng dụng giả mạo sử dụng cùng `client_id`). Tuy nhiên, PKCE đảm bảo tuyệt đối rằng **chỉ có ứng dụng khách đã bắt đầu gửi yêu cầu (đã sinh ra Code Verifier) mới có quyền đổi Authorization Code lấy Access Token**, từ đó chặn đứng hoàn toàn cuộc tấn công đánh cắp mã ủy quyền (Authorization Code Interception Attack).
 
-Nếu server trả về access token trong bước chuyển hướng đó, thì giống như gửi access token qua thư, dễ bị tấn công. Thay vào đó, server sẽ gửi lại một thứ giống như phiếu giảm giá dùng một lần với thời hạn ngắn.
+---
 
-Phiếu này có thể đổi lấy access token, nhưng chỉ một lần và chỉ trong thời gian ngắn. Để sử dụng phiếu này, ứng dụng phải sử dụng back channel để đổi nó. Chúng ta gọi phiếu này là authorization code và OAuth server sẽ trả về nó trong redirect về ứng dụng.
+## 4. Vai trò bảo mật tối mật của Redirect URI
 
-Tuy nhiên, authorization code này có thể bị đánh cắp hoặc sao chép, nghĩa là server không thể chắc chắn ai đang đổi code đó là ứng dụng thật.
+Khi không có `client_secret`, **Redirect URI (Đường dẫn chuyển hướng)** chính là chốt chặn định danh duy nhất còn lại để Authorization Server dựa vào nhằm xác minh tính chính danh của ứng dụng.
 
-Chúng ta cần một cách xác minh.
+### 4.1. Sự khác biệt giữa Web Domain và Custom URL Schemes
+*   **HTTPS Web Domain (SPA/Web App):** Có tính duy nhất toàn cầu. Chỉ có bạn (người sở hữu tên miền `https://example-app.com`) mới có thể cấu hình DNS và triển khai mã nguồn trên tên miền đó. Kẻ tấn công không thể chiếm quyền nhận Redirect URI HTTPS hợp pháp của bạn (trừ khi hệ thống DNS bị hack).
+*   **Custom URL Schemes (Mobile Apps):** Hoàn toàn **không duy nhất**. Nếu ứng dụng của bạn đăng ký scheme `myapp://redirect`, kẻ tấn công có thể phát hành một ứng dụng độc hại trên cùng điện thoại của người dùng và đăng ký cùng scheme `myapp://` để đánh chặn Authorization Code.
 
-Đó là lý do cần client secret.
+### 4.2. Giải pháp kỹ thuật bảo mật hiện đại cho App di động
+Nhóm làm việc OAuth khuyến cáo các nhà phát triển ứng dụng di động chuyển đổi từ *Custom URL Schemes* sang:
+*   **Universal Links** (trên iOS)
+*   **App Links** (trên Android)
 
-Nhớ rằng, client secret giống như mật khẩu của ứng dụng.
+Cơ chế này bắt buộc hệ điều hành di động phải kiểm tra tệp tin chứng thực số (được lưu tại `.well-known/apple-app-site-association` hoặc `.well-known/assetlinks.json`) trên tên miền HTTPS thực tế của nhà phát triển trước khi cho phép ứng dụng di động tiếp nhận đường dẫn chuyển hướng, từ đó biến Redirect URI của Mobile App thành định danh an toàn duy nhất toàn cầu.
 
-Nếu ứng dụng đổi authorization code và chứng minh nó là ứng dụng thật bằng cách xác thực với mật khẩu, thì authorization server biết code đang được đổi bởi ứng dụng thật và không bị đánh cắp.
+> [!WARNING]
+> **Ràng buộc đăng ký Redirect URI nghiêm ngặt:**
+> Authorization Server bắt buộc phải kiểm tra đối khớp tuyệt đối 100% (Exact Match) giữa Redirect URI do Client truyền lên và danh sách Redirect URIs đã được khai báo cứng lúc đăng ký ứng dụng. Tuyệt đối không cho phép sử dụng ký tự đại diện (Wildcards như `*`) để tránh lỗ hổng Open Redirect cho phép kẻ tấn công chuyển hướng mã ủy quyền về server của hắn.
 
-Điều này hoạt động vì ứng dụng sử dụng client secret để xác minh danh tính tại authorization server khi yêu cầu access token.
+---
 
-## Giải pháp cho ứng dụng không có client secret: PKCE
+## 5. Tổng kết
 
-Nhưng nếu app không thể chứng minh danh tính thì sao?
+*   `**Client Secret**` là mật khẩu định danh tối cao của Confidential Client, bắt buộc phải bảo vệ tuyệt mật trên môi trường Server-side.
+*   **Public Client** không thể có danh tính mật mã đáng tin cậy. Do đó, việc triển khai **PKCE** và bảo mật nghiêm ngặt cấu hình **Redirect URIs** (sử dụng HTTPS Web Domain hoặc Universal/App Links) là ranh giới phòng thủ cuối cùng để bảo vệ hệ thống của bạn.
 
-Đó là trường hợp của mobile app hoặc single page app, không thể triển khai với client secret vì các loại ứng dụng này không có client secret.
-
-Nếu họ cố sử dụng authorization code flow, OAuth server về cơ bản sẽ cho phép bất kỳ ứng dụng nào đánh cắp code đều có thể lấy access token.
-
-Chúng ta cần một giải pháp, đó là PKCE (Proof Key for Code Exchange).
-
-Chúng ta sẽ tìm hiểu chi tiết cơ chế này ở các phần tiếp theo.
-
-Tóm tắt ở mức cao: Trước khi app gửi request đầu tiên để bắt đầu flow, nó tạo ra một secret duy nhất cho mỗi request.
-
-Nó sử dụng secret này để bắt đầu flow, và lại sử dụng khi đổi authorization code. Điều này giúp authorization server biết rằng đối tượng đổi code là cùng một đối tượng đã bắt đầu flow, ngăn code bị sử dụng nếu bị đánh cắp. Tuy nhiên, điều này không xác thực danh tính app.
-
-Nó chỉ đảm bảo authorization code chỉ được sử dụng bởi app đã bắt đầu flow. Nhưng nó không ngăn kẻ tấn công giả mạo ứng dụng không có client secret. OAuth flow được thực hiện với thông tin hoàn toàn công khai.
-
-Nếu ai đó muốn, họ có thể bắt đầu OAuth flow với public client của app khác. Nếu họ đánh cắp authorization code, họ cũng có thể lấy access token.
-
-## Vai trò của redirect URI trong danh tính ứng dụng
-
-Điều này dẫn đến khía cạnh cuối cùng của danh tính ứng dụng: redirect URI, là địa chỉ của client nơi authorization server sẽ gửi người dùng quay lại sau khi đăng nhập.
-
-Đó là nơi authorization code sẽ được gửi qua front channel.
-
-Với web app và single page app, nó sẽ là một URL như https://example-app.com.
-
-Với native app, mobile app hoặc desktop, có thể là custom URL scheme như myapp://redirect.
-
-Có một sự khác biệt quan trọng giữa hai loại này, liên quan đến danh tính ứng dụng.
-
-Các URL được coi là duy nhất toàn cầu.
-
-Nếu tôi vận hành website example-app.com, không ai khác có thể vận hành website tại địa chỉ đó. Vì tôi đã đăng ký domain và sở hữu DNS entry cho nó, nhưng không có đăng ký toàn cầu cho custom URL scheme, nghĩa là dù app của tôi dùng scheme myapp://, bạn cũng có thể phát hành app dùng scheme đó.
-
-Các nền tảng di động xử lý khác nhau nếu có hai app cùng xử lý một scheme, nhưng custom URL scheme không thể dùng để xác định danh tính ứng dụng.
-
-Gần đây, các nền tảng di động cũng cho phép native app tiếp quản xử lý URL pattern cho các URL.
-
-Trong trường hợp này, developer phải chứng minh họ kiểm soát domain thật. Apple và Google sẽ không cho bạn phát hành app dùng domain của tôi. Chỉ tôi mới có thể làm điều đó. Vì vậy, redirect URL của app -- nếu là HTTPS redirect URL -- là một phần của danh tính app.
-
-Với mobile app và single page app không có client secret, đây là phần duy nhất của danh tính app mà chúng ta có thể dựa vào.
-
-Nhưng ngay cả vậy, nó cũng không đáng tin cậy như client secret để xác minh danh tính app. Nó tốt hơn không có gì, nhưng vẫn có thể gặp vấn đề.
-
-Thật không may, hiện chưa có giải pháp hoàn chỉnh cho mobile app và single page app.
-
-Đây là cách tốt nhất hiện nay.
-
-Có thể trong tương lai, các nền tảng di động sẽ bổ sung API mới để xác thực app từ app store.
-
-Nhưng hiện tại, đây là lựa chọn duy nhất.
-
-Điều này có nghĩa là nếu bạn không có client secret, nếu bạn xây dựng public client, bạn cần lưu ý hạn chế này khi quyết định các chính sách như thời gian sống của token và có nên bỏ qua màn hình xác nhận nội dung hay không.
-
-Việc redirect URL là dấu hiệu duy nhất xác nhận danh tính app khi không có client secret càng làm cho việc đăng ký redirect URL tại server trở nên quan trọng.
-
-Điều này đảm bảo authorization server chỉ chuyển hướng đến các URL đã đăng ký cho một client ID nhất định.
-
-Chúng ta sẽ nói thêm về đăng ký và cách hoạt động ở phần tiếp theo.
-
-## Kết luận
-
-Như vậy, đó là tổng quan về danh tính ứng dụng.
-
-Ở các phần tiếp theo, chúng ta sẽ xem xét chi tiết cách OAuth flow hoạt động từng bước và tìm hiểu kỹ hơn về PKCE.
+---
+[← Quay lại mục lục](README.md)

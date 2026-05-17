@@ -1,138 +1,181 @@
-#[Về root](../README.md)
+# Luồng Mã Ủy quyền cho Web Application (Server-Side)
 
-# Mục lục
+Tài liệu này phân tích chi tiết quy trình thực thi **Authorization Code Flow** (Luồng Mã Ủy quyền) kết hợp cơ chế mở rộng **PKCE** dành cho ứng dụng Web chạy trên môi trường máy chủ (Confidential Client), giúp bảo vệ token tuyệt mật qua kết nối kênh sau.
 
--   [Tổng quan về Authorization Code Flow cho Web Application](#tổng-quan-về-authorization-code-flow-cho-web-application)
--   [Các bước thực hiện Authorization Code Flow](#các-bước-thực-hiện-authorization-code-flow)
--   [Giới thiệu về PKCE](#giới-thiệu-về-pkce)
--   [Chi tiết các tham số và giá trị sử dụng trong request](#chi-tiết-các-tham-số-và-giá-trị-sử-dụng-trong-request)
--   [Sử dụng Refresh Token](#sử-dụng-refresh-token)
--   [Lưu ý về PKCE cho confidential client](#lưu-ý-về-pkce-cho-confidential-client)
+## Mục lục
+
+1. [Tổng quan về Authorization Code Flow cho Web Application](#1-tổng-quan-về-authorization-code-flow-cho-web-application)
+2. [Sơ đồ Luồng hoạt động trình tự toàn diện](#2-sơ-đồ-luồng-hoạt-động-trình-tự-toàn-diện)
+3. [Phân tích chi tiết Từng bước Thực hiện](#3-phân-tích-chi-tiết-từng-bước-thực-hiện)
+4. [Tìm hiểu sâu về cơ chế PKCE cho Web Server](#4-tìm-hiểu-sâu-về-cơ-chế-pkce-cho-web-server)
+5. [Chi tiết các Tham số Kỹ thuật trong Requests](#5-chi-tiết-các-tham-số-kỹ-thuật-trong-requests)
+6. [Cơ chế sử dụng Refresh Token](#6-cơ-chế-sử-dụng-refresh-token)
+7. [Tổng kết](#7-tổng-kết)
 
 ---
 
-## Tổng quan về Authorization Code Flow cho Web Application
+## 1. Tổng quan về Authorization Code Flow cho Web Application
 
-Trong bài học này, chúng ta sẽ đi từng bước qua một quy trình authorization code flow hoàn chỉnh cho web application. Ví dụ này sẽ minh họa với các URL mẫu, đồng thời đề cập đến một số điểm khác biệt bạn có thể gặp với các OAuth server ngoài thực tế.
+Đối với các ứng dụng Web truyền thống chạy trên máy chủ backend (như Java Spring Boot, NodeJS, .NET), mã nguồn và khóa bí mật (`Client Secret`) được lưu trữ hoàn toàn an toàn đằng sau tường lửa. 
 
-Kết thúc phần này, bạn sẽ có cơ hội tự thử nghiệm với một OAuth server thực tế. Sau khi đăng ký ứng dụng với OAuth server và có client ID cùng secret, bạn đã sẵn sàng bắt đầu flow.
+Mục tiêu tối thượng của **Authorization Code Flow** là:
+*   Chèn người dùng vào giữa quá trình đăng nhập qua trình duyệt để xác thực tập trung.
+*   **Chỉ truyền tải Access Token qua kết nối Kênh sau (Back Channel)** trực tiếp giữa Web Server của bạn và Authorization Server, tuyệt đối không để token xuất hiện hoặc bị lưu lại trên trình duyệt của người dùng.
 
-Đầu tiên, chúng ta sẽ đi qua tóm tắt quy trình, sau đó từng bước chi tiết. Ở phía trên là các vai trò đã định nghĩa trước đó.
+---
 
-Người dùng sử dụng trình duyệt để truy cập ứng dụng, ứng dụng này cần access token từ OAuth server để thực hiện các request tới API.
+## 2. Sơ đồ Luồng hoạt động trình tự toàn diện
 
-Mục tiêu cuối cùng là chuyển access token từ server đến ứng dụng. Lý tưởng nhất là ứng dụng nhận access token qua back channel, giúp token không xuất hiện trên trình duyệt.
+Dưới đây là sơ đồ trình tự tích hợp đầy đủ cơ chế Front-channel (giao tiếp qua trình duyệt) và Back-channel (giao tiếp trực tiếp máy chủ) kèm theo tính năng bảo vệ chống giả mạo mã **PKCE**:
 
-Với ứng dụng chạy trên web server, nếu access token được truyền qua back channel, trình duyệt sẽ không thấy access token, đây là lựa chọn an toàn nhất.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Người dùng (Resource Owner)
+    participant Browser as Trình duyệt (User Agent)
+    participant App as Web App Backend (Confidential Client)
+    participant Auth as Authorization Server
+    participant API as Resource Server (API)
 
-## Các bước thực hiện Authorization Code Flow
+    User->>Browser: 1. Click "Đăng nhập"
+    Note over App: 2. Sinh ngẫu nhiên Code Verifier<br/>và tính hash S256 Code Challenge
+    App-->>Browser: 3. Chuyển hướng (HTTP 302) kèm Code Challenge, Client ID, Redirect URI
+    Browser->>Auth: 4. Gửi yêu cầu ủy quyền qua Front Channel
+    Auth->>User: 5. Hiển thị trang đăng nhập & Consent Screen xin phép
+    User-->>Auth: 6. Đăng nhập & Xác nhận cấp quyền
+    Auth-->>Browser: 7. Chuyển hướng (HTTP 302) kèm Authorization Code
+    Browser-->>App: 8. Trả Authorization Code về Redirect URI
+    
+    Note over App,Auth: BẮT ĐẦU LUỒNG KÊNH SAU (BACK CHANNEL)
+    App->>Auth: 9. HTTP POST đổi Code lấy Access Token (Kèm Client ID, Client Secret, Code Verifier)
+    Note over Auth: 10. Xác thực Client Secret &<br/>Băm Code Verifier đối chiếu Code Challenge
+    Auth-->>App: 11. Trả về Access Token + Refresh Token
+    
+    App->>API: 12. Gọi API kèm Access Token ở header (Authorization: Bearer ...)
+    API-->>App: 13. Trả về dữ liệu bảo mật của người dùng
+    App-->>Browser: 14. Kết xuất dữ liệu hiển thị lên giao diện
+```
 
-Quy trình bắt đầu khi người dùng nhấn nút đăng nhập, nghĩa là họ muốn sử dụng ứng dụng.
+### Bảng giải thích chi tiết luồng hoạt động
 
-Trước khi app redirect người dùng, nó tạo ra một secret mới cho flow này (không phải client secret). Đây là một chuỗi ngẫu nhiên app tạo ra, khác nhau mỗi lần bắt đầu flow.
+| Thành phần/Bước | Vai trò/Mô tả | Chi tiết |
+| :--- | :--- | :--- |
+| **Bước 2 & 3** | Khởi tạo PKCE trên Server | Web App Backend tự sinh ra chuỗi bí mật tạm thời `Code Verifier` cho riêng request này, mã hóa băm SHA256 thành `Code Challenge` gửi đi ở kênh trước. |
+| **Bước 7 & 8** | Authorization Code (Mã ủy quyền) | Là một chiếc vé tạm thời chỉ dùng **một lần**, có thời hạn cực ngắn (thường dưới 1 phút) được gửi qua kênh trước. Kẻ tấn công nếu có đánh cắp được cũng không thể sử dụng. |
+| **Bước 9 & 10** | Xác thực Kênh sau | App Server trực tiếp thực hiện gửi POST request lên Auth Server. Auth Server kiểm tra đồng thời tính hợp lệ của `Client Secret` và đối chiếu khớp hash PKCE trước khi phát hành token. |
 
-![alt text](image.png)
+---
 
-Chuỗi này gọi là PKCE Code Verifier.
+## 3. Phân tích chi tiết Từng bước Thực hiện
 
-App giữ code verifier trên server và tính toán hash của nó, gọi là Code Challenge. Hash là thao tác một chiều, biết giá trị hash không thể suy ra secret ban đầu.
+Hãy cùng đi sâu vào từng bước vận hành thực tế của luồng này:
 
-App đưa hash này vào URL để chuyển hướng trình duyệt tới server, kèm theo các tham số như hash, client ID, redirect URL và scope.
+### Bước 3.1: Khởi động luồng và Sinh khóa bí mật PKCE
+Khi người dùng nhấn nút Đăng nhập trên trình duyệt, ứng dụng Web Backend của bạn sẽ sinh ra một chuỗi văn bản ngẫu nhiên có độ bảo mật cao (chứa từ 43 đến 128 ký tự), gọi là **PKCE Code Verifier**. 
 
-Người dùng sẽ đến server với thông điệp app gửi.
+![Mã hóa PKCE trên Web Server](assets/step_1_create_pkce_secret.png)
 
-![alt text](image-1.png)
+Web App Server sẽ tự tính toán băm SHA256 một chiều của chuỗi này tạo thành **Code Challenge**, đồng thời lưu trữ chuỗi gốc `Code Verifier` an toàn vào bộ nhớ session server của riêng phiên làm việc này.
 
-Đây là thông điệp đầu tiên gửi qua front channel.
+### Bước 3.2: Chuyển hướng người dùng qua Front Channel
+Ứng dụng chuyển hướng trình duyệt của người dùng đến cổng Authorization Server bằng cách đính kèm các tham số công khai bao gồm `client_id`, `redirect_uri`, `scope` và `code_challenge`.
 
-![alt text](image-2.png)
+![Gửi yêu cầu qua Front Channel](assets/step_2_redirect_to_auth_server.png)
 
-Front channel sử dụng thanh địa chỉ trình duyệt để gửi thông điệp giữa hai máy tính khác nhau. App yêu cầu một số thông tin từ server, nhưng thay vì gửi trực tiếp, nó nhờ người dùng chuyển tiếp tới OAuth server.
+> [!NOTE]
+> **Front Channel là gì?**
+> Kênh trước (Front Channel) là con đường sử dụng chính thanh địa chỉ của trình duyệt của người dùng để chuyển tiếp thông điệp. Vì là kênh chuyển tiếp công khai, các thông tin gửi đi tại đây bắt buộc chỉ là thông tin không nhạy cảm (như hash của PKCE thay vì chuỗi mật mã gốc).
 
-Vì đây là request qua front channel, không thể đảm bảo không bị nghe lén, nên app chỉ gửi hash của secret thay vì secret thật.
+![Mô phỏng Front Channel qua thanh địa chỉ](assets/front_channel_explanation.png)
 
-Người dùng đến OAuth server, server yêu cầu đăng nhập, thực hiện xác thực đa yếu tố nếu cần, rồi xác nhận đăng nhập vào app.
+### Bước 3.3: Người dùng Xác thực và Nhận Mã Ủy quyền (Authorization Code)
+Người dùng thực hiện đăng nhập tài khoản trực tiếp trên máy chủ Auth Server và phê duyệt cấp quyền cho ứng dụng. 
 
-Nếu đồng ý, server sẽ gửi người dùng trở lại app kèm theo authorization code dùng một lần.
+Khi hoàn tất, Auth Server tạo ra một chiếc vé dùng một lần gọi là **Authorization Code** và chuyển hướng trình duyệt của người dùng quay trở lại `redirect_uri` của ứng dụng kèm theo mã này trên query string.
 
-Server lấy redirect URI của app, thêm authorization code vào query string và chuyển hướng trình duyệt về app.
+![Trả về Authorization Code qua Front Channel](assets/step_3_return_auth_code.png)
 
-Đây là thông điệp thứ hai qua front channel.
+### Bước 3.4: Đổi Mã lấy Token qua Back Channel
+Ngay khi ứng dụng Web Backend nhận được Authorization Code từ request chuyển hướng của trình duyệt, nó lập tức đứng ra thiết lập kết nối máy-chủ-tới-máy-chủ (**Back Channel**) để gửi một POST request HTTPS trực tiếp đến Auth Server.
 
-![alt text](image-3.png)
+Request này gửi đi các thông tin tuyệt mật bao gồm: `Authorization Code`, `client_id`, `client_secret` (mật khẩu ứng dụng) và chuỗi gốc `code_verifier` ban đầu.
 
-Vì là front channel, server không thể chắc chắn code đã đến app, nên authorization code chỉ dùng một lần và phải sử dụng trong thời gian ngắn (thường dưới một phút).
+![Gửi POST request qua Back Channel đổi Token](assets/step_4_back_channel_exchange.png)
 
-Sau khi app nhận authorization code từ request của trình duyệt, app sẽ gửi request back channel tới OAuth server để đổi lấy access token. Request này gửi từ server của app tới OAuth server, không qua trình duyệt.
+Auth Server kiểm tra xác thực `client_secret`, băm chuỗi `code_verifier` đối chiếu khớp với `code_challenge` ban đầu. Nếu trùng khớp, Auth Server phát hành Access Token gửi về trực tiếp cho Backend của bạn.
 
-Request này bao gồm authorization code, client ID, client secret và PKCE secret (code verifier) ban đầu.
+### Bước 3.5: Gọi API lấy dữ liệu bảo mật
+Sau khi nhận được Access Token, ứng dụng khách lưu trữ token này an toàn trên server backend và đính kèm nó vào Header để gọi các API bảo mật của Resource Server mà người dùng hoàn toàn không nhìn thấy token.
 
-Server kiểm tra request, xác nhận code chưa dùng, đúng client, đúng client secret, và so sánh hash của code verifier với code challenge ban đầu. Nếu khớp, server tạo access token và trả về.
+![Gọi API an toàn](assets/step_5_call_api_with_token.png)
 
-![alt text](image-4.png)
+---
 
-Kết thúc flow, app có thể sử dụng access token để gọi API.
+## 4. Tìm hiểu sâu về cơ chế PKCE cho Web Server
 
-![alt text](image-5.png)
+Ban đầu, cơ chế **PKCE** (RFC 7636) được thiết kế đặc thù dành riêng cho các Public Client (như Mobile App) vốn không thể bảo vệ Client Secret. Tuy nhiên, khuyến nghị bảo mật OAuth hiện đại nhất hiện nay (OAuth 2.1) quy định:
 
-## Giới thiệu về PKCE
+> [!IMPORTANT]
+> **Bắt buộc phải áp dụng PKCE cho cả các Confidential Client có Client Secret:**
+> Cơ chế PKCE giúp ngăn chặn triệt để cuộc tấn công nguy hiểm **Authorization Code Injection Attack** (hoán đổi mã ủy quyền của nạn nhân để đăng nhập tài khoản của họ vào phiên làm việc của kẻ tấn công) mà chốt chặn Client Secret thông thường không thể phát hiện và xử lý được.
 
-Bạn có thể nhận thấy các tham số Code Challenge và Code Verifier đến từ extension PKCE.
+---
 
-![alt text](image-5.png)
+## 5. Chi tiết các Tham số Kỹ thuật trong Requests
 
-PKCE ban đầu phát triển cho mobile app, nhưng hiện tại được khuyến nghị cho mọi loại ứng dụng, kể cả khi có client secret.
+### 5.1. Request xin mã ủy quyền ban đầu (GET)
+Client chuyển hướng trình duyệt người dùng đến Authorization Endpoint:
+```text
+https://auth.company.com/authorize?
+    response_type=code
+    &client_id=web-app-client-123
+    &redirect_uri=https://web-app.com/callback
+    &scope=read:profile write:orders
+    &state=xyzSecureState987
+    &code_challenge=E9Melhoa2OwvFrGMTJguCH5yOFDpwUYzFxSAXwT4_o
+    &code_challenge_method=S256
+```
 
-Lý do là vì vẫn có thể xảy ra tấn công hoán đổi authorization code, khiến đăng nhập vào tài khoản của người khác mà app và server không biết. Đây gọi là authorization code injection attack. PKCE giúp ngăn chặn tấn công này, nên được khuyến nghị cho cả confidential client.
+### 5.2. Request đổi Code lấy Token (POST)
+Client gửi POST request (body dạng `application/x-www-form-urlencoded`) trực tiếp đến Token Endpoint qua Back Channel:
+```http
+POST /token HTTP/1.1
+Host: auth.company.com
+Content-Type: application/x-www-form-urlencoded
 
-## Chi tiết các tham số và giá trị sử dụng trong request
+grant_type=authorization_code
+&code=SplxlOBeZQQYbYS6WxSbIA
+&redirect_uri=https://web-app.com/callback
+&client_id=web-app-client-123
+&client_secret=super-secret-password-xyz
+&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOyXfc
+```
 
-Trước khi app chuyển hướng người dùng tới OAuth server, nó tạo một chuỗi ngẫu nhiên gọi là code verifier (43-128 ký tự). Sau đó, tính hash SHA256 của chuỗi này và base64 URL encode kết quả.
+---
 
-Sau đó, xây dựng link gửi người dùng tới OAuth server, tìm authorization endpoint qua tài liệu hoặc metadata URL.
+## 6. Cơ chế sử dụng Refresh Token
 
-Thêm các tham số vào query string:
+Nếu trong phản hồi Auth Server trả về kèm theo một `**Refresh Token**`, ứng dụng của bạn có thể sử dụng nó để tự động xin Access Token mới khi Access Token cũ hết hạn mà không làm gián đoạn trải nghiệm của người dùng.
 
--   `response_type=code`: báo server sử dụng authorization code flow.
--   `client_id`: xác định app gửi request.
--   `redirect_uri`: phải trùng với URI đã đăng ký.
--   `scope`: quyền truy cập API.
--   `state`: ban đầu dùng cho CSRF protection, nhưng PKCE cũng bảo vệ nên có thể dùng lưu trạng thái app (ví dụ trang cần redirect sau đăng nhập). Chỉ nên dùng cách này nếu chắc chắn server hỗ trợ PKCE, nếu không thì phải là giá trị ngẫu nhiên.
--   `code_challenge`: hash của code verifier.
--   `code_challenge_method=S256`: dùng SHA256.
+Request làm mới token (POST):
+```http
+POST /token HTTP/1.1
+Host: auth.company.com
+Content-Type: application/x-www-form-urlencoded
 
-Tạo URL với các tham số trên và chuyển hướng người dùng tới server để đăng nhập.
+grant_type=refresh_token
+&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
+&client_id=web-app-client-123
+&client_secret=super-secret-password-xyz
+```
 
-Sau khi người dùng đăng nhập và đồng ý, OAuth server tạo authorization code dùng một lần và chuyển hướng về app.
+---
 
-Nếu có lỗi, server sẽ redirect về app với error code thay vì authorization code.
+## 7. Tổng kết
 
-Khi nhận được authorization code, kiểm tra lại state để bảo vệ CSRF, sau đó đổi authorization code lấy access token bằng request back channel tới token endpoint (cần tra cứu endpoint này).
+*   **Authorization Code Flow** là tiêu chuẩn vàng an toàn nhất cho các ứng dụng Server-side Web App.
+*   **Bảo vệ hai lớp:** Kết hợp chặt chẽ việc kiểm tra `Client Secret` trên kênh sau và cơ chế băm đối sánh `PKCE` giúp loại bỏ hoàn toàn các lỗ hổng tấn công trung gian.
+*   **Nhiệm vụ tiếp theo:** Trong bài học kế tiếp, chúng ta sẽ khảo sát cách thức điều chỉnh luồng này để chạy trực tiếp trên môi trường trình duyệt cho ứng dụng Single Page Application (SPA) khi hoàn toàn thiếu vắng Client Secret.
 
-Request này là POST với body dạng form-encoded, gồm các tham số:
-
--   `grant_type=authorization_code`
--   `code`: authorization code nhận được
--   `redirect_uri`: giống lúc request
--   `code_verifier`: secret ban đầu
--   `client_id` và `client_secret`: thông tin app
-
-Một số server yêu cầu client ID và secret trong body, số khác yêu cầu trong header (Basic OAuth header), cần kiểm tra tài liệu server.
-
-Nếu thành công, server trả về access token, thời gian hết hạn và có thể cả refresh token.
-
-## Sử dụng Refresh Token
-
-Nếu nhận được refresh token, khi access token hết hạn, app có thể dùng refresh token để lấy access token mới mà không cần thực hiện lại toàn bộ flow.
-
-Request này cũng là POST tới token endpoint, với `grant_type=refresh_token` và kèm refresh token trong body, cùng client ID và secret.
-
-Nếu refresh token còn hiệu lực, server trả về access token mới và có thể cả refresh token mới. Nếu không, app phải thực hiện lại flow từ đầu.
-
-## Lưu ý về PKCE cho confidential client
-
-Một số OAuth server ngoài thực tế chưa hỗ trợ PKCE cho confidential client do khuyến nghị này còn mới. Trong trường hợp đó, nên đề xuất server bổ sung PKCE.
-
-Tuy nhiên, bạn vẫn có thể gửi tham số PKCE trong request, server sẽ bỏ qua nếu không nhận ra. Như vậy, bạn có thể xây dựng OAuth client hỗ trợ PKCE ngay hôm nay, và khi server cập nhật, không cần sửa lại ứng dụng.
-
-Trong bài học tiếp theo, chúng ta sẽ thử nghiệm authorization code flow với một OAuth server thực tế.
+---
+[← Quay lại mục lục](README.md)

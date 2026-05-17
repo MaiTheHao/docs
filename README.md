@@ -19,7 +19,7 @@ Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu**
 *   [N+1 Problem](backend_development/n_plus_one_problem/) - Vấn đề N+1 trong cơ sở dữ liệu
 
 ### 🛡️ 3. [Security](security/) - Xác thực và Bảo mật
-*   [JWT](security/jwt/) - JSON Web Tokens - Xác thực và bảo mật
+*   [JWT](security/jwt/README.md) - JSON Web Tokens - Xác thực và bảo mật
 *   [OAuth](security/oauth/) - Xác thực và ủy quyền OAuth
 
 ### 📐 4. [Software Architecture](architecture/) - Kiến trúc phần mềm

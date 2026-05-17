@@ -1,74 +1,83 @@
-[Về root](../README.md)
+# Quy trình Đăng ký OAuth Client
 
-# Mục lục
+Tài liệu này hướng dẫn chi tiết quy trình đăng ký ứng dụng khách (**OAuth Client Registration**), các thông tin siêu dữ liệu (metadata) cần thiết, vai trò mật mã học của Client ID/Secret, và giải pháp bảo vệ Redirect URIs trước các nguy cơ tấn công mạng.
 
--   [Đăng ký OAuth client](#đăng-ký-oauth-client)
--   [Quy trình đăng ký ứng dụng](#quy-trình-đăng-ký-ứng-dụng)
--   [Thông tin cần thiết khi đăng ký](#thông-tin-cần-thiết-khi-đăng-ký)
--   [Redirect URI và bảo mật](#redirect-uri-và-bảo-mật)
--   [Client ID và Client Secret](#client-id-và-client-secret)
--   [Lưu ý khi sử dụng Client Secret](#lưu-ý-khi-sử-dụng-client-secret)
+## Mục lục
+
+1. [Khái niệm Đăng ký Client](#1-khái-niệm-đăng-ký-client)
+2. [Quy trình Thực tế Đăng ký](#2-quy-trình-thực-tế-đăng-ký)
+3. [Các Siêu dữ liệu Yêu cầu khi Đăng ký](#3-các-siêu-dữ-liệu-yêu-cầu-khi-đăng-ký)
+4. [Bảo mật Redirect URI](#4-bảo-mật-redirect-uri)
+5. [Cấp phát Client ID và Client Secret](#5-cấp-phát-client-id-và-client-secret)
+6. [Lưu ý Quan trọng khi Sử dụng Client Secret](#6-lưu-ý-quan-trọng-khi-sử-dụng-client-secret)
+7. [Tổng kết](#7-tổng-kết)
 
 ---
 
-# Đăng ký OAuth client
+## 1. Khái niệm Đăng ký Client
 
-Nếu bạn đã sẵn sàng xây dựng một OAuth client, trước khi bắt đầu một Auth flow, bạn cần đăng ký client tại OAuth server.
+Trước khi ứng dụng khách (Client) có thể bắt đầu bất kỳ luồng giao dịch ủy quyền OAuth 2.0 nào với Authorization Server, nó bắt buộc phải được đăng ký danh tính chính thức trên máy chủ xác thực.
 
-Việc đăng ký client là bước đăng ký danh tính của ứng dụng tại server, điều này thực hiện một số việc rất quan trọng.
+Quá trình đăng ký này thực hiện hai nhiệm vụ cốt lõi:
+1.  Khai báo các thuộc tính logic của ứng dụng (Tên, tên miền, redirect URL).
+2.  Nhận các thông tin xác thực mật mã để máy chủ nhận diện ứng dụng trong suốt quá trình chạy.
 
-# Quy trình đăng ký ứng dụng
+---
 
-Thông thường, bạn sẽ truy cập vào website dành cho developer của dịch vụ mà bạn đang viết ứng dụng, đăng ký làm developer, sau đó tạo ứng dụng. Đây là cách hoạt động với các API công khai như Twitter, Google, GitHub và các dịch vụ có public API khác.
+## 2. Quy trình Thực tế Đăng ký
 
-Bạn đăng ký làm developer, sau đó có thể tạo ứng dụng trong nền tảng của họ. Việc đăng ký ứng dụng sẽ cung cấp cho bạn các thông tin xác thực để sử dụng với OAuth flow. Nếu bạn sử dụng OAuth server của công ty hoặc doanh nghiệp, bước đăng ký có thể không tự phục vụ như vậy.
+*   **Với các dịch vụ API công khai (Public SaaS APIs):** Các dịch vụ lớn như Google, GitHub, Twitter hỗ trợ một cổng thông tin tự phục vụ dành riêng cho nhà phát triển (**Developer Portal**). Bạn chỉ cần tạo tài khoản Developer, tạo một dự án mới, khai báo thông tin và nhận khóa xác thực ngay lập tức.
+*   **Với hệ thống doanh nghiệp (Enterprise APIs):** Các dịch vụ lưu trữ nội bộ hoặc private APIs thường không hỗ trợ tự đăng ký. Bạn sẽ cần gửi yêu cầu cấu hình (thường qua tệp YAML, GitOps, hoặc hệ thống ticket hỗ trợ) để quản trị viên hệ thống (Admin) cấu hình và cung cấp khóa bí mật một cách an toàn.
 
-Bạn sẽ cần quản trị viên đăng ký ứng dụng cho bạn.
+---
 
-# Thông tin cần thiết khi đăng ký
+## 3. Các Siêu dữ liệu Yêu cầu khi Đăng ký
 
-Dù bằng cách nào, việc đăng ký ứng dụng sẽ yêu cầu nhập một số thông tin về ứng dụng, sau đó bạn sẽ nhận được một định danh cho ứng dụng, gọi là client ID, và có thể nhận được client secret, tức là mật khẩu. Khi đăng ký ứng dụng, server sẽ yêu cầu một số thông tin về ứng dụng của bạn. Mỗi server sẽ có cách làm khác nhau, nhưng thường bạn sẽ thấy ít nhất là nơi nhập tên ứng dụng và một hoặc nhiều redirect URL cho ứng dụng. Tên ứng dụng có thể được hiển thị cho người dùng nếu họ được hỏi quyền trước khi tiếp tục.
+Khi đăng ký, Authorization Server sẽ yêu cầu bạn khai báo các thuộc tính siêu dữ liệu (metadata) cơ bản sau:
 
-Một số server cũng có thể yêu cầu mô tả hoặc logo của ứng dụng.
+*   **Application Name (Tên ứng dụng):** Tên thương hiệu hiển thị công khai trên màn hình Consent Screen để người dùng nhận diện ứng dụng.
+*   **Application Logo (Logo ứng dụng):** Hiển thị trên giao diện xác thực của Auth Server.
+*   **Terms of Service & Privacy Policy URLs:** Đường dẫn chính sách bảo mật và điều khoản sử dụng, bắt buộc đối với các ứng dụng công khai để người dùng duyệt trước khi đồng ý cấp quyền.
+*   **Client Type (Loại ứng dụng):** Khai báo rõ ràng là *Confidential* (Web App Server-side) hay *Public* (SPA/Mobile App) để Auth Server áp dụng các chính sách cấp phát Refresh Token và bật CORS thích hợp.
 
-Nếu là public API, có thể có nơi để liên kết tới điều khoản dịch vụ hoặc chính sách bảo mật của ứng dụng.
+---
 
-Tất cả những thông tin này là thuộc tính của ứng dụng, có thể cần thiết vì sẽ được hiển thị cho người dùng hoặc xuất hiện trong log.
+## 4. Bảo mật Redirect URI
 
-Một biến thể khác mà bạn có thể gặp, tùy vào OAuth server bạn sử dụng, là server có thể hỏi bạn đang xây dựng loại ứng dụng nào.
+> [!IMPORTANT]
+> **Redirect URI là thông số cấu hình tối quan trọng nhất khi đăng ký:**
+> Redirect URI (Đường dẫn chuyển hướng) là địa chỉ máy chủ của bạn mà Auth Server sẽ gửi người dùng quay trở lại kèm theo Authorization Code sau khi đăng nhập thành công.
 
-Tùy vào lựa chọn, server có thể áp dụng các chính sách khác nhau về việc cấp refresh token hoặc bật CORS header cho JavaScript app, chẳng hạn.
+### Ràng buộc bảo mật của Redirect URI:
+*   **Chống Open Redirect Attack:** Kẻ tấn công có thể cố tình gửi Client ID của ứng dụng bạn, nhưng điền tham số redirect URI trỏ về server độc hại của hắn. Nếu Auth Server không có whitelist đăng ký trước để đối chiếu, nó sẽ gửi thẳng mã ủy quyền (Code) về server của kẻ tấn công.
+*   **Cấm tuyệt đối ký tự đại diện (Wildcards):** Cấm các cấu hình lỏng lẻo như `https://*.example.com` hoặc `https://example.com/oauth/callback?*`. Kẻ tấn công có thể lợi dụng wildcard này để tiêm các đường dẫn phụ độc hại và vượt qua bước kiểm tra regex của server.
 
-# Redirect URI và bảo mật
+---
 
-Việc nhập redirect URI là một trong những bước quan trọng nhất khi đăng ký. Một số server cho phép bạn đăng ký nhiều hơn một URI, nhưng luôn cần đăng ký ít nhất một.
+## 5. Cấp phát Client ID và Client Secret
 
-Việc liệt kê rõ ràng các redirect URL liên kết với ứng dụng giúp đảm bảo rằng kẻ tấn công không thể sử dụng client ID của ứng dụng bạn để chuyển hướng người dùng về website của kẻ tấn công.
+Sau khi hoàn tất đăng ký, Auth Server sẽ trả về cặp thông tin xác thực mật mã:
 
-Các OAuth server hỗ trợ khuyến nghị mới nhất cũng sẽ không cho phép đăng ký redirect URL có wildcard, vì đó là một lỗ hổng mà kẻ tấn công có thể lợi dụng để lừa người dùng chuyển hướng về website của họ.
+*   `**Client ID**` (Định danh Client): Là chuỗi ký tự công khai duy nhất đại diện cho ứng dụng. Bạn có thể thoải mái đưa Client ID vào mã nguồn, file JavaScript (SPA), hoặc nhúng trong URL chuyển hướng.
+*   `**Client Secret**` (Khóa bí mật Client): Là chuỗi ký tự ngẫu nhiên có độ dài mật mã lớn hoạt động giống như **mật khẩu của ứng dụng**. Client Secret chỉ được dùng ở kết nối Kênh sau (Back Channel) để xác thực danh tính thực của ứng dụng khi đổi Code lấy Token.
 
-Việc sử dụng wildcard hoặc so khớp một phần redirect URL là cách dễ dàng để mở ra nguy cơ bị open redirect attack. Đây là kiểu tấn công không chỉ riêng OAuth, nhưng thường được kết hợp với các lỗ hổng khác để thực hiện các hành động không mong muốn.
+---
 
-Như đã đề cập trước đó với public client, redirect URL thực sự là hy vọng duy nhất để authorization đảm bảo rằng kẻ tấn công không giả mạo OAuth client thật.
+## 6. Lưu ý Quan trọng khi Sử dụng Client Secret
 
-# Client ID và Client Secret
+> [!WARNING]
+> **Quy tắc vàng về bảo vệ Client Secret:**
+> *   Nếu ứng dụng của bạn là **Public Client** (Mobile App, JavaScript SPA), khi đăng ký Auth Server sẽ thông minh cấu hình chỉ cấp phát `Client ID` mà **không cấp phát `Client Secret`**.
+> *   Nếu bạn vô tình nhận được Client Secret cho một SPA hoặc Mobile App, **tuyệt đối không được đưa nó vào mã nguồn**. Bất kỳ ai cũng có thể mở thanh F12 (Inspect Element) hoặc dịch ngược file `.apk/.ipa` để đánh cắp Secret trong vòng vài giây.
+> *   Client Secret chỉ được lưu trữ an toàn trong các biến môi trường (`.env`), tệp cấu hình bảo mật ở Web Server Backend (Confidential Client), nơi người dùng đầu cuối hoàn toàn không có quyền truy cập trực tiếp.
 
-Sau khi nhập đầy đủ thông tin, ứng dụng của bạn đã được đăng ký và sẵn sàng bắt đầu OAuth flow. Client ID được xem là thông tin công khai, dùng để xác định ứng dụng trong suốt OAuth flow, và có thể đưa vào source code hoặc các nơi tương tự. Ví dụ, khi bắt đầu flow, bạn sẽ đưa client ID của ứng dụng vào URL. Nhờ đó, server biết ứng dụng nào sẽ hiển thị trên consent screen, cũng như biết chính sách thời gian sống của token nào sẽ áp dụng cho access token cấp cho ứng dụng. Client secret ngược lại là mật khẩu của ứng dụng, dùng để xác thực với token endpoint để lấy access token.
+---
 
-# Lưu ý khi sử dụng Client Secret
+## 7. Tổng kết
 
-Nếu bước đăng ký hỏi loại ứng dụng bạn xây dựng và bạn chọn mobile app, native app hoặc JavaScript app, thì thường bạn chỉ nhận được client ID mà không có client secret.
+*   **Đăng ký chính xác:** Luôn khai báo chính xác thuộc tính ứng dụng (đặc biệt là Client Type) khi đăng ký trên Auth Server.
+*   **White-list tuyệt đối:** Đăng ký chính xác, cụ thể các Redirect URIs (sử dụng giao thức HTTPS bảo mật) và tuyệt đối không dùng wildcard.
+*   **Bảo mật khóa:** Bảo vệ Client Secret giống như bảo vệ mật khẩu cơ sở dữ liệu của bạn, chỉ sử dụng trên môi trường Server-side an toàn.
 
-Vì mobile app và JavaScript app không thể bảo vệ client secret, nên không cần tạo client secret. Đây là cách giúp developer làm đúng.
-
-Nếu bạn nhận được client secret và đang xây dựng mobile app hoặc JavaScript app, thì không nên đưa client secret vào ứng dụng vì nó sẽ không còn là bí mật nữa, ai cũng có thể lấy được.
-
-Hãy nhớ rằng client secret là mật khẩu, nên phải được bảo vệ như mật khẩu. Không chia sẻ với ai và luôn giữ an toàn.
-
-Chỉ những ứng dụng có thể triển khai client secret và đảm bảo nó luôn bí mật mới nên sử dụng client secret.
-
-Nếu bạn xây dựng server side app, bạn hoàn toàn có thể lưu secret trong biến môi trường hoặc file cấu hình vì người dùng ứng dụng sẽ không truy cập được.
-
-Với client ID và client secret, nếu bạn xây dựng server side app, bạn đã sẵn sàng bắt đầu OAuth flow.
-
-Hẹn gặp bạn ở bài tiếp theo, nơi chúng ta sẽ đi từng bước thực hiện authorization code flow cho server side app.
+---
+[← Quay lại mục lục](README.md)

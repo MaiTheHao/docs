@@ -1,69 +1,127 @@
-[Về root](../README.md)
+# Luồng Hỗn hợp trong OpenID Connect (OIDC Hybrid Flow)
 
-# Mục lục
+Tài liệu này phân tích sâu cơ chế vận hành của luồng hỗn hợp **OIDC Hybrid Flow**, sự kết hợp của các `response_types` phức tạp, vai trò mật mã học của claim `c_hash` trong việc chống tấn công chèn mã ủy quyền (Code Injection), và khuyến nghị bảo mật hiện đại thay thế.
 
--   [Giới thiệu về Hybrid Flows trong OpenID Connect](#giới-thiệu-về-hybrid-flows-trong-openid-connect)
--   [Các loại response_type trong OAuth và OpenID Connect](#các-loại-response_type-trong-oauth-và-openid-connect)
--   [Các chế độ hybrid trong OpenID Connect](#các-chế-độ-hybrid-trong-openid-connect)
--   [Lý do không nên sử dụng response_type chứa "token"](#lý-do-không-nên-sử-dụng-response_type-chứa-token)
--   [Phân tích response_type=code+id_token](#phân-tích-response_typecodeid_token)
--   [Vai trò của c_hash claim](#vai-trò-của-c_hash-claim)
--   [Lý do sử dụng response_type=code+id_token](#lý-do-sử-dụng-response_typecodeid_token)
--   [Bảo vệ chống tấn công authorization code injection](#bảo-vệ-chống-tấn-công-authorization-code-injection)
--   [Khuyến nghị sử dụng PKCE](#khuyến-nghị-sử-dụng-pkce)
+## Mục lục
+
+1. [Giới thiệu về Hybrid Flows trong OIDC](#1-giới-thiệu-về-hybrid-flows-trong-oidc)
+2. [Các Loại response_type trong OAuth và OIDC](#2-các-loại-response_type-trong-oauth-và-oidc)
+3. [Các Chế độ Hybrid trong OIDC](#3-các-chế-độ-hybrid-trong-oidc)
+4. [Nguy cơ Bảo mật khi Dùng response_type chứa "token"](#4-nguy-cơ-bảo-mật-khi-dùng-response_type-chứa-token)
+5. [Sơ đồ Trình tự Luồng response_type=code id_token](#5-sơ-đồ-trình-tự-luồng-responsetypecode-id_token)
+6. [Vai trò của c_hash Claim chống Code Injection](#6-vai-trò-của-c_hash-claim-chống-code-injection)
+7. [Khuyến nghị Bảo mật Hiện đại: PKCE thay thế Hybrid](#7-khuyến-nghị-bảo-mật-hiện-đại-pkce-thay-thế-hybrid)
+8. [Tổng kết](#8-tổng-kết)
 
 ---
 
-# Giới thiệu về Hybrid Flows trong OpenID Connect
+## 1. Giới thiệu về Hybrid Flows trong OIDC
 
-Trong bài học này, chúng ta sẽ nói về một số hybrid flows trong OpenID Connect.
+Trong kiến trúc ứng dụng Web phức tạp, có những thời điểm ứng dụng khách (Client) có nhu cầu tối ưu hóa hiệu năng cực cao: muốn lấy thông tin định danh cá nhân người dùng thật nhanh ở kênh trước (Front Channel) để kết xuất ngay giao diện, nhưng vẫn muốn giữ quá trình cấp phát Access Token nhạy cảm an toàn ở kênh sau (Back Channel). 
 
-Bạn sẽ thường thấy các tham chiếu đến hybrid flows, tức là sử dụng các kết hợp của response types.
+Để giải quyết bài toán này, đặc tả OpenID Connect định nghĩa cơ chế **Hybrid Flow (Luồng hỗn hợp)** - cho phép trả về các loại token khác nhau ở các bước chuyển tiếp khác nhau trong cùng một luồng giao dịch.
 
-# Các loại response_type trong OAuth và OpenID Connect
+---
 
-Trong OAuth thông thường, bạn sẽ sử dụng `response_type=code`, nghĩa là bạn chỉ muốn nhận authorization code trong response và sau đó sẽ lấy access token bằng authorization code đó. Ta cũng đã thấy việc sử dụng `response_type=id_token`, tức là bạn chỉ muốn nhận ID Token trong response và không cần access token.
+## 2. Các Loại response_type trong OAuth và OIDC
 
-# Các chế độ hybrid trong OpenID Connect
+Tham số `response_type` khai báo ở GET request ban đầu báo cho Auth Server biết Client mong muốn nhận lại dữ liệu gì ở URL redirect:
+*   `response_type=code`: Chỉ nhận Authorization Code (Luồng Code tiêu chuẩn).
+*   `response_type=token`: Chỉ nhận Access Token qua Front Channel (Implicit Flow - Đã bị cấm).
+*   `response_type=id_token`: Chỉ nhận ID Token qua Front Channel (OIDC Implicit).
 
-OpenID Connect cũng định nghĩa một số chế độ hybrid, về cơ bản là các kết hợp của response types. Ví dụ như `response_type=code+id_token` nghĩa là bạn muốn nhận ID Token qua front channel và authorization code để lấy access token qua back channel. Ngoài ra còn có các response types bao gồm `token`, sử dụng implicit flow của OAuth cũ.
+---
 
-# Lý do không nên sử dụng response_type chứa "token"
+## 3. Các Chế độ Hybrid trong OIDC
 
-Mặc dù OpenID Connect cung cấp các công cụ để ngăn chặn tấn công access token injection, nhưng vẫn có nguy cơ rò rỉ access token qua front channel. Vì vậy, thông thường không khuyến nghị sử dụng bất kỳ response type nào chứa "token". Điều này cũng được đề cập trong các khuyến nghị bảo mật mới nhất của OAuth.
+Luồng hỗn hợp Hybrid Flow được kích hoạt khi chúng ta kết hợp nhiều giá trị cách nhau bởi dấu cách (` ` hoặc `%20`) trong tham số `response_type`:
+*   `response_type=code id_token`: Trả về đồng thời **Authorization Code** và **ID Token** tại Front Channel.
+*   `response_type=code token`: Trả về **Authorization Code** và **Access Token** tại Front Channel.
+*   `response_type=code id_token token`: Trả về cả 3 dữ liệu tại Front Channel.
 
-Nếu bỏ qua tất cả các combination response type có chứa token (vì chúng trả về access token qua front channel, điều này không an toàn), thì về cơ bản chỉ còn lại `response_type=code+id_token`.
+---
 
-# Phân tích response_type=code+id_token
+## 4. Nguy cơ Bảo mật khi Dùng response_type chứa "token"
 
-Với response_type này, bạn sẽ nhận được ID Token và access token ở các bước khác nhau trong flow.
+> [!WARNING]
+> **Cấm tuyệt đối các response_type chứa chữ "token":**
+> Các nhóm làm việc của đặc tả OAuth và OIDC khuyến cáo **không bao giờ sử dụng** các chế độ hybrid chứa chữ `token` (như `code token` hay `code id_token token`). 
+> Nguyên nhân là do chúng trả về thẳng Access Token nhạy cảm qua Kênh trước (Front Channel URL Redirect) - môi trường cực kỳ kém an toàn trên trình duyệt.
 
-Nếu chỉ sử dụng `response_type=code` và vẫn yêu cầu ID token bằng scope "openid", bạn sẽ nhận được cả ID Token và access token khi trao đổi authorization code. Điều này thuận tiện vì bạn nhận được cả hai token trong cùng một bước và không cần lo lắng về việc xác thực JSON Web Token vì token đã được nhận qua kết nối tin cậy.
+Nếu loại bỏ hoàn toàn các luồng chứa `token` kém an toàn, luồng hỗn hợp duy nhất còn lại có thể cân nhắc sử dụng là **`response_type=code id_token`**.
 
-Còn với `response_type=code+id_token`, bạn sẽ nhận được cả ID Token và authorization code trong response. Trong redirect, bạn sẽ nhận được authorization code như trước, đồng thời nhận được ID Token.
+---
 
-Tuy nhiên, ID Token này được trả về qua front channel nên chưa được tin cậy. Do đó, bạn cần xác thực JSON Web Token và kiểm tra tất cả các claims.
+## 5. Sơ đồ Trình tự Luồng response_type=code id_token
 
-# Vai trò của c_hash claim
+Dưới đây là sơ đồ trình tự thể hiện chi tiết cách luồng hỗn hợp an toàn trả về ID Token sớm ở kênh trước và Access Token muộn ở kênh sau:
 
-Khi sử dụng `response_type=code_id_token`, ID Token sẽ bao gồm thêm một claim gọi là `c_hash`. Đây là hash của authorization code, dùng để xác thực rằng code không bị thay đổi trong response. Sau đó, bạn có thể dùng code này để đổi lấy access token.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Người dùng
+    participant Browser as Trình duyệt (User Agent)
+    participant Client as Ứng dụng Khách (Client)
+    participant Auth as Authorization Server
+    participant API as Resource Server (API)
 
-# Lý do sử dụng response_type=code+id_token
+    User->>Browser: 1. Click "Đăng nhập"
+    Browser->>Auth: 2. Request ủy quyền (scope: "openid profile", response_type: "code id_token")
+    Auth->>User: 3. Xác thực & Consent Screen xin cấp quyền
+    User-->>Auth: 4. Chấp thuận cấp quyền
+    Auth-->>Browser: 5. Redirect (302) về Client kèm theo: Code AND ID Token (Front Channel)
+    Browser-->>Client: 6. Nhận Code và ID Token
+    
+    Note over Client: 7. Giải mã ID Token hiển thị ngay Avatar <br/>& BẮT BUỘC xác thực chữ ký số + claim c_hash
+    
+    Note over Client,Auth: BẮT ĐẦU LUỒNG KÊNH SAU (BACK CHANNEL)
+    Client->>Auth: 8. HTTP POST gửi Code + Client Secret để đổi Access Token
+    Auth-->>Client: 9. Trả về Access Token an toàn tuyệt mật
+    Client->>API: 10. Gọi API lấy dữ liệu bằng Access Token
+    API-->>Client: 11. Trả dữ liệu API
+```
 
-Lý do sử dụng flow này là bạn có thể nhận được dữ liệu ID Token sớm hơn access token. Nếu vì lý do hiệu năng hoặc lý do khác mà bạn cần truy cập thông tin định danh người dùng trước khi lấy access token, đây là một lựa chọn. Tuy nhiên, bạn cần thực hiện nhiều bước xác thực ID Token hơn để đảm bảo an toàn.
+---
 
-# Bảo vệ chống tấn công authorization code injection
+## 6. Vai trò của c_hash Claim chống Code Injection
 
-Một điểm quan trọng là ứng dụng có thể tự phát hiện tấn công authorization code injection nhờ claim `c_hash`. Nó cho phép client tự bảo vệ mình khỏi các tấn công này. Tuy nhiên, authorization server không thể đảm bảo rằng client đã thực hiện các kiểm tra này.
+Khi nhận được đồng thời `ID Token` và `Authorization Code` qua Front Channel ở Bước 5 & 6, làm thế nào Client có thể tin tưởng mã `code` nhận được là sạch và không bị kẻ tấn công đánh tráo trên trình duyệt?
 
-Nếu bạn xây dựng cả hai phía (server và client) và kiểm soát được toàn bộ code, bạn có thể chấp nhận điều này. Nhưng nếu server và client do các nhóm khác nhau phát triển, bạn nên có thêm xác nhận rằng client không bị tấn công code injection.
+Đặc tả OIDC giải quyết bằng cách đưa thêm một claim đặc biệt gọi là **`c_hash` (Code Hash)** vào bên trong Payload của ID Token:
 
-# Khuyến nghị sử dụng PKCE
+```text
+c_hash = Base64URL( Tả_nửa_phần_đầu( SHA256( authorization_code ) ) )
+```
 
-Để tăng cường bảo vệ, PKCE cung cấp cơ chế chống tấn công authorization code injection từ phía OAuth server. Server sẽ chắc chắn rằng authorization code không bị chèn vì request sẽ bị từ chối nếu có vấn đề.
+> [!IMPORTANT]
+> **Quy trình bắt buộc đối với lập trình viên Client:**
+> Khi nhận được ID Token và Code ở kênh trước:
+> 1.  Client giải mã ID Token, tự thực hiện tính toán hash SHA256 của chuỗi `code` nhận được.
+> 2.  Cắt lấy nửa số byte phần đầu (128 bit đầu tiên) của chuỗi hash đó và mã hóa Base64URL.
+> 3.  Đối chiếu khớp 100% với claim `c_hash` nằm trong ID Token.
+> 4.  **Nếu không khớp:** Hủy bỏ toàn bộ giao dịch ngay lập tức vì mã Code đã bị kẻ tấn công giả mạo hoặc tiêm vào (Code Injection Attack).
 
-Khuyến nghị hiện nay là sử dụng PKCE ngay cả với OpenID Connect, lấy cả ID Token và access token bằng authorization code flow được bảo vệ bởi PKCE.
+---
 
-Điều này áp dụng cho cả confidential và public clients, dù có client secret hay không. Đây là cách đơn giản nhất cho client và cũng an toàn nhất. Lời khuyên chung là sử dụng PKCE với authorization code flow để lấy cả ID Token và access token.
+## 7. Khuyến nghị Bảo mật Hiện đại: PKCE thay thế Hybrid
 
-Đây là lựa chọn an toàn nhất và ít tốn công sức nhất cho lập trình viên ứng dụng, đồng thời đảm bảo bảo mật ở phía authorization server thay vì phụ thuộc vào từng lập trình viên ứng dụng.
+Mặc dù giải thuật `c_hash` của Hybrid Flow rất thông minh, tuy nhiên nó đặt ra gánh nặng lập trình cực kỳ lớn lên vai nhà phát triển ứng dụng khách (họ bắt buộc phải tự viết code mã hóa, băm SHA256 và đối khớp thủ công một cách chính xác). Nếu lập trình viên lười biếng bỏ qua bước này, hệ thống sẽ mở toang cửa cho tin tặc.
+
+Do đó, các khuyến nghị bảo mật OAuth hiện đại nhất đưa ra lời khuyên:
+
+> [!TIP]
+> **Chuyển đổi sang Authorization Code Flow kết hợp PKCE:**
+> *   Thay vì dùng Hybrid Flow phức tạp, hãy sử dụng **Authorization Code Flow tiêu chuẩn kết hợp PKCE** với tham số `response_type=code` và scope `openid`.
+> *   Cơ chế PKCE giúp chốt chặn và xác thực mã ủy quyền **tự động ở phía Authorization Server** mà không cần lập trình viên Client phải tự tính toán khớp `c_hash` thủ công.
+> *   Client nhận đồng thời cả Access Token và ID Token qua kết nối Kênh sau HTTPS cực kỳ an toàn, loại bỏ hoàn toàn việc phải viết mã xác thực chữ ký JWT phức tạp.
+
+---
+
+## 8. Tổng kết
+
+*   **Hybrid Flow (`code id_token`)** cung cấp giải pháp lấy thông tin danh tính sớm ở kênh trước và Access Token an toàn ở kênh sau.
+*   **Bảo vệ bằng `c_hash`:** Claim `c_hash` là vũ khí mật mã tối quan trọng để tự Client phát hiện tấn công Code Injection khi chạy trên Kênh trước.
+*   **Khuyến nghị tối ưu:** Hãy luôn ưu tiên lựa chọn **Authorization Code Flow kết hợp PKCE** để tận dụng tối đa khả năng bảo mật tự động của server, giúp mã nguồn Client luôn ngắn gọn, sạch sẽ và an toàn nhất.
+
+---
+[← Quay lại mục lục](README.md)
