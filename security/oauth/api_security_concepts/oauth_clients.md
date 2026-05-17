@@ -57,4 +57,4 @@ Mỗi môi trường chạy của ứng dụng khách đặt ra các thử thác
 *   Nắm vững sự phân tách trách nhiệm giữa Client và Auth Server giúp bạn viết code gọn gàng, chuẩn chỉ và tối ưu hóa hiệu năng hệ thống.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

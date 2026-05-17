@@ -124,4 +124,4 @@ Do đó, các khuyến nghị bảo mật OAuth hiện đại nhất đưa ra l�
 *   **Khuyến nghị tối ưu:** Hãy luôn ưu tiên lựa chọn **Authorization Code Flow kết hợp PKCE** để tận dụng tối đa khả năng bảo mật tự động của server, giúp mã nguồn Client luôn ngắn gọn, sạch sẽ và an toàn nhất.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

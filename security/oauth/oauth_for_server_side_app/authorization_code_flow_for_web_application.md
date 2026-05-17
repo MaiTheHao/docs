@@ -178,4 +178,4 @@ grant_type=refresh_token
 *   **Nhiệm vụ tiếp theo:** Trong bài học kế tiếp, chúng ta sẽ khảo sát cách thức điều chỉnh luồng này để chạy trực tiếp trên môi trường trình duyệt cho ứng dụng Single Page Application (SPA) khi hoàn toàn thiếu vắng Client Secret.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

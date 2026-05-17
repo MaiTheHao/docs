@@ -114,4 +114,4 @@ Giải pháp tối ưu là sử dụng kết hợp cả hai kênh:
 *   **Vá bảo mật:** Loại bỏ hoàn toàn *Implicit Flow* khỏi hệ thống và chuyển đổi sang *Authorization Code Flow kết hợp PKCE* để tận dụng tối đa sức mạnh bảo mật của Kênh sau trên môi trường trình duyệt hiện đại.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

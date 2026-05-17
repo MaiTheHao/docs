@@ -99,4 +99,4 @@ Do nhận thức rõ các rủi ro bảo mật cố hữu của trình duyệt, 
     *   Nếu muốn an toàn tuyệt đối $\rightarrow$ Chuyển đổi sang mô hình *Backend-for-Frontend (BFF)* để giữ sạch token hoàn toàn ngoài trình duyệt.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

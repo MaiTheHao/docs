@@ -64,4 +64,4 @@ Mặc dù cổng xác thực chuyển hướng luôn là bắt buộc, tuy nhiê
 *   **Bảo vệ quyền riêng tư:** Thiết kế và bật Consent Screen rõ ràng, minh bạch cho các ứng dụng bên thứ ba nhằm nâng cao uy tín bảo mật cho hệ thống của bạn.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

@@ -123,4 +123,4 @@ Dưới đây là bảng so sánh tóm tắt các khía cạnh kỹ thuật cố
 *   Hiểu rõ và phân biệt chính xác hai giao thức này giúp kiến trúc sư phần mềm thiết kế luồng đăng nhập SSO và phân quyền API cực kỳ chuẩn xác, tránh các lỗ hổng bảo mật nghiêm trọng do nhầm lẫn vai trò của token.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

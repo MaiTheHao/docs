@@ -69,4 +69,4 @@ Ngoài các claims hệ thống trên, tùy thuộc vào phạm vi quyền (`sco
 *   **Chuyên đề tiếp theo:** Chúng ta sẽ phân tích sự khác biệt sâu sắc giữa *ID Token* và *Access Token* để tránh các lỗi thiết kế kiến trúc bảo mật tai hại thường gặp trong thực tế.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

@@ -77,4 +77,4 @@ Dưới đây là bảng đối chiếu toàn diện giúp bạn phân biệt r�
 *   **Nhiệm vụ tiếp theo:** Trong bài học kế tiếp, chúng ta sẽ hướng dẫn cách thức Client cấu hình request để xin cấp phát đồng thời cả hai loại token này từ Authorization Server.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

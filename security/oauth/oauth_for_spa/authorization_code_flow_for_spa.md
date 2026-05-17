@@ -140,4 +140,4 @@ grant_type=authorization_code
 *   **Thách thức kế tiếp:** Sau khi lấy được Access Token an toàn về trình duyệt, việc lưu trữ token ở đâu trong trình duyệt để chống lại lỗ hổng XSS sẽ được phân tích sâu ở bài học tiếp theo.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

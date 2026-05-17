@@ -100,4 +100,4 @@ Dưới đây là bảng đối chiếu chi tiết mức độ bảo mật và �
 *   **Bước phát triển tiếp theo:** Trong bài học kế tiếp, chúng ta sẽ khảo sát mô hình **Backend-for-Frontend (BFF)** - giải pháp giữ token 100% ngoài phạm vi của JavaScript bằng cách sử dụng HttpOnly Secure Cookie bảo mật tối đa.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

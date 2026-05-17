@@ -88,4 +88,4 @@ Trách nhiệm xác thực ID Token thay đổi hoàn toàn tùy thuộc vào k�
 *   Chúc mừng bạn! Chúng ta đã hoàn thành việc chuẩn hóa và nâng cấp toàn diện 19 bài học cốt lõi của chuyên đề **OAuth 2.0 & OpenID Connect**.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

@@ -85,4 +85,4 @@ Sự phân chia Client Type quyết định trực tiếp đến **chính sách 
 *   Với **Public Client**, luồng bắt buộc hiện nay là *Authorization Code Flow kết hợp PKCE* nhằm loại bỏ sự phụ thuộc vào Client Secret.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

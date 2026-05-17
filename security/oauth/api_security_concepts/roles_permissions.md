@@ -98,4 +98,4 @@ sequenceDiagram
 *   Trong các bài học tiếp theo, chúng ta sẽ đi sâu phân loại các kiểu ứng dụng khách (**Confidential Client** vs **Public Client**) để hiểu rõ lý do vì sao mỗi loại ứng dụng lại bắt buộc phải áp dụng các cơ chế bảo mật khác nhau.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

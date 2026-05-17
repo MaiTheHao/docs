@@ -97,4 +97,4 @@ Bên cạnh scope `openid` bắt buộc để phát hành ID Token cơ bản (ch
 *   **Chuyên đề tiếp theo:** Chúng ta sẽ tìm hiểu luồng nâng cao phối hợp song song cả kênh trước và kênh sau trong OIDC, được gọi là **Hybrid OpenID Connect Flow**.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

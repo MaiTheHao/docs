@@ -81,4 +81,4 @@ Cơ chế này bắt buộc hệ điều hành di động phải kiểm tra tệ
 *   **Public Client** không thể có danh tính mật mã đáng tin cậy. Do đó, việc triển khai **PKCE** và bảo mật nghiêm ngặt cấu hình **Redirect URIs** (sử dụng HTTPS Web Domain hoặc Universal/App Links) là ranh giới phòng thủ cuối cùng để bảo vệ hệ thống của bạn.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

@@ -80,4 +80,4 @@ Sau khi hoàn tất đăng ký, Auth Server sẽ trả về cặp thông tin xá
 *   **Bảo mật khóa:** Bảo vệ Client Secret giống như bảo vệ mật khẩu cơ sở dữ liệu của bạn, chỉ sử dụng trên môi trường Server-side an toàn.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)

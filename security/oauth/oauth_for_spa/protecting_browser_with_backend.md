@@ -105,4 +105,4 @@ sequenceDiagram
 *   **Chuyên đề tiếp theo:** Chúng ta đã khép lại phần nghiên cứu sâu về các luồng OAuth. Trong mô-đun cuối cùng, chúng ta sẽ chuyển hướng sang tìm hiểu **OpenID Connect (OIDC)** để khám phá cách thức xác thực danh tính người dùng bằng **ID Token**.
 
 ---
-[← Quay lại mục lục](README.md)
+[← Quay lại mục lục](../README.md)
