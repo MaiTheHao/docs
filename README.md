@@ -8,25 +8,19 @@ Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu**
 
 ## Mục lục
 
-### 💻 1. [Programming Languages](programming_languages/) - Ngôn ngữ lập trình
+### 1. [Programming Languages](programming_languages/) - Ngôn ngữ lập trình
 *   [Java](programming_languages/java/) - Tài liệu và PDF về Java
 *   [JavaScript](programming_languages/javascript/) - Tài liệu về JavaScript
 
-### ⚙️ 2. [Backend Development](backend_development/) - Phát triển Backend & Database
-*   [Servlet](backend_development/java_servlet/) - Servlet và Web Application Server
-*   [Spring Boot](backend_development/spring_boot/) - Tài liệu về Spring Boot
-*   [Hibernate & JPA](backend_development/hibernate_jpa/) - ORM Framework cho Java
-*   [N+1 Problem](backend_development/n_plus_one_problem/) - Vấn đề N+1 trong cơ sở dữ liệu
-
-### 🛡️ 3. [Security](security/) - Xác thực và Bảo mật
+### 2. [Security](security/) - Xác thực và Bảo mật
 *   [JWT](security/jwt/README.md) - JSON Web Tokens - Xác thực và bảo mật
 *   [OAuth](security/oauth/) - Xác thực và ủy quyền OAuth
 
-### 📐 4. [Software Architecture](architecture/) - Kiến trúc phần mềm
+### 3. [Software Architecture](architecture/) - Kiến trúc phần mềm
 *   [Design Patterns](architecture/design_patterns/) - Các mẫu thiết kế phần mềm
 *   [Project Structure Patterns](architecture/project-structure-patterns/) - Các mẫu cấu trúc dự án
 
-### 🌐 5. [Computer Networking](computer_networking/) - Mạng máy tính
+### 4. [Computer Networking](computer_networking/) - Mạng máy tính
 *   [Computer Networking](computer_networking/) - Các kiến thức về mạng máy tính và giao thức mạng
 
 ---
