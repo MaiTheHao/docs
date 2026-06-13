@@ -23,6 +23,9 @@ Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu**
 ### 4. [Computer Networking](computer_networking/) - Mạng máy tính
 *   [Computer Networking](computer_networking/) - Các kiến thức về mạng máy tính và giao thức mạng
 
+### 5. [Web Notifications](web_notifications/) - Thông báo đẩy trên nền web
+*   [Web Notifications](web_notifications/) - Kiến trúc, luồng hoạt động FCM/Web Push API và hướng dẫn triển khai
+
 ---
 
 ## Liên hệ
