@@ -1,6 +1,6 @@
 # Abstract Factory Pattern
 
-`Abstract Factory` giúp tạo ra **họ các sản phẩm** liên quan thông qua `Concrete Factory`.
+`Abstract Factory` (còn được gọi là **Kit**) giúp tạo ra **họ các sản phẩm** liên quan thông qua `Concrete Factory`.
 
 > Nó khác với `Factory Method` ở chỗ **"tạo ra họ sản phẩm"** chứ không phải một sản phẩm cụ thể.
 
@@ -61,3 +61,6 @@ Với **Abstract Factory pattern**, bạn chỉ cần một factory cho mỗi nh
 > -   Dễ bảo trì do các `FactoryConcrete` tách biệt.
 > -   Số lượng `ConcreteClass` nhiều.
 > -   Khó mở rộng theo chiều dọc.
+
+---
+[← Quay lại mục lục Creational](README.md)

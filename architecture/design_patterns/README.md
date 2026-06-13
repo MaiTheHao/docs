@@ -10,6 +10,7 @@
 <details>
 <summary><strong>Creational Patterns</strong></summary>
 
+-   [Giới thiệu Creational Patterns](./creational/README.md)
 -   [Singleton Pattern](./creational/singleton.md)
 -   [Prototype Pattern](./creational/prototype.md)
 -   [Factory Method Pattern](./creational/factory_method.md)

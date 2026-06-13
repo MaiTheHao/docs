@@ -50,11 +50,15 @@ public class UserManager {
     private final LoggerService loggerService;
     private final UserValidator userValidator;
 
-    public UserManager() {
-        this.userRepository = new UserRepository();
-        this.emailService = new EmailService();
-        this.loggerService = new LoggerService();
-        this.userValidator = new UserValidator();
+    // Dependency Injection thông qua constructor
+    public UserManager(UserRepository userRepository, 
+                       EmailService emailService, 
+                       LoggerService loggerService, 
+                       UserValidator userValidator) {
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+        this.loggerService = loggerService;
+        this.userValidator = userValidator;
     }
 
     public void registerUser(User user) {...}

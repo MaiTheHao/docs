@@ -83,3 +83,6 @@ public static synchronized App getInstance() {
 -   Phụ thuộc không rõ ràng: Các phần khác nhau của mã có thể phụ thuộc vào singleton mà không thể hiện rõ ràng trong cấu trúc code.
 -   Vấn đề với biến tĩnh và bộ nạp lớp: Singleton có thể không thực sự duy nhất nếu ứng dụng sử dụng nhiều class loader (ví dụ: trong môi trường web).
 -   Trạng thái toàn cục có thể thay đổi: Singleton có trạng thái toàn cục dễ bị thay đổi, dẫn đến lỗi khó kiểm soát và bảo trì.
+
+---
+[← Quay lại mục lục Creational](README.md)

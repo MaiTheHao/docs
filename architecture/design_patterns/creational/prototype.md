@@ -41,3 +41,6 @@ public class Dog extends Animal {
 
 -   Cần đảm bảo clone đúng (deep/shallow copy).
 -   Có thể phức tạp khi đối tượng có nhiều tham chiếu lồng nhau.
+
+---
+[← Quay lại mục lục Creational](README.md)

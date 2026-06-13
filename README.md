@@ -18,6 +18,8 @@ Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu**
 
 ### 3. [Software Architecture](architecture/) - Kiến trúc phần mềm
 *   [Design Patterns](architecture/design_patterns/) - Các mẫu thiết kế phần mềm
+    *   [SOLID Principles](architecture/design_patterns/solid/) - 5 Nguyên lý thiết kế hướng đối tượng
+    *   [Creational Patterns](architecture/design_patterns/creational/) - Các mẫu thiết kế khởi tạo
 *   [Project Structure Patterns](architecture/project-structure-patterns/) - Các mẫu cấu trúc dự án
 
 ### 4. [Computer Networking](computer_networking/) - Mạng máy tính

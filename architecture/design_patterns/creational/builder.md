@@ -61,3 +61,6 @@ public class GamingComputerBuilder extends ComputerBuilder {
 
 -   Số lượng class tăng khi có nhiều loại builder.
 -   Có thể dư thừa nếu đối tượng đơn giản.
+
+---
+[← Quay lại mục lục Creational](README.md)

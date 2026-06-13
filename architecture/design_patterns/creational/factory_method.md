@@ -24,7 +24,7 @@ Nhưng với Simple Factory, nó không đáp ứng được **Open/Closed Princ
 
 ## Factory Method (Design Pattern)
 
-Đến với **Factory Method**, nó sẽ hoạt động đáp ứng SOLID hơn và sẽ giải quyết được vấn đề của `Simple Factory`.
+Đến với **Factory Method** (còn gọi là **Virtual Constructor**), nó sẽ hoạt động đáp ứng SOLID hơn và sẽ giải quyết được vấn đề của `Simple Factory`.
 
 ### Sơ đồ UML
 
@@ -140,3 +140,6 @@ public class Main {
     }
 }
 ```
+
+---
+[← Quay lại mục lục Creational](README.md)
