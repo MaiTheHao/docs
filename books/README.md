@@ -21,7 +21,7 @@ Chào mừng bạn đến với thư viện sách kỹ thuật cá nhân. Dướ
 ---
 
 ### **3. Design Patterns: Elements of Reusable Object-Oriented Software**
-* **File:** [Design Patterns - Elements of Reusable Object-Oriented Software.epub](Design Patterns - Elements of Reusable Object-Oriented Software.epub)
+* **File:** [design_patterns.epub](design_patterns.epub)
 * **Mô tả:** Cuốn sách huyền thoại của **Gang of Four** (Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides) – thường được gọi tắt là **GoF Design Patterns**. Đây là một trong những cuốn sách ảnh hưởng nhất trong lịch sử lập trình hướng đối tượng.
 * **Nội dung nổi bật:** Cuốn sách hệ thống hóa **23 design patterns** kinh điển, chia thành 3 nhóm: **Creational**, **Structural** và **Behavioral**. Mỗi pattern được trình bày cực kỳ chi tiết: Intent, Motivation, Applicability, Structure, Participants, Collaborations, Consequences, Implementation, Sample Code, Known Uses và Related Patterns.
 * **Đối tượng phù hợp:** Dù đã hơn 30 năm tuổi, các pattern này vẫn là nền tảng cho tư duy thiết kế phần mềm hiện đại. Đây là cuốn sách giúp bạn hiểu "tại sao" thay vì chỉ "cách làm", nâng cao khả năng nhận diện vấn đề và áp dụng giải pháp đã được kiểm chứng qua hàng triệu dự án.
@@ -29,7 +29,7 @@ Chào mừng bạn đến với thư viện sách kỹ thuật cá nhân. Dướ
 ---
 
 ### **4. Fundamentals of Software Architecture, 2nd Edition**
-* **File:** [Fundamentals of Software Architecture, 2nd Edition.epub](Fundamentals of Software Architecture, 2nd Edition.epub)
+* **File:** [fundamentals_of_software_architecture_2nd.epub](fundamentals_of_software_architecture_2nd.epub)
 * **Mô tả:** Cuốn sách xuất sắc của **Mark Richards** và **Neal Ford** – hai chuyên gia kiến trúc phần mềm hàng đầu. Phiên bản 2nd Edition cập nhật rất nhiều nội dung về kiến trúc hiện đại (microservices, event-driven, serverless, data architecture…).
 * **Nội dung nổi bật:** Cuốn sách tập trung vào các khái niệm cốt lõi: **Architecture Characteristics** (availability, scalability, performance, fault tolerance, security…), **Architecture Styles** (Layered, Modular Monolith, Microservices, Event-Driven, Space-Based, Service-Based…), **Architecture Decision Records (ADR)**, **Trade-off Analysis**, và vai trò của **Architect** trong tổ chức.
 * **Đối tượng phù hợp:** Điểm mạnh của cuốn sách là cách tiếp cận thực tế, giúp bạn hiểu rằng không có kiến trúc nào là hoàn hảo, chỉ có kiến trúc phù hợp với ngữ cảnh. Rất phù hợp cho những ai muốn chuyển từ Senior Developer sang Software Architect hoặc Tech Lead.
@@ -53,7 +53,7 @@ Chào mừng bạn đến với thư viện sách kỹ thuật cá nhân. Dướ
 ---
 
 ### **7. Microservices with Spring Boot and Spring Cloud, 4th Edition**
-* **File:** [Microservices with Spring Boot and Spring Cloud, 4th Edition.epub](Microservices with Spring Boot and Spring Cloud, 4th Edition.epub)
+* **File:** [mivroservices_with_spring_boot_and_spring_cloud_4th.epub](mivroservices_with_spring_boot_and_spring_cloud_4th.epub)
 * **Mô tả:** Cuốn sách thực chiến cực mạnh về **Microservices** sử dụng **Spring Boot** và **Spring Cloud** (phiên bản mới nhất).
 * **Nội dung nổi bật:** Cuốn sách hướng dẫn xây dựng hệ thống microservices hoàn chỉnh từ A-Z: Service Registration & Discovery (Eureka), API Gateway, Load Balancing (Ribbon, Spring Cloud LoadBalancer), Circuit Breaker (Resilience4j), Distributed Tracing (Zipkin, Sleuth/Micrometer), Configuration Management (Spring Cloud Config), Event-Driven Architecture (Spring Cloud Stream + Kafka/RabbitMQ), Security (OAuth2, JWT), Containerization với Docker, và Deployment với Kubernetes.
 * **Đối tượng phù hợp:** Đây là tài liệu thực hành xuất sắc dành cho Java/Spring developers muốn chuyển từ monolithic sang microservices architecture một cách bài bản và chuyên nghiệp.
