@@ -36,15 +36,7 @@ Chào mừng bạn đến với thư viện sách kỹ thuật cá nhân. Dướ
 
 ---
 
-### **5. Learn Docker in a Month of Lunches, Second Edition**
-* **File:** [Learn Docker in a Month of Lunches, Second Edition.epub](Learn Docker in a Month of Lunches, Second Edition.epub)
-* **Mô tả:** Cuốn sách thực hành xuất sắc nhất để học **Docker** của **Elton Stoneman**. Được viết theo phong cách "Month of Lunches" – mỗi chương là một buổi học ngắn gọn nhưng cực kỳ thực tế.
-* **Nội dung nổi bật:** Cuốn sách bao quát từ cơ bản đến nâng cao: Docker Image, Container, Dockerfile, Docker Compose, Multi-stage builds, Volumes, Networking, Swarm, Security, CI/CD integration, và cách sử dụng Docker trong môi trường production. Phiên bản 2nd Edition cập nhật Docker Desktop, BuildKit, Compose V2 và nhiều tính năng mới.
-* **Đối tượng phù hợp:** Đây là cuốn sách lý tưởng cho Developer, DevOps, và SysAdmin muốn nắm vững Docker một cách nhanh chóng và thực tế nhất, thay vì chỉ đọc lý thuyết suông.
-
----
-
-### **6. Learning SQL, 3rd Edition**
+### **5. Learning SQL, 3rd Edition**
 * **File:** [learning_sql_3rd_edition.epub](learning_sql_3rd_edition.epub)
 * **Mô tả:** Cuốn sách kinh điển để học **SQL** của **Alan Beaulieu**. Dù là lập trình viên hay data analyst, đây vẫn là một trong những cuốn sách tốt nhất về SQL.
 * **Nội dung nổi bật:** Cuốn sách dạy bạn cách suy nghĩ theo kiểu tập hợp (set-based thinking), viết query hiệu quả, tối ưu performance, sử dụng Window Functions, Common Table Expressions (CTE), Recursive Queries, Pivot/Unpivot, và các kỹ thuật nâng cao khác. Phiên bản 3rd Edition cập nhật nhiều nội dung về SQL chuẩn ANSI và các tính năng mới của các DBMS phổ biến (MySQL, PostgreSQL, SQL Server, Oracle).
@@ -52,7 +44,7 @@ Chào mừng bạn đến với thư viện sách kỹ thuật cá nhân. Dướ
 
 ---
 
-### **7. Microservices with Spring Boot and Spring Cloud, 4th Edition**
+### **6. Microservices with Spring Boot and Spring Cloud, 4th Edition**
 * **File:** [mivroservices_with_spring_boot_and_spring_cloud_4th.epub](mivroservices_with_spring_boot_and_spring_cloud_4th.epub)
 * **Mô tả:** Cuốn sách thực chiến cực mạnh về **Microservices** sử dụng **Spring Boot** và **Spring Cloud** (phiên bản mới nhất).
 * **Nội dung nổi bật:** Cuốn sách hướng dẫn xây dựng hệ thống microservices hoàn chỉnh từ A-Z: Service Registration & Discovery (Eureka), API Gateway, Load Balancing (Ribbon, Spring Cloud LoadBalancer), Circuit Breaker (Resilience4j), Distributed Tracing (Zipkin, Sleuth/Micrometer), Configuration Management (Spring Cloud Config), Event-Driven Architecture (Spring Cloud Stream + Kafka/RabbitMQ), Security (OAuth2, JWT), Containerization với Docker, và Deployment với Kubernetes.
