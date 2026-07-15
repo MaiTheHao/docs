@@ -15,7 +15,7 @@ Chương này giới thiệu khái niệm cơ bản về hệ thống quản lý
 
 ## 1.1 Version Control System là gì?
 
-**Version Control System (VCS)** — Hệ thống quản lý phiên bản — là một công cụ phần mềm ghi lại các thay đổi của tập tin theo thời gian, cho phép bạn triệu hồi lại bất kỳ phiên bản nào trong quá khứ.
+**Version Control System (VCS)** — Hệ thống quản lý phiên bản — là một công cụ phần mềm ghi lại lịch sử thay đổi của các tập tin theo thời gian, giúp bạn dễ dàng khôi phục hoặc xem lại bất kỳ phiên bản nào trong quá khứ.
 
 **Nguyên lý hoạt động cốt lõi:**
 - **Lưu trữ lịch sử thay đổi**: Mỗi lần bạn "commit" (lưu lại), VCS chụp ảnh trạng thái của các tập tin tại thời điểm đó.
@@ -96,7 +96,7 @@ timeline
 ### Distributed VCS (VCS phân tán — DVCS)
 - Mỗi developer có toàn bộ bản sao kho (bao gồm toàn bộ lịch sử commits).
 - **Ưu điểm**: Làm việc offline hoàn hảo, không có single point of failure, tốc độ xử lý nhanh, backup phân tán trên mọi máy client.
-- **Nhược điểm**: Đường cong học tập dốc hơn, tốn dung lượng đĩa cho lịch sử ban đầu khi clone.
+- **Nhược điểm**: Khó làm quen hơn đối với người mới bắt đầu, tốn dung lượng đĩa ban đầu khi thực hiện tải về (clone) toàn bộ lịch sử.
 - **Đại diện**: Git (2005), Mercurial (2005).
 
 ---
