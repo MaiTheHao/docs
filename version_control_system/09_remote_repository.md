@@ -1,4 +1,4 @@
-# Chương 10. Làm việc với Remote Repository
+# Chương 9. Làm việc với Remote Repository
 
 Chương này hướng dẫn cách làm việc với các kho lưu trữ từ xa (Remote Repository), làm rõ các thuật ngữ như origin, upstream, cách quản lý nhánh từ xa và so sánh chi tiết giữa lệnh fetch và pull.
 

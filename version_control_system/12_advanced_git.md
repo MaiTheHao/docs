@@ -1,4 +1,4 @@
-# Chương 13. Git nâng cao
+# Chương 12. Git nâng cao
 
 Chương này giới thiệu các công cụ và tính năng nâng cao trong Git phục vụ cho việc quản lý các dự án phức tạp, gỡ lỗi hiệu quả, nhúng các thư viện mã nguồn ngoài và tối ưu hóa quy trình tự động hóa.
 

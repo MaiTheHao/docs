@@ -1,4 +1,4 @@
-# Chương 9. Làm việc với lịch sử
+# Chương 8. Làm việc với lịch sử
 
 Chương này hướng dẫn các kỹ thuật nâng cao để kiểm tra lịch sử dự án, phục hồi mã nguồn bị mất, và các công cụ mạnh mẽ để hoàn tác (undo), chỉnh sửa lịch sử (rewrite history) một cách an toàn.
 

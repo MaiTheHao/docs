@@ -16,17 +16,16 @@ Tài liệu này cung cấp cái nhìn toàn diện và chi tiết nhất về h
 <details>
 <summary><strong>2. Sử dụng Git cơ bản (Git Basics)</strong></summary>
 
--   [Chương 6. Cài đặt Git](06_installation.md)
--   [Chương 7. Các lệnh Git cơ bản](07_basic_commands.md)
--   [Chương 8. Quản lý Branch](08_branch_management.md)
+-   [Chương 6. Các lệnh Git cơ bản](06_basic_commands.md)
+-   [Chương 7. Quản lý Branch](07_branch_management.md)
 
 </details>
 
 <details>
 <summary><strong>3. Làm việc nâng cao với Git (Advanced Git)</strong></summary>
 
--   [Chương 9. Làm việc với lịch sử](09_history_manipulation.md)
--   [Chương 13. Git nâng cao](13_advanced_git.md)
+-   [Chương 8. Làm việc với lịch sử](08_history_manipulation.md)
+-   [Chương 12. Git nâng cao](12_advanced_git.md)
 
 </details>
 
@@ -35,17 +34,17 @@ Tài liệu này cung cấp cái nhìn toàn diện và chi tiết nhất về h
 
 -   [Chương 4. GitHub và GitLab](04_github_and_gitlab.md)
 -   [Chương 5. Git vs GitHub vs GitLab](05_git_vs_github_vs_gitlab.md)
--   [Chương 10. Làm việc với Remote Repository](10_remote_repository.md)
--   [Chương 11. GitHub Workflow](11_github_workflow.md)
--   [Chương 12. Các Workflow phổ biến](12_common_workflows.md)
+-   [Chương 9. Làm việc với Remote Repository](09_remote_repository.md)
+-   [Chương 10. GitHub Workflow](10_github_workflow.md)
+-   [Chương 11. Các Workflow phổ biến](11_common_workflows.md)
 
 </details>
 
 <details>
 <summary><strong>5. Best Practices & Phụ lục (Best Practices & Appendix)</strong></summary>
 
--   [Chương 14. Best Practices](14_best_practices.md)
--   [Phụ lục. Cheat Sheet, Thuật ngữ, FAQ, Tài liệu tham khảo](15_appendix.md)
+-   [Chương 13. Best Practices](13_best_practices.md)
+-   [Phụ lục. Cheat Sheet, Thuật ngữ, FAQ, Tài liệu tham khảo](14_appendix.md)
 
 </details>
 

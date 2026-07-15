@@ -1,4 +1,4 @@
-# Chương 11. GitHub Workflow
+# Chương 10. GitHub Workflow
 
 Chương này hướng dẫn quy trình làm việc chuẩn mực trên GitHub (GitHub Workflow) — quy trình được hàng triệu lập trình viên và doanh nghiệp áp dụng để cộng tác và đóng góp mã nguồn hiệu quả.
 

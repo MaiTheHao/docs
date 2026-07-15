@@ -1,4 +1,4 @@
-# Chương 14. Best Practices
+# Chương 13. Best Practices
 
 Chương này tổng hợp các quy tắc ứng xử chuẩn mực (Best Practices) khi làm việc với Git nhằm tối ưu hiệu suất làm việc nhóm, bảo vệ mã nguồn an toàn và xây dựng lịch sử commit rõ ràng, chuyên nghiệp.
 

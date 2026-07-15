@@ -1,4 +1,4 @@
-# Chương 7. Các lệnh Git cơ bản
+# Chương 6. Các lệnh Git cơ bản
 
 Chương này trình bày các nhóm lệnh Git cơ bản và thiết yếu nhất mà bạn sẽ sử dụng hàng ngày để làm việc trên local và đồng bộ hóa code lên máy chủ từ xa.
 

@@ -115,9 +115,6 @@ SHA-1("blob 13Hello, World!") = 8ab686e...
 - **Git 2.51 (2025)**: SHA-256 trở thành thuật toán mặc định cho các repository mới (Git 3.0).
 - **Hệ sinh thái**: GitHub hiện tại vẫn chưa hỗ trợ hoàn toàn SHA-256 repos (tính đến tháng 7/2026), trong khi GitLab và Forgejo đã có các bản thử nghiệm/hỗ trợ chính thức từ sớm.
 
-> [!WARNING]
-> **Quan điểm Skeptic**: Quá trình chuyển đổi sang SHA-256 hiện đang gặp nhiều trì trệ (stalled). Code tương thích ngược (interoperability) chỉ hoàn thành khoảng 25% (100 trên tổng số 200-400 patches). Sự sẵn sàng của hệ sinh thái (Ecosystem readiness) là rào cản lớn nhất.
-
 ### Blob
 - Đối tượng lưu trữ nội dung thô của file (không bao gồm các thông tin như tên file hay quyền truy cập).
 - Hai file có nội dung giống hệt nhau sẽ có chung một mã hash SHA-1 bất kể tên file hoặc vị trí của chúng ở đâu.

@@ -127,8 +127,7 @@ timeline
 6. **Linh hoạt**: Hỗ trợ mọi workflow từ đơn giản đến phức tạp.
 7. **Ecosystem**: Các nền tảng lớn như GitHub, GitLab, Bitbucket hỗ trợ tối đa.
 
-> [!WARNING]
-> **Quan điểm phản biện (từ Skeptic Research)**: Git KHÔNG phải là lựa chọn tốt nhất cho mọi trường hợp. Perforce vượt trội cho binary lớn (game dev). SVN đơn giản hơn cho người mới. Fossil tích hợp sẵn wiki+tickets. Git có ~44+ CVE lịch sử và UX được đánh giá là phức tạp không cần thiết.
+> Git KHÔNG phải là lựa chọn tốt nhất cho mọi trường hợp. Perforce vượt trội cho binary lớn (game dev). SVN đơn giản hơn cho người mới. Fossil tích hợp sẵn wiki+tickets. Git có ~44+ CVE lịch sử và UX được đánh giá là phức tạp không cần thiết.
 
 ---
 [← Quay lại mục lục](README.md)

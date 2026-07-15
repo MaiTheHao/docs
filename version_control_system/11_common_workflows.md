@@ -1,4 +1,4 @@
-# Chương 12. Các Workflow phổ biến
+# Chương 11. Các Workflow phổ biến
 
 Chương này phân tích các mô hình quy trình làm việc (Workflows) phổ biến trong dự án phần mềm, từ đơn giản đến phức tạp, và hướng dẫn cách chọn chiến lược gộp code tối ưu.
 

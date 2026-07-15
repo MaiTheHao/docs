@@ -1,4 +1,4 @@
-# Chương 8. Quản lý Branch
+# Chương 7. Quản lý Branch
 
 Chương này trình bày khái niệm về nhánh (Branch) — một trong những tính năng mạnh mẽ nhất giúp Git vượt trội hơn các VCS khác, cách tạo, chuyển đổi, hợp nhất nhánh (Merge), giải quyết xung đột (Merge Conflict), dời gốc nhánh (Rebase) và lấy commit cụ thể (Cherry-pick).
 
