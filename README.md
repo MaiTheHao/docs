@@ -28,6 +28,12 @@ Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu**
 ### 5. [Web Notifications](web_notifications/) - Thông báo đẩy trên nền web
 *   [Web Notifications](web_notifications/) - Kiến trúc, luồng hoạt động FCM/Web Push API và hướng dẫn triển khai
 
+### 6. [NGINX](nginx/README.md) - Web Server & Reverse Proxy
+*   [NGINX](nginx/README.md) - Hướng dẫn toàn diện từ kiến trúc Event-Driven, C10K, Cấu hình, Caching, SSL/TLS đến Trade-offs
+
+### 7. [Version Control System](version_control_system/README.md) - Hệ thống Quản lý Phiên bản
+*   [Git & GitHub](version_control_system/README.md) - Hướng dẫn toàn diện từ Version Control đến cộng tác phần mềm
+
 ---
 
 ## Liên hệ
