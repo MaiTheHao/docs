@@ -4,12 +4,12 @@ Chương này phân tích chi tiết cơ chế MVCC, sự tiến hóa từ mô h
 
 ## Mục lục
 
-- [1.1 Vấn đề của Concurrency Control truyền thống](#11-vấn-đề-của-concurrency-control-truyền-thống)
-- [1.2 Kỷ nguyên Single-Version: Cơ chế Khóa 2PL](#12-kỷ-nguyên-single-version-cơ-chế-khóa-2pl)
-- [1.3 MVCC trong PostgreSQL — Append-Only Heap](#13-mvcc-trong-postgresql--append-only-heap)
-- [1.4 MVCC trong MySQL InnoDB — In-place & Undo Log](#14-mvcc-trong-mysql-innodb--in-place--undo-log)
-- [1.5 Các Cấp độ Cô lập Transaction](#15-các-cấp-độ-cô-lập-transaction)
-- [1.6 Bảng So sánh Kiến trúc MVCC](#16-bảng-so-sánh-kiến-trúc-mvcc)
+-   [1.1 Vấn đề của Concurrency Control truyền thống](#11-vấn-đề-của-concurrency-control-truyền-thống)
+-   [1.2 Kỷ nguyên Single-Version: Cơ chế Khóa 2PL](#12-kỷ-nguyên-single-version-cơ-chế-khóa-2pl)
+-   [1.3 MVCC trong PostgreSQL — Append-Only Heap](#13-mvcc-trong-postgresql--append-only-heap)
+-   [1.4 MVCC trong MySQL InnoDB — In-place & Undo Log](#14-mvcc-trong-mysql-innodb--in-place--undo-log)
+-   [1.5 Các Cấp độ Cô lập Transaction](#15-các-cấp-độ-cô-lập-transaction)
+-   [1.6 Bảng So sánh Kiến trúc MVCC](#16-bảng-so-sánh-kiến-trúc-mvcc)
 
 ---
 
@@ -27,11 +27,11 @@ MVCC ra đời để giải quyết triệt để vấn đề này bằng nguyê
 
 ## 1.2 Kỷ nguyên Single-Version: Cơ chế Khóa 2PL
 
-Trước khi có MVCC, dữ liệu chỉ tồn tại ở **duy nhất 1 phiên bản vật lý (Single Version)** trên đĩa. Cơ chế Two-Phase Locking (2PL) kiểm soát đồng thời bằng cách:
+Trước khi có MVCC, dữ liệu chỉ tồn tại ở **duy nhất 1 phiên bản vật lý (Single Version)** trên đĩa. Cơ chế **Two-Phase Locking (2PL)** kiểm soát đồng thời bằng cách:
 
-- Mọi câu lệnh **Đọc (READ)** phải xin **Shared Lock (S-Lock)**.
-- Mọi câu lệnh **Ghi (WRITE)** phải xin **Exclusive Lock (X-Lock)**.
-- Thao tác WRITE chặn tất cả READ/WRITE khác trên cùng dòng/bảng đó.
+*   Mọi câu lệnh **Đọc (READ)** phải xin **Shared Lock (S-Lock)**.
+*   Mọi câu lệnh **Ghi (WRITE)** phải xin **Exclusive Lock (X-Lock)**.
+*   Thao tác WRITE chặn tất cả READ/WRITE khác trên cùng dòng/bảng đó.
 
 ### Các Transaction State trong mô hình Single-State
 
@@ -68,7 +68,9 @@ PostgreSQL áp dụng mô hình **Append-Only** trên bảng Heap. Dữ liệu c
 
 ### Quy trình DML
 
-```
+Mỗi thao tác DML trong Postgres không ghi đè mà tạo ra các phiên bản tuple mới:
+
+```text
 INSERT → Tạo tuple mới: xmin = XID_hiện_tại, xmax = 0
 DELETE → Không xóa vật lý, chỉ đánh dấu: xmax = XID_hiện_tại
 UPDATE → DELETE (gán xmax) + INSERT (tạo tuple mới với xmin mới)
@@ -84,9 +86,9 @@ UPDATE → DELETE (gán xmax) + INSERT (tạo tuple mới với xmin mới)
 
 ### Tác động Hiệu năng
 
-- **Table Bloat (Phình bảng):** UPDATE/DELETE liên tục tích lũy "Dead Tuples" làm phình file dữ liệu trên đĩa.
-- **AUTOVACUUM:** Tiến trình ngầm quét Heap Pages để dọn Dead Tuples, cập nhật Free Space Map (FSM) và Visibility Map (VM). Dưới tải cao, AUTOVACUUM ngốn Disk I/O rất lớn.
-- **HOT (Heap-Only Tuple):** Nếu tuple mới nằm cùng Data Page với tuple cũ **và** không có cột Secondary Index nào bị thay đổi, Postgres chỉ nối con trỏ nội bộ mà không tạo entry mới trên Secondary Index — giảm đáng kể hiện tượng phình Index.
+*   **Table Bloat (Phình bảng):** UPDATE/DELETE liên tục tích lũy "Dead Tuples" làm phình file dữ liệu trên đĩa.
+*   **AUTOVACUUM:** Tiến trình ngầm quét Heap Pages để dọn Dead Tuples, cập nhật Free Space Map (FSM) và Visibility Map (VM). Dưới tải cao, AUTOVACUUM ngốn Disk I/O rất lớn.
+*   **HOT (Heap-Only Tuple):** Nếu tuple mới nằm cùng Data Page với tuple cũ **và** không có cột Secondary Index nào bị thay đổi, Postgres chỉ nối con trỏ nội bộ mà không tạo entry mới trên Secondary Index — giảm đáng kể hiện tượng phình Index.
 
 ---
 
@@ -96,7 +98,7 @@ UPDATE → DELETE (gán xmax) + INSERT (tạo tuple mới với xmin mới)
 
 Năm 1995, **Michael "Monty" Widenius** phát triển MySQL với engine MyISAM — không có Transaction, không MVCC, dùng Table-level Locking. Điểm mạnh duy nhất: đọc cực nhanh, phù hợp Web 2.0 sơ khai.
 
-Khi các ứng dụng tài chính và TMĐT yêu cầu tính toàn vẹn dữ liệu (ACID), kỹ sư người Phần Lan **Heikki Tuuri** (công ty Innobase Oy) đã tạo ra Storage Engine **InnoDB** với triết lý trái ngược hoàn toàn với Postgres: **ghi đè in-place, dữ liệu cũ đẩy sang vùng nhớ riêng (Undo Log)**. Thiết kế này tối ưu cho workload OLTP (Online Transaction Processing) điển hình — đọc nhanh, ghi nhanh, ít bloat.
+Khi các ứng dụng tài chính và TMĐT yêu cầu tính toàn vẹn dữ liệu (ACID), kỹ sư người Phần Lan **Heikki Tuuri** (công ty Innobase Oy) tạo ra Storage Engine **InnoDB** với triết lý trái ngược hoàn toàn với Postgres: **ghi đè in-place, dữ liệu cũ đẩy sang vùng nhớ riêng (Undo Log)**. Thiết kế này tối ưu cho workload OLTP điển hình — đọc nhanh, ghi nhanh, ít bloat.
 
 Năm 2005, Oracle mua lại Innobase Oy. Năm 2010, Oracle thâu tóm Sun Microsystems (sở hữu MySQL). Do lo ngại Oracle độc quyền, Monty Widenius fork MySQL thành **MariaDB** — đặt tên theo con gái thứ hai của ông.
 
@@ -114,7 +116,7 @@ MySQL InnoDB lưu trữ dữ liệu theo cấu trúc **Clustered Index (B+Tree s
 
 ### Cơ chế Read View & Undo Log Chain
 
-Khi một Transaction thực hiện SELECT, InnoDB tạo ra một **Read View** (chứa danh sách các TRX_ID đang hoạt động). Nếu bản ghi hiện tại có `DB_TRX_ID` nằm trong danh sách đó (chưa Commit), InnoDB theo con trỏ `DB_ROLL_PTR` lội ngược chuỗi **Undo Log Chain** để tái tạo phiên bản dữ liệu nhất quán tại thời điểm Transaction bắt đầu.
+Khi một Transaction thực hiện `SELECT`, InnoDB tạo ra một **Read View** (chứa danh sách các `TRX_ID` đang hoạt động). Nếu bản ghi hiện tại có `DB_TRX_ID` nằm trong danh sách đó (chưa Commit), InnoDB theo con trỏ `DB_ROLL_PTR` lội ngược chuỗi **Undo Log Chain** để tái tạo phiên bản dữ liệu nhất quán tại thời điểm Transaction bắt đầu.
 
 ### Trạng thái Record & Undo Chain
 
@@ -147,7 +149,7 @@ Với MVCC, khái niệm "trạng thái dữ liệu của một Transaction" kh�
 
 | Tiêu chí | PostgreSQL (Append-Only) | MySQL InnoDB (In-place + Undo Log) |
 | :--- | :--- | :--- |
-| **Triết lý nguồn gốc** | "Never Overwrite" — Stonebraker, UC Berkeley (1986) | OLTP thực tiễn — Heikki Tuuri, Innobase Oy (InnoDB ~2001) |
+| **Triết lý nguồn gốc** | "Never Overwrite" — Stonebraker, UC Berkeley (1986) | OLTP thực tiễn — Heikki Tuuri, Innobase Oy (~2001) |
 | **Vị trí lưu tuple cũ** | Nằm trực tiếp trong Heap Page cùng tuple mới. | Nằm ở vùng đệm riêng biệt (Undo Log Segment). |
 | **Cơ chế UPDATE** | Tạo Tuple mới hoàn toàn + Cập nhật tất cả Secondary Indexes (trừ khi đạt HOT). | Ghi đè in-place trên Clustered Index + Đẩy bản cũ vào Undo Log. |
 | **Thao tác dọn rác** | AUTOVACUUM quét Data Page — rất nặng I/O. | Purge Threads tự động xóa Undo Log — bảng chính không bị bloat. |
