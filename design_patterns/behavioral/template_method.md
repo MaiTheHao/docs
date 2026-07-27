@@ -44,6 +44,38 @@ classDiagram
 | `DataProcessor` | Abstract Class | Định nghĩa phương thức khuôn mẫu (`process`) được khai báo `final` để tránh ghi đè, và các phương thức trừu tượng phụ trợ. |
 | `CsvDataProcessor`| Concrete Class | Kế thừa lớp cha, triển khai chi tiết các phương thức xử lý đặc thù cho tệp tin CSV (`readData`, `processData`). |
 
+### Sequence Diagram — Luồng thực thi Template Method
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Processor as CsvDataProcessor (Concrete)
+    participant Abstract as DataProcessor (Abstract)
+
+    Client->>Processor: process()
+    Note over Processor: Gọi final method từ lớp cha
+    Processor->>Abstract: process() [final template]
+    Abstract->>Processor: readData() [abstract hook]
+    Processor-->>Abstract: "Reading CSV..."
+    Abstract->>Processor: processData() [abstract hook]
+    Processor-->>Abstract: "Processing CSV..."
+    Abstract->>Abstract: saveData() [concrete step]
+    Abstract-->>Client: "Saving to database..."
+```
+
+### Flowchart — Cấu trúc Template Method
+
+```mermaid
+flowchart TD
+    Call["Client gọi\nprocessor.process()"] --> Template["DataProcessor.process()\n(final — không được override)"]
+    Template --> Step1["readData()\n(abstract — bắt buộc override)"]
+    Template --> Step2["processData()\n(abstract — bắt buộc override)"]
+    Template --> Step3["saveData()\n(concrete — có sẵn implementation)"]
+    Step1 --> CsvRead["CsvDataProcessor:\nĐọc từ file CSV"]
+    Step2 --> CsvProcess["CsvDataProcessor:\nXử lý cấu trúc CSV"]
+    Step3 --> DB["Lưu vào Database\n(giống nhau cho mọi Processor)"]
+```
+
 ---
 
 ## 3. Ứng dụng thực tế

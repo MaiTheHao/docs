@@ -73,4 +73,43 @@ Nhóm **Behavioral Patterns (Nhóm mẫu hành vi)** tập trung vào việc ph�
 *   **Phân tách bên gửi và bên nhận:** Mẫu *Command* và *Chain of Responsibility* tách biệt hoàn toàn đối tượng gửi yêu cầu khỏi đối tượng thực thi, cho phép xếp hàng, thay đổi quy trình xử lý linh hoạt tại runtime.
 
 ---
+
+## Bảng So sánh Tổng quan 7 Behavioral Patterns
+
+| Pattern | Mục tiêu cốt lõi | Cấu trúc quan hệ | Khi nào dùng |
+| :--- | :--- | :--- | :--- |
+| **Observer** | Đồng bộ trạng thái 1-nhiều | Subject → nhiều Observer | Event system, UI data binding, pub-sub |
+| **Strategy** | Hoán đổi thuật toán tại runtime | Context → Strategy interface | Thay thế if-else về thuật toán |
+| **Command** | Đóng gói yêu cầu thành object | Invoker → Command → Receiver | Undo/Redo, Queue, Transaction log |
+| **State** | Thay đổi hành vi theo trạng thái | Context → State interface | State machine, vòng đời đối tượng |
+| **Template Method** | Cố định khung thuật toán, thay phần chi tiết | Abstract Class → Concrete subclass | Code reuse, framework hooks |
+| **Mediator** | Tập trung hóa giao tiếp nhiều-nhiều | Colleague → Mediator ← Colleague | Chat system, UI controller, Air traffic |
+| **Chain of Responsibility** | Truyền yêu cầu qua chuỗi handler | Handler → Handler → Handler | Middleware pipeline, logging, filter |
+
+### Sơ đồ phân loại theo cơ chế giao tiếp
+
+```mermaid
+graph TD
+    subgraph OneToMany ["Quan hệ 1 → Nhiều"]
+        Observer["Observer\n(Subject → Observers)"]
+    end
+
+    subgraph OneToOne ["Quan hệ 1 → 1 (với delegation)"]
+        Strategy["Strategy\n(Context → Strategy)"]
+        State["State\n(Context → State)"]
+        Command["Command\n(Invoker → Command → Receiver)"]
+        Template["Template Method\n(Parent → Child hooks)"]
+    end
+
+    subgraph Chain ["Quan hệ Chuỗi"]
+        CoR["Chain of Responsibility\n(Handler → Handler → ...)"]
+    end
+
+    subgraph Hub ["Quan hệ Hub (Trung tâm)"]
+        Mediator["Mediator\n(Colleagues → Mediator)"]
+    end
+```
+
+---
 [← Quay lại mục lục chính](../README.md)
+

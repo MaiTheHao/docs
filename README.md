@@ -31,7 +31,10 @@ Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu**
 ### 6. [NGINX](nginx/README.md) - Web Server & Reverse Proxy
 *   [NGINX](nginx/README.md) - Hướng dẫn toàn diện từ kiến trúc Event-Driven, C10K, Cấu hình, Caching, SSL/TLS đến Trade-offs
 
-### 7. [Version Control System](version_control_system/README.md) - Hệ thống Quản lý Phiên bản
+### 7. [Database Internals](database/README.md) - Cơ sở Dữ liệu
+*   [MVCC, Index & Case Studies](database/README.md) - Phân tích chuyên sâu MVCC, B+Tree Index, Covering Index, lịch sử MySQL/PostgreSQL và Case Study Uber Migration
+
+### 8. [Version Control System](version_control_system/README.md) - Hệ thống Quản lý Phiên bản
 *   [Git & GitHub](version_control_system/README.md) - Hướng dẫn toàn diện từ Version Control đến cộng tác phần mềm
 
 ---

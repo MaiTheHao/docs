@@ -58,6 +58,41 @@ classDiagram
 | `Observer` | Interface Người quan sát | Khai báo phương thức `update` nhận dữ liệu mới cập nhật từ Subject. |
 | `PhoneDisplay` | Concrete Observer | Cài đặt `Observer` và cập nhật thông tin hiển thị khi nhận được sự thay đổi nhiệt độ. |
 
+### Sequence Diagram — Luồng thông báo khi Subject thay đổi
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant WeatherStation as WeatherStation (Subject)
+    participant Phone1 as PhoneDisplay #1
+    participant Phone2 as PhoneDisplay #2
+
+    Client->>WeatherStation: attach(Phone1)
+    Client->>WeatherStation: attach(Phone2)
+    Client->>WeatherStation: setTemperature(36.5)
+    WeatherStation->>WeatherStation: notifyObservers()
+    WeatherStation->>Phone1: update(36.5)
+    WeatherStation->>Phone2: update(36.5)
+
+    Client->>WeatherStation: detach(Phone1)
+    Client->>WeatherStation: setTemperature(37.0)
+    WeatherStation->>WeatherStation: notifyObservers()
+    WeatherStation->>Phone2: update(37.0)
+    Note over Phone1: Đã unsubscribe, không nhận thông báo
+```
+
+### Flowchart — Quy trình thông báo của Subject
+
+```mermaid
+flowchart TD
+    Change["Subject thay đổi\ntrạng thái (setState)"] --> Notify["Gọi notifyObservers()"]
+    Notify --> Loop["Duyệt danh sách\nobservers"]
+    Loop --> CallUpdate["observer.update(newState)"]
+    CallUpdate --> Next{"Còn observer\ntiếp theo?"}
+    Next -- Có --> Loop
+    Next -- Không --> Done(["Tất cả đã được\nthông báo"])
+```
+
 ---
 
 ## 3. Ứng dụng thực tế

@@ -59,6 +59,35 @@ classDiagram
 | `User` | Colleague Class | Lớp trừu tượng định nghĩa các đối tượng cần giao tiếp với nhau qua `ChatMediator`. |
 | `ChatUser` | Concrete Colleague | Lớp cụ thể của `User`, thực hiện gửi/nhận tin nhắn gián tiếp thông qua trung gian `ChatRoom`. |
 
+### Sequence Diagram — Luồng gửi tin nhắn qua Mediator
+
+```mermaid
+sequenceDiagram
+    participant Alice as ChatUser (Alice)
+    participant ChatRoom as ChatRoom (Mediator)
+    participant Bob as ChatUser (Bob)
+    participant Carol as ChatUser (Carol)
+
+    Alice->>ChatRoom: send("Hello everyone!")
+    ChatRoom->>Bob: receive("Hello everyone!")
+    ChatRoom->>Carol: receive("Hello everyone!")
+    Note over Alice: Alice không biết Bob/Carol tồn tại
+```
+
+### Flowchart — Logic điều phối của Mediator
+
+```mermaid
+flowchart TD
+    Send["User.send(msg)\n→ mediator.sendMessage(msg, this)"] --> Loop["Mediator duyệt\ntất cả users"]
+    Loop --> Check{"user == sender?"}
+    Check -- Có --> Skip["Bỏ qua\n(không gửi lại cho chính mình)"]
+    Check -- Không --> Deliver["user.receive(msg)"]
+    Skip --> Next{"Còn user\ntiếp theo?"}
+    Deliver --> Next
+    Next -- Có --> Loop
+    Next -- Không --> Done(["Hoàn thành\nphân phối tin nhắn"])
+```
+
 ---
 
 ## 3. Ứng dụng thực tế

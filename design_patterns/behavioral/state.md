@@ -52,6 +52,42 @@ classDiagram
 | `PublishedState`| Concrete State | Triển khai hành vi xuất bản khi tài liệu đã được xuất bản (Published). |
 | `Document` | Context | Duy trì trạng thái hiện tại (`DocumentState`) và ủy nhiệm cuộc gọi thực thi cho trạng thái đó. |
 
+### Sequence Diagram — Luồng thay đổi trạng thái
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Document as Document (Context)
+    participant DraftState
+    participant PublishedState
+
+    Client->>Document: new Document()
+    Note over Document: state = DraftState (mặc định)
+
+    Client->>Document: publish()
+    Document->>DraftState: publish()
+    DraftState-->>Client: "Moving to Review..."
+
+    Client->>Document: setState(new PublishedState())
+    Client->>Document: publish()
+    Document->>PublishedState: publish()
+    PublishedState-->>Client: "Already Published."
+```
+
+### State Diagram — Vòng đời chuyển đổi trạng thái
+
+```mermaid
+stateDiagram-v2
+    [*] --> Draft : new Document()
+    Draft --> Review : publish()
+    Review --> Published : approve()
+    Published --> Archived : archive()
+    Archived --> [*]
+    Published --> Draft : unpublish()
+    Note right of Draft : DraftState.publish()\n→ chuyển sang Review
+    Note right of Published : PublishedState.publish()\n→ không làm gì
+```
+
 ---
 
 ## 3. Ứng dụng thực tế

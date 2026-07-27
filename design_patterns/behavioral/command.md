@@ -57,8 +57,42 @@ classDiagram
 | `Light` | Receiver | Đối tượng thực thi các logic thực tế đằng sau yêu cầu. |
 | `RemoteControl` | Invoker | Yêu cầu `Command` thực hiện hành động bằng cách gọi phương thức `execute()`. |
 
----
+### Sequence Diagram — Luồng thực thi Command & Undo
 
+```mermaid
+sequenceDiagram
+    participant Client
+    participant RemoteControl as RemoteControl (Invoker)
+    participant LightOnCmd as LightOnCommand (Command)
+    participant Light as Light (Receiver)
+
+    Client->>RemoteControl: setCommand(LightOnCmd)
+    Client->>RemoteControl: pressButton()
+    RemoteControl->>LightOnCmd: execute()
+    LightOnCmd->>Light: turnOn()
+    Light-->>Client: "Light is ON"
+
+    Client->>RemoteControl: pressUndo()
+    RemoteControl->>LightOnCmd: undo()
+    LightOnCmd->>Light: turnOff()
+    Light-->>Client: "Light is OFF"
+```
+
+### Flowchart — Vòng đời của một Command
+
+```mermaid
+flowchart LR
+    Create["Client tạo\nConcreteCommand(receiver)"] --> Set["setCommand(cmd)\nvào Invoker"]
+    Set --> Exec["pressButton()\n→ command.execute()"]
+    Exec --> Action["Receiver thực thi\nhành động thực tế"]
+    Action --> Queue["Lưu vào\nHistory Stack"]
+    Queue --> Undo{"Cần Undo?"}
+    Undo -- Có --> Revert["pressUndo()\n→ command.undo()"]
+    Undo -- Không --> Done(["Hoàn thành"])
+    Revert --> Done
+```
+
+---
 ## 3. Ứng dụng thực tế
 
 Áp dụng mẫu thiết kế Command khi:

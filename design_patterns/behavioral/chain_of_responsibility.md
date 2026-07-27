@@ -50,6 +50,40 @@ classDiagram
 | `ConsoleLogger` | Concrete Handler | Triển khai ghi nhật ký thông tin thông thường ra console khi có thẩm quyền. |
 | `ErrorLogger` | Concrete Handler | Triển khai ghi nhật ký lỗi hệ thống ra tệp tin lỗi chuyên biệt. |
 
+### Sequence Diagram — Luồng xử lý yêu cầu qua chuỗi
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant ConsoleLogger
+    participant ErrorLogger
+
+    Client->>ConsoleLogger: logMessage(INFO, "msg")
+    ConsoleLogger->>ConsoleLogger: level <= INFO? ✓ write("msg")
+    ConsoleLogger->>ErrorLogger: logMessage(INFO, "msg")
+    ErrorLogger->>ErrorLogger: level <= INFO? ✗ skip
+    Note over ErrorLogger: Hết chuỗi, không xử lý tiếp
+
+    Client->>ConsoleLogger: logMessage(ERROR, "err")
+    ConsoleLogger->>ConsoleLogger: level <= ERROR? ✓ write("err")
+    ConsoleLogger->>ErrorLogger: logMessage(ERROR, "err")
+    ErrorLogger->>ErrorLogger: level <= ERROR? ✓ write("err")
+```
+
+### Flowchart — Logic ra quyết định của mỗi Handler
+
+```mermaid
+flowchart TD
+    Start(["Nhận yêu cầu (level, message)"]) --> Check{"this.level <= level?"}
+    Check -- Có --> Handle["Gọi write(message)\n(Xử lý yêu cầu)"]
+    Check -- Không --> Skip["Bỏ qua"]
+    Handle --> HasNext{"Có nextLogger?"}
+    Skip --> HasNext
+    HasNext -- Có --> Forward["Truyền tiếp:\nnextLogger.logMessage(level, message)"]
+    HasNext -- Không --> End(["Kết thúc chuỗi"])
+    Forward --> End
+```
+
 ---
 
 ## 3. Ứng dụng thực tế

@@ -52,6 +52,42 @@ classDiagram
 | `PayPalPayment` | Concrete Strategy | Triển khai phương thức thanh toán thông qua ví điện tử PayPal. |
 | `ShoppingCart` | Context | Giữ tham chiếu đến `PaymentStrategy` và ủy quyền thanh toán cho chiến lược đang được cấu hình. |
 
+### Sequence Diagram — Hoán đổi Strategy tại runtime
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Cart as ShoppingCart (Context)
+    participant CreditCard as CreditCardPayment
+    participant PayPal as PayPalPayment
+
+    Client->>Cart: setPaymentStrategy(CreditCard)
+    Client->>Cart: checkout(500)
+    Cart->>CreditCard: pay(500)
+    CreditCard-->>Client: "Paid 500 using Credit Card"
+
+    Client->>Cart: setPaymentStrategy(PayPal)
+    Client->>Cart: checkout(300)
+    Cart->>PayPal: pay(300)
+    PayPal-->>Client: "Paid 300 using PayPal"
+    Note over Cart: Context không thay đổi,\nchỉ Strategy thay đổi
+```
+
+### Flowchart — Cơ chế lựa chọn Strategy
+
+```mermaid
+flowchart TD
+    Start(["Client gọi checkout(amount)"]) --> HasStrategy{"paymentStrategy\nđã được set?"}
+    HasStrategy -- Không --> Error["Throw NullPointerException\n/ set default strategy"]
+    HasStrategy -- Có --> Delegate["paymentStrategy.pay(amount)\n(Ủy quyền hoàn toàn)"]
+    Delegate --> CreditCard["CreditCardPayment.pay()\n→ xử lý thẻ tín dụng"]
+    Delegate --> PayPal["PayPalPayment.pay()\n→ xử lý PayPal"]
+    Delegate --> More["... Strategy khác"]
+    CreditCard --> Done(["Thanh toán hoàn tất"])
+    PayPal --> Done
+    More --> Done
+```
+
 ---
 
 ## 3. Ứng dụng thực tế
