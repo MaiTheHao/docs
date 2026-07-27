@@ -1,6 +1,6 @@
 # Chương 6. Reverse Proxy & Cân bằng tải Upstream
 
-Chương này trình bày nguyên lý hoạt động của NGINX dưới vai trò Reverse Proxy, quy tắc chuyển tiếp URI với `proxy_pass`, cơ chế bảo toàn thông tin client, xử lý giao thức WebSocket, các thuật toán cân bằng tải Upstream và cơ chế kiểm tra sức khỏe máy chủ (Health Check).
+Chương này trình bày nguyên lý hoạt động của NGINX dưới vai trò Reverse Proxy, quy tắc chuyển tiếp URI với `proxy_pass`, cơ chế bảo toàn thông tin client, xử lý WebSocket, các thuật toán cân bằng tải và cơ chế kiểm tra sức khỏe máy chủ (Health Check).
 
 ## Mục lục
 
@@ -99,7 +99,7 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
 
-        # Tăng thời gian chờ read/send cho kết nối lâu dài (mặc định 60s)
+        # Tăng thời gian chờ read/send cho kết nối lâu dài
         proxy_read_timeout 3600s;
         proxy_send_timeout 3600s;
     }
@@ -116,10 +116,10 @@ Khối `upstream` được khai báo trong ngữ cảnh `http` để định ngh
 graph TD
     ClientReq["Client Requests"] --> NGINXProxy["NGINX Proxy"]
     
-    subgraph Upstream Pool "backend_cluster"
-        NGINXProxy -->|Round Robin / Weight| S1["Backend 1: 192.168.1.10:8080 (Weight 3)"]
-        NGINXProxy -->|Round Robin / Weight| S2["Backend 2: 192.168.1.11:8080 (Weight 1)"]
-        NGINXProxy -->|Backup Server| S3["Backend 3: 192.168.1.12:8080 (Backup)"]
+    subgraph UpstreamPool ["Upstream Pool: backend_cluster"]
+        NGINXProxy -->|"Round Robin / Weight"| S1["Backend 1: 192.168.1.10:8080 (Weight 3)"]
+        NGINXProxy -->|"Round Robin / Weight"| S2["Backend 2: 192.168.1.11:8080 (Weight 1)"]
+        NGINXProxy -->|"Backup Server"| S3["Backend 3: 192.168.1.12:8080 (Backup)"]
     end
 ```
 
@@ -156,9 +156,7 @@ upstream hash_cluster {
 }
 ```
 
-> [!TIP]
-> **Tối ưu HTTP Keep-Alive tới Upstream:**
-> Mặc định NGINX mở và đóng kết nối TCP tới backend trên từng request. Khai báo directive `keepalive 32;` trong khối `upstream` giúp duy trì một pool kết nối mở sẵn tới backend, giảm thời gian trễ bắt tay TCP lên đến 50%.
+**Tối ưu HTTP Keep-Alive tới Upstream:** Mặc định NGINX mở và đóng kết nối TCP tới backend trên từng request. Khai báo directive `keepalive 32;` trong khối `upstream` giúp duy trì một pool kết nối mở sẵn tới backend, giảm thời gian trễ bắt tay TCP đáng kể.
 
 ---
 
@@ -168,7 +166,7 @@ Phiên bản NGINX Open Source sử dụng cơ chế **Kiểm tra sức khỏe t
 
 ```nginx
 upstream backend_health {
-    # Nếu 1 server bị lỗi 3 lần trong vòng 30 giây, 
+    # Nếu 1 server bị lỗi 3 lần trong vòng 30 giây,
     # NGINX sẽ đánh dấu server đó bị sập (DOWN) trong 30 giây tiếp theo.
     server 10.0.0.10:8080 max_fails=3 fail_timeout=30s;
     server 10.0.0.11:8080 max_fails=3 fail_timeout=30s;

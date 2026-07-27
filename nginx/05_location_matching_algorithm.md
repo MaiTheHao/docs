@@ -1,14 +1,13 @@
 # Chương 5. Giải thuật Khớp Location & Định tuyến URI
 
-Chương này giải mã giải thuật khớp khối `location` trong NGINX, độ phức tạp thuật toán cấp cấu trúc dữ liệu nội bộ (Red-Black Tree vs Linked List), sự khác biệt giữa `root` và `alias`, cùng với cơ chế chuyển hướng bằng `return` và `rewrite`.
+Chương này giải mã giải thuật khớp khối `location` trong NGINX, sự khác biệt giữa `root` và `alias`, cùng với cơ chế điều hướng bằng `return` và `rewrite`.
 
 ## Mục lục
 
 - [5.1 Các loại Modifier trong Khối Location](#51-các-loại-modifier-trong-khối-location)
 - [5.2 Giải thuật Khớp Location 5 bước](#52-giải-thuật-khớp-location-5-bước)
-- [5.3 Cấu trúc Dữ liệu Nội bộ: Red-Black Tree vs Linked List](#53-cấu-trúc-dữ-liệu-nội-bộ-red-black-tree-vs-linked-list)
-- [5.4 Phân biệt Chỉ thị root và alias](#54-phân-biệt-chỉ-thị-root-và-alias)
-- [5.5 Điều hướng Luồng: return vs rewrite](#55-điều-hướng-luồng-return-vs-rewrite)
+- [5.3 Phân biệt Chỉ thị root và alias](#53-phân-biệt-chỉ-thị-root-và-alias)
+- [5.4 Điều hướng Luồng: return vs rewrite](#54-điều-hướng-luồng-return-vs-rewrite)
 
 ---
 
@@ -34,63 +33,32 @@ Khi một yêu cầu URI đến, NGINX thực hiện tìm kiếm qua một quy t
 flowchart TD
     Start["URI Request Đến"] --> Step1{"1. Kiểm tra Exact Match (=)?"}
     
-    Step1 -- Có --> UseExact["Sử dụng khối =<br/>(Dừng tìm kiếm ngay)"]
-    Step1 -- Không --> Step2["2. Tìm Prefix Match dài nhất<br/>(Tiền tố thông thường & ^~)"]
+    Step1 -- Có --> UseExact["Sử dụng khối =\n(Dừng tìm kiếm ngay)"]
+    Step1 -- Không --> Step2["2. Tìm Prefix Match dài nhất\n(Tiền tố thông thường & ^~)"]
     
     Step2 --> Step3{"3. Prefix dài nhất có modifier ^~ ?"}
     
-    Step3 -- Có --> UsePreferential["Sử dụng khối ^~<br/>(Bỏ qua toàn bộ Regex, dừng)"]
-    Step3 -- Không --> Step4["Tạm lưu Prefix dài nhất.<br/>4. Quét danh sách Regex (~ và ~*) từ trên xuống"]
+    Step3 -- Có --> UsePreferential["Sử dụng khối ^~\n(Bỏ qua toàn bộ Regex, dừng)"]
+    Step3 -- Không --> Step4["Tạm lưu Prefix dài nhất.\n4. Quét danh sách Regex từ trên xuống"]
     
     Step4 --> Step5{"Có Regex nào khớp không?"}
     
-    Step5 -- Có --> UseRegex["Sử dụng Regex khớp ĐẦU TIÊN<br/>(Dừng tìm kiếm)"]
+    Step5 -- Có --> UseRegex["Sử dụng Regex khớp ĐẦU TIÊN\n(Dừng tìm kiếm)"]
     Step5 -- Không --> UseSavedPrefix["Sử dụng Prefix dài nhất đã tạm lưu"]
 ```
 
-Sơ đồ trên minh họa thuật toán chọn `location` của NGINX. 
-
-> [!IMPORTANT]
-> **Quy tắc vàng:** 
-> 1. Modifier `^~` KHÔNG ĐẢM BẢO sẽ được chọn nếu URI không khớp với tiền tố đó. Nhưng nếu nó khớp và là tiền tố dài nhất, nó sẽ **vô hiệu hóa** toàn bộ các khối Regex!
-> 2. Các khối Regex được quét theo **thứ tự xuất hiện từ trên xuống dưới** trong file cấu hình. Khối Regex nào nằm trên khớp trước sẽ được sử dụng ngay.
+Sơ đồ trên minh họa thuật toán chọn `location` của NGINX. Hai điểm cần nắm vững:
+1. Modifier `^~` chỉ có hiệu lực khi URI thực sự khớp với tiền tố đó và nó là tiền tố dài nhất — lúc đó nó mới **vô hiệu hóa** toàn bộ các khối Regex.
+2. Các khối Regex được quét theo **thứ tự xuất hiện từ trên xuống dưới** trong file cấu hình. Khối Regex nào nằm trên khớp trước sẽ được sử dụng ngay.
 
 ---
 
-## 5.3 Cấu trúc Dữ liệu Nội bộ: Red-Black Tree vs Linked List
-
-Hiệu năng định tuyến URI của NGINX cực kỳ cao nhờ sự tối ưu hóa cấu trúc dữ liệu ở cấp nhân hệ thống tại thời điểm khởi động:
-
-```mermaid
-graph TD
-    subgraph "Prefix Tree (Cây Đỏ-Đen / Red-Black Tree)"
-        Root["/"] --> Static["/static/"]
-        Root --> API["/api/"]
-        API --> APIv1["/api/v1/"]
-        API --> APIv2["/api/v2/"]
-    end
-
-    subgraph "Regex List (Danh sách Liên kết Phẳng / Linked List)"
-        R1["1. ~ \.(jpg|png|gif)$"] --> R2["2. ~* \.(pdf|docx)$"]
-        R2 --> R3["3. ~ /user/\d+"]
-    end
-```
-
-- **Các khối Prefix (`=`, `^~`, Trống)** được NGINX biên dịch và sắp xếp vào một **Cây Đỏ-Đen cân bằng (Red-Black Tree)**. Độ phức tạp thời gian tìm kiếm tiền tố dài nhất chỉ là $O(\log N)$ và **hoàn toàn không phụ thuộc** vào vị trí bạn viết dòng lệnh trong tệp cấu hình.
-- **Các khối Regex (`~`, `~*`)** được lưu trữ trong một **Danh sách liên kết phẳng (Linked List)**. NGINX buộc phải duyệt tuần tự qua từng phần tử với độ phức tạp $O(N)$.
-
-> [!TIP]
-> **Kinh nghiệm tối ưu:** Hạn chế tối đa việc lạm dụng khối Regex. Nên thay thế các Regex prefix bằng modifier `^~` để đẩy phép tìm kiếm sang Cây Đỏ-Đen $O(\log N)$, giúp tối ưu tốc độ xử lý URI.
-
----
-
-## 5.4 Phân biệt Chỉ thị root và alias
+## 5.3 Phân biệt Chỉ thị root và alias
 
 Hai chỉ thị `root` và `alias` được sử dụng để ánh xạ URI vào đường dẫn đĩa vật lý, nhưng có cơ chế ghép nối hoàn toàn khác nhau:
 
 ### Chỉ thị `root`
 NGINX cộng dồn giá trị của `root` với **toàn bộ chuỗi URI** yêu cầu:
-$$\text{Đường dẫn vật lý} = \text{root} + \text{URI}$$
 
 ```nginx
 location /images/ {
@@ -102,7 +70,6 @@ location /images/ {
 
 ### Chỉ thị `alias`
 NGINX **thay thế** phần URI trùng khớp trong khối `location` bằng đường dẫn khai báo trong `alias`:
-$$\text{Đường dẫn vật lý} = \text{alias} + (\text{URI} - \text{Location\_Prefix})$$
 
 ```nginx
 location /images/ {
@@ -112,28 +79,19 @@ location /images/ {
 # Kết quả:  /var/www/media/photos/logo.png
 ```
 
-> [!CAUTION]
-> **Lỗ hổng Path Traversal nguy hiểm với `alias`:**
-> Nếu khối location không kết thúc bằng dấu gạch chéo `/` mà alias lại khai báo dấu `/` (hoặc ngược lại):
-> ```nginx
-> location /files { # Không có dấu / ở cuối
->     alias /var/www/data/;
-> }
-> ```
-> Kẻ tấn công có thể gửi request `GET /files../etc/passwd` để đọc trộm các file hệ thống nhạy cảm do phép cộng chuỗi sai lệch. Hãy luôn đảm bảo tính đồng nhất về dấu `/` giữa `location` và `alias`!
+**Lưu ý về bảo mật với `alias`:** Nếu khối `location` không kết thúc bằng dấu gạch chéo `/` mà `alias` lại khai báo dấu `/` (hoặc ngược lại), kẻ tấn công có thể khai thác lỗ hổng Path Traversal để đọc các file hệ thống nhạy cảm. Luôn đảm bảo tính đồng nhất về dấu `/` giữa `location` và `alias`.
 
 ---
 
-## 5.5 Điều hướng Luồng: return vs rewrite
+## 5.4 Điều hướng Luồng: return vs rewrite
 
 Khi cần điều hướng lưu lượng hoặc thay đổi URI nội bộ, NGINX cung cấp hai chỉ thị chính:
 
 ### 1. Chỉ thị `return`
 Thực hiện phản hồi ở tầng giao thức ngay lập tức mà không cần khởi chạy bộ máy Regex. Tối ưu CPU tối đa.
 
-Ví dụ chuyển hướng HTTPS bằng `return`:
 ```nginx
-# Phản hồi mã HTTP 301 chuyển hướng vĩnh viễn
+# Phản hồi mã HTTP 301 chuyển hướng vĩnh viễn sang HTTPS
 return 301 https://$host$request_uri;
 
 # Phản hồi trực tiếp dữ liệu văn bản

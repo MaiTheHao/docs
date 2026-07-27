@@ -44,8 +44,6 @@ Người ta tranh luận rằng vị trí tốt nhất để "nhét" nó vào l�
 
 Tại sao? Bởi vì nó _có trạng thái_ (stateful). Nó phải quản lý trạng thái của các biến phiên (session variables), các khóa mã hóa đã được thống nhất, v.v., ngay bên trên **TCP (Layer 4)**. Nếu TCP là người vận chuyển, thì TLS là người quản lý phiên an toàn cho chuyến hàng đó.
 
-(Một lần nữa, đây không phải là "ghi trên đá", nó chỉ là một cách phân loại mang tính học thuật).
-
 ---
 
 ## 2\. HTTP "Trần" (Vanilla HTTP) - Vấn đề là gì?

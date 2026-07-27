@@ -1,6 +1,6 @@
 # Chương 7. Caching Engine & Tối ưu hóa Hiệu năng I/O
 
-Chương này đi sâu vào cơ chế bộ đệm HTTP Cache của NGINX, kỹ thuật Microcaching cho hệ thống tải cao, các chỉ thị tối ưu I/O cấp nhân hệ điều hành (`sendfile`, `tcp_nopush`, `tcp_nodelay`) và phương pháp tuning các thông số kernel để đạt hiệu năng tối đa.
+Chương này đi sâu vào cơ chế bộ đệm HTTP Cache của NGINX, kỹ thuật Microcaching cho hệ thống tải cao, các chỉ thị tối ưu I/O cấp nhân hệ điều hành (`sendfile`, `tcp_nopush`, `tcp_nodelay`) và cách quản lý bộ đệm file descriptor hiệu quả.
 
 ## Mục lục
 
@@ -9,7 +9,6 @@ Chương này đi sâu vào cơ chế bộ đệm HTTP Cache của NGINX, kỹ t
 - [7.3 Kỹ thuật Microcaching cho Ứng dụng Động](#73-kỹ-thuật-microcaching-cho-ứng-dụng-động)
 - [7.4 Tối ưu hóa I/O cấp Nhân Hệ điều hành](#74-tối-ưu-hóa-io-cấp-nhân-hệ-điều-hành)
 - [7.5 Quản lý Bộ đệm File: open_file_cache](#75-quản-lý-bộ-đệm-file-open_file_cache)
-- [7.6 Tuning Tham số Tiến trình & Kernel Limits](#76-tuning-tham-số-tiến-trình--kernel-limits)
 
 ---
 
@@ -66,11 +65,11 @@ location / {
     proxy_cache MY_CACHE;
     proxy_pass http://backend_app;
 
-    # Nếu Backend bị lỗi 500, 502, 503, 504 hoặc timeout,
-    # NGINX sẽ tiếp tục trả về dữ liệu Cache CŨ (Stale Content) cho Client!
+    # Nếu Backend bị lỗi 5xx hoặc timeout,
+    # NGINX sẽ tiếp tục trả về dữ liệu Cache cũ (Stale Content) cho Client
     proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 
-    # Đảm bảo chỉ gửi 1 request duy nhất tới Backend để cập nhật Cache (Chống Cache Stampede)
+    # Chỉ gửi 1 request duy nhất tới Backend để cập nhật Cache (Chống Cache Stampede)
     proxy_cache_lock on;
 
     # Tái xác thực Cache bằng Conditional GETs (If-Modified-Since)
@@ -78,8 +77,7 @@ location / {
 }
 ```
 
-> [!TIP]
-> **Chống hiện tượng Cache Stampede (Dog-piling):** Khi một file cache phổ biến vừa hết hạn, hàng ngàn request đồng thời có thể đổ về backend để lấy dữ liệu mới. Directive `proxy_cache_lock on;` ép NGINX chỉ cho phép **1 request duy nhất** gọi backend để cập nhật cache, các request còn lại sẽ chờ kết quả từ request đó.
+**Chống Cache Stampede:** Khi một file cache phổ biến vừa hết hạn, hàng ngàn request đồng thời có thể đổ về backend cùng lúc. Directive `proxy_cache_lock on;` ép NGINX chỉ cho phép **1 request duy nhất** gọi backend để cập nhật cache, các request còn lại sẽ chờ kết quả từ request đó.
 
 ---
 
@@ -93,8 +91,8 @@ proxy_cache_valid 200 1s; # Cache kết quả trong đúng 1 giây
 
 ### Tại sao Microcaching lại hiệu quả?
 Trong các đợt bùng nổ lưu lượng (Flash Crowds) với 10.000 requests/giây:
-- **Nếu không dùng Cache**: Backend phải xử lý 10.000 câu truy vấn DB/giây $\rightarrow$ Sập hệ thống.
-- **Nếu dùng Microcaching 1 giây**: Backend chỉ cần xử lý đúng **1 request/giây**, 9.999 request còn lại được NGINX phục vụ tức thì từ RAM $\rightarrow$ Hệ thống hoạt động mượt mà với độ trễ gần bằng 0.
+- **Không dùng Cache**: Backend phải xử lý 10.000 câu truy vấn DB/giây → Sập hệ thống.
+- **Dùng Microcaching 1 giây**: Backend chỉ cần xử lý đúng **1 request/giây**, 9.999 request còn lại được NGINX phục vụ tức thì từ RAM.
 
 ---
 
@@ -104,16 +102,16 @@ NGINX tối ưu hóa đường truyền dữ liệu bằng cách khai thác tr�
 
 ```mermaid
 graph TD
-    subgraph "Sao chép truyền thống (Không dùng sendfile)"
-        Disk1["Disk / Storage"] -->|1. Read Data| KernelBuf1["Kernel Page Cache"]
-        KernelBuf1 -->|2. Copy| UserBuf["NGINX User Space Buffer"]
-        UserBuf -->|3. Copy| SocketBuf1["Socket Buffer"]
-        SocketBuf1 -->|4. Send| NIC1["Card Mạng (NIC)"]
+    subgraph Traditional ["Sao chép truyền thống (Không dùng sendfile)"]
+        Disk1["Disk / Storage"] -->|"1. Read Data"| KernelBuf1["Kernel Page Cache"]
+        KernelBuf1 -->|"2. Copy"| UserBuf["NGINX User Space Buffer"]
+        UserBuf -->|"3. Copy"| SocketBuf1["Socket Buffer"]
+        SocketBuf1 -->|"4. Send"| NIC1["Card Mạng (NIC)"]
     end
 
-    subgraph "Tối ưu Zero-Copy (sendfile = on)"
-        Disk2["Disk / Storage"] -->|1. Read Data| KernelBuf2["Kernel Page Cache"]
-        KernelBuf2 -->|2. Direct DMA Transfer| NIC2["Card Mạng (NIC)"]
+    subgraph ZeroCopy ["Tối ưu Zero-Copy (sendfile = on)"]
+        Disk2["Disk / Storage"] -->|"1. Read Data"| KernelBuf2["Kernel Page Cache"]
+        KernelBuf2 -->|"2. Direct DMA Transfer"| NIC2["Card Mạng (NIC)"]
     end
 ```
 
@@ -124,13 +122,13 @@ http {
     # 1. Bật cơ chế Zero-copy chuyển dữ liệu trực tiếp từ đĩa sang NIC
     sendfile on;
 
-    # Giới hạn dung lượng dữ liệu tối đa gửi trong 1 lần gọi sendfile (chống chiếm dụng worker)
+    # Giới hạn dung lượng dữ liệu tối đa gửi trong 1 lần gọi sendfile
     sendfile_max_chunk 1m;
 
-    # 2. Gộp các gói tin TCP để gửi trong một khung truyền lớn duy nhất (Tối ưu băng thông)
+    # 2. Gộp các gói tin TCP để gửi trong một khung truyền lớn duy nhất
     tcp_nopush on;
 
-    # 3. Tắt thuật toán Nagle trên kết nối Keep-Alive (Tải gói tin nhỏ tức thì, giảm độ trễ)
+    # 3. Tắt thuật toán Nagle trên kết nối Keep-Alive (giảm độ trễ)
     tcp_nodelay on;
 }
 ```
@@ -157,42 +155,6 @@ http {
     # Đệm cả các thông báo lỗi file không tìm thấy (404)
     open_file_cache_errors on;
 }
-```
-
----
-
-## 7.6 Tuning Tham số Tiến trình & Kernel Limits
-
-Để hệ thống NGINX có thể chịu tải hàng trăm nghìn kết nối đồng thời, cấu hình phần mềm phải đi kèm với việc điều chỉnh giới hạn của hệ điều hành Linux:
-
-### 1. Cấu hình NGINX (`nginx.conf`)
-```nginx
-user nginx;
-worker_processes auto;
-
-# Tăng giới hạn số lượng File Descriptors mở tối đa cho mỗi Worker Process
-worker_rlimit_nofile 65535;
-
-events {
-    worker_connections 10240;
-    use epoll;
-    multi_accept on; # Cho phép Worker nhận tất cả kết nối mới cùng lúc
-}
-```
-
-### 2. Tuning Tham số Kernel OS (`/etc/sysctl.conf`)
-```ini
-# Tăng số lượng kết nối đang chờ trong hàng đợi của Socket (SOMAXCONN)
-net.core.somaxconn = 65535
-
-# Tăng dải cổng local port được phép mở kết nối out-bound
-net.ipv4.ip_local_port_range = 1024 65535
-
-# Cho phép tái sử dụng các Socket ở trạng thái TIME_WAIT
-net.ipv4.tcp_tw_reuse = 1
-
-# Tăng giới hạn số lượng file open của toàn hệ thống
-fs.file-max = 2097152
 ```
 
 ---

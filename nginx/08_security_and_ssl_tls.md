@@ -1,14 +1,13 @@
 # Chương 8. Bảo mật, SSL/TLS Termination & HTTP Protocols
 
-Chương này trình bày chuyên sâu về cấu hình bảo mật trong NGINX: SSL/TLS Termination, tối ưu hóa quá trình bắt tay TLS với Session Resumption & OCSP Stapling, sự tiến hóa giữa HTTP/2 và HTTP/3 QUIC, cùng các kỹ thuật chống tấn công bằng Rate Limiting và Security Headers.
+Chương này trình bày cấu hình bảo mật trong NGINX: SSL/TLS Termination, sự tiến hóa giữa HTTP/2 và HTTP/3 QUIC, cùng các kỹ thuật chống tấn công bằng Rate Limiting và Security Headers.
 
 ## Mục lục
 
 - [8.1 Cấu hình HTTPS & SSL/TLS Termination](#81-cấu-hình-https--ssltls-termination)
-- [8.2 Tối ưu TLS Handshake: Session Resumption & OCSP Stapling](#82-tối-ưu-tls-handshake-session-resumption--ocsp-stapling)
-- [8.3 Tiến trình Giao thức: HTTP/1.1 vs HTTP/2 vs HTTP/3 QUIC](#83-tiến-trình-giao-thức-http11-vs-http2-vs-http3-quic)
-- [8.4 Chống Tấn công với Rate Limiting & Connection Limiting](#84-chống-tấn-công-với-rate-limiting--connection-limiting)
-- [8.5 Thiết lập Security Headers chuẩn Doanh nghiệp](#85-thiết-lập-security-headers-chuẩn-doanh-nghiệp)
+- [8.2 Tiến trình Giao thức: HTTP/1.1 vs HTTP/2 vs HTTP/3 QUIC](#82-tiến-trình-giao-thức-http11-vs-http2-vs-http3-quic)
+- [8.3 Chống Tấn công với Rate Limiting & Connection Limiting](#83-chống-tấn-công-với-rate-limiting--connection-limiting)
+- [8.4 Thiết lập Security Headers chuẩn Doanh nghiệp](#84-thiết-lập-security-headers-chuẩn-doanh-nghiệp)
 
 ---
 
@@ -25,7 +24,7 @@ server {
     ssl_certificate     /etc/ssl/certs/example.com.crt;
     ssl_certificate_key /etc/ssl/private/example.com.key;
 
-    # Chỉ hỗ trợ các phiên bản giao thức TLS an toàn (Bỏ hoàn toàn SSLv3, TLS 1.0, TLS 1.1)
+    # Chỉ hỗ trợ các phiên bản giao thức TLS an toàn
     ssl_protocols TLSv1.2 TLSv1.3;
 
     # Tập hợp các thuật toán mã hóa (Ciphers) mạnh nhất
@@ -34,54 +33,20 @@ server {
 }
 ```
 
-> [!IMPORTANT]
-> **Server Name Indication (SNI):** SNI là một mở rộng của giao thức TLS cho phép client gửi tên miền (Hostname) muốn kết nối ngay trong gói tin TLS Client Hello đầu tiên. Nhờ SNI, NGINX có thể phục vụ hàng trăm chứng chỉ SSL/TLS khác nhau cho hàng trăm domain chạy chung trên **duy nhất một địa chỉ IP**.
+**Server Name Indication (SNI):** SNI là một mở rộng của giao thức TLS cho phép client gửi tên miền muốn kết nối ngay trong gói tin TLS Client Hello đầu tiên. Nhờ SNI, NGINX có thể phục vụ hàng trăm chứng chỉ SSL/TLS khác nhau cho hàng trăm domain chạy chung trên **duy nhất một địa chỉ IP**.
 
----
-
-## 8.2 Tối ưu TLS Handshake: Session Resumption & OCSP Stapling
-
-Quá trình bắt tay TLS (TLS Handshake) mặc định tiêu tốn từ 1 đến 2 vòng truyền dữ liệu mạng (Round Trip Times — RTT). NGINX tối ưu hóa độ trễ này bằng hai giải pháp kỹ thuật cốt lõi:
-
-### 1. SSL Session Resumption (Tái sử dụng Phiên TLS)
-NGINX lưu đệm các tham số mã hóa của phiên kết nối TLS trong vùng nhớ RAM chung giữa các Worker. Khi client quay lại, hệ thống bỏ qua quá trình bắt tay mã hóa lại từ đầu.
+**Tối ưu SSL Session:** Bật bộ đệm phiên TLS giúp các client quay lại không cần thực hiện lại quá trình bắt tay TLS toàn bộ:
 
 ```nginx
-# Tạo vùng nhớ RAM chung 10MB lưu trữ thông tin phiên TLS (chứa ~40.000 sessions)
+# Tạo vùng nhớ RAM chung 10MB lưu trữ thông tin phiên TLS (~40.000 sessions)
 ssl_session_cache shared:SSL:10m;
 ssl_session_timeout 1d;
 ssl_session_tickets off;
 ```
 
-### 2. OCSP Stapling (Dán tem xác thực chứng chỉ)
-Mặc định, trình duyệt client phải tự gửi request đến máy chủ CA (Certificate Authority) để kiểm tra xem chứng chỉ SSL có bị thu hồi hay không, gây ra độ trễ cực lớn.
-
-Với **OCSP Stapling**, NGINX chủ động gửi query đến máy chủ CA định kỳ, lấy phản hồi xác thực có ký số (OCSP Response) và "dán" (staple) sẵn vào gói tin TLS Handshake gửi cho client.
-
-```mermaid
-graph TD
-    subgraph "Không dùng OCSP Stapling (Chậm)"
-        Client1["Browser"] -->|1. TLS Handshake| NGINX1["NGINX"]
-        Client1 -->|2. Query status (RTT trễ)| CA1["CA Server"]
-    end
-
-    subgraph "Dùng OCSP Stapling (Nhanh)"
-        NGINX2["NGINX"] <--->|Chủ động query ngầm định kỳ| CA2["CA Server"]
-        Client2["Browser"] -->|1. TLS Handshake + Dán sẵn OCSP Proof| NGINX2
-    end
-```
-
-```nginx
-# Kích hoạt OCSP Stapling
-ssl_stapling on;
-ssl_stapling_verify on;
-ssl_trusted_certificate /etc/ssl/certs/fullchain.pem;
-resolver 8.8.8.8 8.8.4.4 valid=300s;
-```
-
 ---
 
-## 8.3 Tiến trình Giao thức: HTTP/1.1 vs HTTP/2 vs HTTP/3 QUIC
+## 8.2 Tiến trình Giao thức: HTTP/1.1 vs HTTP/2 vs HTTP/3 QUIC
 
 ```mermaid
 timeline
@@ -95,7 +60,7 @@ timeline
 ```
 
 ### 1. HTTP/2 Multiplexing
-HTTP/2 cho phép truyền nhận đồng thời hàng trăm Yêu cầu/Phản hồi (Requests/Responses) song song trên **duy nhất một kết nối TCP**, loại bỏ hiện tượng nghẽn đầu hàng (Head-of-Line Blocking) ở tầng ứng dụng.
+HTTP/2 cho phép truyền nhận đồng thời hàng trăm Yêu cầu/Phản hồi song song trên **duy nhất một kết nối TCP**, loại bỏ hiện tượng nghẽn đầu hàng (Head-of-Line Blocking) ở tầng ứng dụng.
 
 ```nginx
 server {
@@ -105,9 +70,7 @@ server {
 ```
 
 ### 2. HTTP/3 QUIC (UDP-based Transport)
-HTTP/3 thay thế hoàn toàn giao thức TCP bên dưới bằng **QUIC (Quick UDP Internet Connections)** chạy trên nền UDP. 
-
-HTTP/3 giải quyết triệt để hiện tượng Head-of-Line Blocking ở cả tầng giao vận (Transport Layer): nếu 1 gói tin UDP bị mất, các luồng dữ liệu khác vẫn tiếp tục được xử lý bình thường mà không bị tạm dừng toàn bộ kết nối như TCP.
+HTTP/3 thay thế TCP bên dưới bằng **QUIC (Quick UDP Internet Connections)** chạy trên nền UDP. Nếu 1 gói tin UDP bị mất, các luồng dữ liệu khác vẫn tiếp tục được xử lý mà không bị tạm dừng toàn bộ kết nối như TCP.
 
 ```nginx
 server {
@@ -124,7 +87,7 @@ server {
 
 ---
 
-## 8.4 Chống Tấn công với Rate Limiting & Connection Limiting
+## 8.3 Chống Tấn công với Rate Limiting & Connection Limiting
 
 NGINX bảo vệ hệ thống khỏi các đợt tấn công từ chối dịch vụ (DDoS) và cào dữ liệu (Web Scraping) dựa trên thuật toán **Leaky Bucket (Thùng rò rỉ)**.
 
@@ -132,8 +95,8 @@ NGINX bảo vệ hệ thống khỏi các đợt tấn công từ chối dịch 
 graph TD
     Traffic["Lưu lượng Request ồ ạt từ IP"] --> Bucket{"Leaky Bucket Buffer (Burst)"}
     
-    Bucket -->|Xử lý với tốc độ ổn định 10req/s| Backend["Backend Processing"]
-    Bucket -->|Vượt quá ngưỡng Burst| Drop["Từ chối ngay tức thì (Trả về HTTP 429 / 503)"]
+    Bucket -->|"Xử lý với tốc độ ổn định 10req/s"| Backend["Backend Processing"]
+    Bucket -->|"Vượt quá ngưỡng Burst"| Drop["Từ chối ngay (HTTP 429)"]
 ```
 
 ### 1. Giới hạn Tốc độ Yêu cầu (Rate Limiting - `limit_req`)
@@ -171,7 +134,7 @@ http {
 
 ---
 
-## 8.5 Thiết lập Security Headers chuẩn Doanh nghiệp
+## 8.4 Thiết lập Security Headers chuẩn Doanh nghiệp
 
 NGINX đóng vai trò tấm lá chắn bổ sung các Header bảo mật bắt buộc để chống lại các lỗ hổng web phổ biến (XSS, Clickjacking, MIME Sniffing):
 

@@ -1,15 +1,18 @@
 # Chương 2. Kiến trúc Hệ thống & Cơ chế Vận hành
 
-Chương này phân tích chuyên sâu kiến trúc nội bộ của NGINX: mô hình tiến trình Master-Worker, vòng lặp sự kiện bất đồng bộ không chặn (Asynchronous Non-blocking Event Loop), các cơ chế I/O Multiplexing ở cấp nhân hệ điều hành và quy trình nạp lại cấu hình/nâng cấp không gián đoạn (Zero-downtime).
+Chương này phân tích chuyên sâu kiến trúc nội bộ của NGINX: mô hình tiến trình Master-Worker, vòng lặp sự kiện bất đồng bộ không chặn (Asynchronous Non-blocking Event Loop), cơ chế chống thảm họa tranh chấp kết nối, Thread Pools giải tỏa Disk I/O, các cơ chế I/O Multiplexing cấp nhân hệ điều hành (`epoll`/`kqueue`) và quy trình nâng cấp/nạp lại cấu hình không gián đoạn (Zero-downtime).
 
 ## Mục lục
 
 - [2.1 Mô hình Tiến trình Master-Worker](#21-mô-hình-tiến-trình-master-worker)
 - [2.2 Vai trò của Master Process](#22-vai-trò-của-master-process)
 - [2.3 Vai trò của Worker Process](#23-vai-trò-của-worker-process)
+  - [2.3.1 Công thức tính Max Clients & Giới hạn File Descriptors](#231-công-thức-tính-max-clients--giới-hạn-file-descriptors)
+  - [2.3.2 Chống thảm họa tranh chấp kết nối (Thundering Herd & SO_REUSEPORT)](#232-chống-thảm-họa-tranh-chấp-kết-nối-thundering-herd--so_reuseport)
+  - [2.3.3 Khái niệm Thread Pools (Giải tỏa nghẽn Disk I/O)](#233-khái-niệm-thread-pools-giải-tỏa-nghẽn-disk-io)
 - [2.4 Vòng lặp Sự kiện & Asynchronous Non-blocking I/O](#24-vòng-lặp-sự-kiện--asynchronous-non-blocking-io)
 - [2.5 Cơ chế I/O Multiplexing: epoll vs kqueue](#25-cơ-chế-io-multiplexing-epoll-vs-kqueue)
-- [2.6 Cơ chế Tín hiệu & Hot Reload / Binary Upgrade](#26-cơ-chế-tín-hiệu--hot-reload--binary-upgrade)
+- [2.6 Cơ chế Hot Reload & Binary Upgrade (Zero-Downtime)](#26-cơ-chế-hot-reload--binary-upgrade-zero-downtime)
 
 ---
 
@@ -19,32 +22,33 @@ NGINX sử dụng kiến trúc đa tiến trình (Multi-Process Model) có sự 
 
 ```mermaid
 graph TD
-    Kernel["OS Kernel (Network Sockets / Epoll)"] <---> Master["Master Process (User: root)"]
+    Kernel["OS Kernel (epoll / kqueue Event Loop)"]
+    Master["Master Process (User: root)"]
     
-    Master -->|fork / Signals| Worker1["Worker Process 1 (User: nginx)"]
-    Master -->|fork / Signals| Worker2["Worker Process 2 (User: nginx)"]
-    Master -->|fork / Signals| WorkerN["Worker Process N (User: nginx)"]
+    Master -->|Khởi tạo & Quản lý| Worker1["Worker Process 1 (User: nginx)"]
+    Master -->|Khởi tạo & Quản lý| Worker2["Worker Process 2 (User: nginx)"]
+    Master -->|Khởi tạo & Quản lý| WorkerN["Worker Process N (User: nginx)"]
     
     Master -->|fork| CacheLoader["Cache Loader Process"]
     Master -->|fork| CacheManager["Cache Manager Process"]
 
-    Worker1 <---> Kernel
-    Worker2 <---> Kernel
-    WorkerN <---> Kernel
+    Worker1 <--->|epoll / kqueue| Kernel
+    Worker2 <--->|epoll / kqueue| Kernel
+    WorkerN <--->|epoll / kqueue| Kernel
 ```
 
-Sơ đồ trên thể hiện cấu trúc phân cấp tiến trình trong NGINX. Master Process giữ đặc quyền cao nhất để bound port và điều khiển, trong khi các Worker Process trực tiếp giao tiếp với OS Kernel để xử lý lưu lượng mạng.
+Sơ đồ trên thể hiện cấu trúc phân cấp tiến trình trong NGINX. Master Process giữ đặc quyền cao nhất để khởi tạo và quản lý vòng đời các Worker Process, trong khi các Worker Process mới là các bên trực tiếp giao tiếp với OS Kernel để xử lý lưu lượng mạng qua vòng lặp sự kiện.
 
 ---
 
 ## 2.2 Vai trò của Master Process
 
-**Master Process** chạy dưới quyền người dùng đặc quyền (`root`) và tuyệt đối **không** tham gia trực tiếp vào việc xử lý các kết nối HTTP của khách hàng.
+**Master Process** chạy dưới quyền người dùng đặc quyền (`root`) và tuyệt đối **không** tham gia trực tiếp vào vòng lặp lắng nghe hay xử lý các kết nối HTTP của khách hàng.
 
 Nhiệm vụ chính của Master Process bao gồm:
-1. **Đọc và Phân tích Cấu hình**: Nạp tệp `nginx.conf`, kiểm tra tính toàn vẹn cú pháp và lắng nghe (bind) trên các cổng dịch vụ đặc quyền (như port 80, 443).
-2. **Khởi tạo và Giám sát Worker**: Gọi hàm hệ thống `fork()` để tạo ra các Worker Process. Nếu một Worker Process bị hỏng (crash) do lỗi hệ thống, Master Process lập tức phát hiện và khởi chạy một Worker thay thế ngay lập tức.
-3. **Tiếp nhận Tín hiệu Điều khiển**: Xử lý các tín hiệu từ người quản trị (như reload, stop, reopen logs) và điều phối các Worker thực thi tương ứng.
+1. **Đọc Cấu hình & Mở Socket Khởi tạo**: Nạp tệp `nginx.conf`, kiểm tra tính toàn vẹn cú pháp và mở cổng dịch vụ đặc quyền (như port 80, 443).
+2. **Khởi tạo và Giám sát Worker**: Gọi hàm hệ thống `fork()` để tạo ra các Worker Process. Khi Worker Process khởi tạo thành công, chúng kế thừa Socket File Descriptor từ Master để trực tiếp nhận kết nối từ Client. Nếu một Worker Process bị hỏng (crash) do lỗi hệ thống, Master Process lập tức phát hiện và khởi tạo một Worker thay thế.
+3. **Tiếp nhận Lệnh Điều khiển**: Tiếp nhận các câu lệnh từ người quản trị (như reload, stop, reopen logs) và điều phối các Worker thực thi tương ứng.
 
 ---
 
@@ -57,6 +61,10 @@ Các **Worker Process** chạy dưới tài khoản không có quyền đặc qu
 - **Không tranh chấp bộ nhớ**: Vì các Worker hoạt động trên không gian địa chỉ độc lập, hệ thống không cần đến các cơ chế khóa đồng bộ (Locking) phức tạp giữa các luồng, loại bỏ nguy cơ Deadlock hoặc Race Condition.
 - **Số lượng Worker tối ưu**: Thường được cấu hình bằng số lượng lõi CPU vật lý (`worker_processes auto;`) để đảm bảo mỗi Worker gắn chặt với một CPU core thông qua cơ chế CPU Affinity (`worker_cpu_affinity`), giảm thiểu việc CPU cache miss.
 
+### 2.3.1 Công thức tính Max Clients & Giới hạn File Descriptors
+
+Công thức tính tổng số kết nối đồng thời tối đa trên lý thuyết:
+
 ```text
 Công thức tính tổng số kết nối đồng thời tối đa (Direct Web Server):
 Max Clients = worker_processes * worker_connections
@@ -65,8 +73,23 @@ Công thức tính tổng số kết nối đồng thời tối đa (Reverse Pro
 Max Clients = (worker_processes * worker_connections) / 2
 ```
 
-> [!IMPORTANT]
-> Khi NGINX đóng vai trò Reverse Proxy, mỗi yêu cầu từ client sẽ tiêu tốn **2 File Descriptors (FD)**: 1 FD cho kết nối từ Client đến NGINX và 1 FD cho kết nối từ NGINX đến Upstream Backend.
+**Lưu ý quan trọng về File Descriptors (`RLIMIT_NOFILE`):**
+- Khi NGINX đóng vai trò Reverse Proxy, mỗi yêu cầu từ client sẽ tiêu tốn **2 File Descriptors (FD)**: 1 FD cho kết nối từ Client đến NGINX và 1 FD cho kết nối từ NGINX đến Upstream Backend.
+- Công thức trên là giới hạn lý thuyết. Trong thực tế, số lượng kết nối tối đa bị giới hạn cứng bởi giới hạn File Descriptors (`RLIMIT_NOFILE` hoặc `ulimit -n`) của hệ điều hành và chỉ thị `worker_rlimit_nofile` trong cấu hình NGINX. Nếu `worker_connections` đặt là `10000` nhưng `ulimit -n` của hệ thống chỉ cho phép `1024`, NGINX sẽ bị từ chối kết nối mới ngay khi đạt mốc 1024 FD.
+
+### 2.3.2 Chống thảm họa tranh chấp kết nối (Thundering Herd & `SO_REUSEPORT`)
+
+Khi một kết nối mạng mới tới socket dùng chung, nếu tất cả các Worker Process cùng bị đánh thức để giành giật kết nối đó (nhưng chỉ 1 Worker nhận thành công), hiện tượng **Thundering Herd** xuất hiện gây lãng phí chu kỳ CPU.
+
+NGINX giải quyết vấn đề này qua hai cơ chế:
+- **`accept_mutex` (Cơ chế cũ)**: Sử dụng khóa mutex ở cấp ứng dụng để chỉ cho phép duy nhất một Worker mở cờ lắng nghe socket tại một thời điểm.
+- **`SO_REUSEPORT` (Cơ chế hiện đại)**: Khai báo cờ `reuseport` trong chỉ thị `listen` (ví dụ: `listen 80 reuseport;`). Nhân hệ điều hành sẽ tự tạo ra các hàng đợi socket độc lập cho từng Worker Process và chủ động phân phối đều các kết nối mới vào từng Worker mà không cần dùng đến khóa `accept_mutex`.
+
+### 2.3.3 Khái niệm Thread Pools (Giải tỏa nghẽn Disk I/O)
+
+Mặc dù Worker Process vận hành dựa trên Vòng lặp Sự kiện Đơn luồng (Single-Threaded Event Loop), nhưng NGINX có bổ sung tính năng **Thread Pools** (`aio threads`).
+
+Khi Worker Process phải đọc tệp tin dung lượng lớn từ đĩa cứng (Disk I/O) mà dữ liệu chưa có trong RAM Cache, thao tác đọc đĩa đồng bộ có thể làm dừng (block) vòng lặp Event Loop duy nhất của Worker đó. Khi bật Thread Pools, Worker Process chính sẽ chuyển giao công việc đọc đĩa nặng nề này sang cho một **Worker Thread phụ** nằm trong Thread Pool xử lý bất đồng bộ, giúp cho vòng lặp Event Loop chính của Worker luôn thông suốt để tiếp tục xử lý hàng nghìn kết nối mạng khác.
 
 ---
 
@@ -89,7 +112,7 @@ sequenceDiagram
     Note over EventLoop: Worker KHÔNG đứng chờ Backend trả lời.<br/>Nó quay lại xử lý các sự kiện của Client khác!
     Backend-->>Kernel: Upstream trả về Response
     Kernel-->>EventLoop: Kích hoạt sự kiện BACKEND_READ_READY
-    EventLoop->>Client: Gửi trả Response cho Client (Non-blocking write)
+    EventLoop->>Client: Gửi trả Response for Client (Non-blocking write)
 ```
 
 Sơ đồ trình tự trên thể hiện vòng đời xử lý sự kiện bất đồng bộ. Worker Process đóng vai trò một State Machine (Máy trạng thái): khi nhận thông báo sự kiện từ Kernel, nó xử lý một phần công việc rồi lập tức chuyển sang sự kiện tiếp theo mà không bao giờ rơi vào trạng thái nghẽn chờ (Blocked).
@@ -109,28 +132,28 @@ Trái tim tạo nên tốc độ xử lý hàng trăm ngàn sự kiện/giây c�
 
 ---
 
-## 2.6 Cơ chế Tín hiệu & Hot Reload / Binary Upgrade
+## 2.6 Cơ chế Hot Reload & Binary Upgrade (Zero-Downtime)
 
-NGINX được thiết kế để hoạt động liên tục 24/7/365. Mọi thao tác thay đổi cấu hình hoặc nâng cấp phiên bản phần mềm đều được thực hiện dưới cơ chế Zero-downtime thông qua các tín hiệu POSIX (POSIX Signals).
+NGINX được thiết kế để hoạt động liên tục 24/7/365. Mọi thao tác thay đổi cấu hình hoặc nâng cấp phiên bản phần mềm đều được thực hiện dưới cơ chế Zero-downtime (không gián đoạn dịch vụ).
 
 ### 1. Nạp lại Cấu hình Không gián đoạn (Graceful Reload)
-Khi quản trị viên thực thi lệnh `nginx -s reload` (hoặc gửi tín hiệu `SIGHUP` tới Master PID):
+Khi quản trị viên thực thi lệnh `nginx -s reload`:
 
 ```mermaid
 graph TD
-    Step1["1. Master Process nhận tín hiệu SIGHUP"] --> Step2["2. Master kiểm tra cú pháp nginx.conf mới"]
+    Step1["1. Master Process tiếp nhận lệnh reload"] --> Step2["2. Master kiểm tra cú pháp nginx.conf mới"]
     Step2 -->|Cú pháp hợp lệ| Step3["3. Master khởi tạo các Worker Process mới (dùng cấu hình mới)"]
     Step2 -->|Cú pháp lỗi| StepError["Hủy lệnh reload, giữ nguyên các Worker cũ hoạt động"]
-    Step3 --> Step4["4. Master gửi tín hiệu SIGQUIT tới các Worker Process cũ"]
+    Step3 --> Step4["4. Master yêu cầu các Worker Process cũ đóng kết nối dần"]
     Step4 --> Step5["5. Worker cũ ngừng chấp nhận kết nối mới, phục vụ nốt kết nối dở dang rồi tự hủy"]
 ```
 
 ### 2. Nâng cấp Phần mềm Không gián đoạn (Hot Binary Upgrade)
-Khi cần nâng cấp phiên bản NGINX mà không ngắt kết nối HTTP hiện tại:
-1. Gửi tín hiệu `SIGUSR2` đến Master PID cũ. Master PID cũ đổi tên file PID của nó (`nginx.pid` $\rightarrow$ `nginx.pid.oldbin`), sau đó thực thi file nhị phân NGINX mới để tạo ra một Master Process thứ hai.
-2. Master Process mới khởi tạo các Worker Process mới sử dụng bản nhị phân mới.
-3. Gửi tín hiệu `SIGWINCH` đến Master PID cũ để nó ra lệnh đóng dần các Worker Process cũ.
-4. Nếu bản nhị phân mới hoạt động ổn định, gửi tín hiệu `SIGQUIT` đến Master PID cũ để hoàn tất chuyển giao. Nếu xảy ra sự cố, gửi tín hiệu `SIGHUP` tới Master cũ để khôi phục trạng thái ban đầu.
+Khi cần nâng cấp phiên bản NGINX mới mà không làm đứt gãy các kết nối HTTP đang diễn ra:
+1. Master Process khởi chạy phiên bản nhị phân NGINX mới, tạo ra một Master Process thứ hai song song.
+2. Master Process mới khởi tạo các Worker Process mới để nhận các yêu cầu mới.
+3. Master Process cũ ra lệnh cho các Worker Process cũ ngưng tiếp nhận kết nối và đóng dần sau khi phục vụ xong yêu cầu hiện tại.
+4. Sau khi các Worker cũ tự hủy và hệ thống mới hoạt động ổn định, Master Process cũ dừng hoạt động hoàn tất quá trình chuyển giao.
 
 ---
 [← Quay lại mục lục](README.md)
