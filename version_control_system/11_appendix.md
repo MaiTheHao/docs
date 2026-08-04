@@ -8,7 +8,7 @@ Phần phụ lục này cung cấp bảng tra cứu nhanh các lệnh Git thư�
 - [Phụ lục B. Thuật ngữ Git Việt hóa](#phụ-lục-b-thuật-ngữ-git-việt-hóa)
 - [Phụ lục C. Câu hỏi thường gặp (FAQ)](#phụ-lục-c-câu-hỏi-thường-gặp-faq)
 - [Phụ lục D. Tài liệu tham khảo](#phụ-lục-d-tài-liệu-tham-khảo)
-- [Phụ lục E. Sách và bài viết nên đọc](#phụ-lục-e-sách-và-bài-viết-nên-đọc)
+- [Phụ lục E. Sách và bài viết nên đọc](#phụ-lục-e-sách-và-bài-viết-nền-đọc)
 
 ---
 
