@@ -6,41 +6,7 @@ Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu**
 
 ---
 
-## Bản đồ Tri thức & Mục lục
-
-```mermaid
-flowchart TD
-    accTitle: Bản đồ Tri thức Kho lưu trữ Tài liệu
-    accDescr: Tổng quan sơ đồ các chuyên đề kỹ thuật, thiết kế mẫu và kiến trúc phần mềm trong repository
-
-    Repo["Repo Docs"]
-
-    Repo --> Prog["1. Programming Languages"]
-    Repo --> Sec["2. Security"]
-    Repo --> DP["3. Design Patterns"]
-    Repo --> Arch["4. Software Architecture<br/>(Đang triển khai)"]
-    Repo --> Net["5. Computer Networking"]
-    Repo --> WebPush["6. Web Notifications"]
-    Repo --> Nginx["7. NGINX Server"]
-    Repo --> DB["8. Database Internals"]
-    Repo --> VCS["9. Version Control System"]
-
-    Prog --> Java["Java"]
-    Prog --> JS["JavaScript"]
-
-    Sec --> JWT["JWT Authentication"]
-    Sec --> OAuth["OAuth Authorization"]
-
-    DP --> SOLID["SOLID Principles"]
-    DP --> Creational["Creational Patterns"]
-    DP --> Behavioral["Behavioral Patterns"]
-
-    Arch --> UIArch["MVC / MVVM / MVP"]
-    Arch --> DDD["Domain-Driven Design (DDD)"]
-    Arch --> CleanArch["Clean Architecture"]
-    Arch --> HexArch["Hexagonal Architecture"]
-    Arch --> OnionArch["Onion Architecture"]
-```
+## Mục lục
 
 ### 1. [Programming Languages](programming_languages/) - Ngôn ngữ lập trình
 *   [Java](programming_languages/java/) - Tài liệu và PDF về Java

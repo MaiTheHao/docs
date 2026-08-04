@@ -25,21 +25,25 @@ Hệ thống file cấu hình của NGINX được tổ chức theo cơ chế mo
 ├── conf.d/                 # Thư mục chứa các file cấu hình Virtual Host (*.conf)
 ├── sites-available/        # [Debian/Ubuntu] Chứa các cấu hình Virtual Host khả thi
 ├── sites-enabled/          # [Debian/Ubuntu] Symlink trỏ đến sites-available để kích hoạt
-└── modules-enabled/        # Nạp các mô-đun động (Dynamic Modules)
+└── modules-enabled/        # [Debian/Ubuntu] Nạp các mô-đun động (Dynamic Modules)
 ```
 
-**Sự khác biệt giữa các bản phân phối Linux:**
-- **Debian/Ubuntu**: Sử dụng mô hình liên kết mềm (`sites-available/` → `sites-enabled/`). Tệp `nginx.conf` nạp cấu hình qua chỉ thị `include /etc/nginx/sites-enabled/*;`.
-- **RHEL / CentOS / Rocky Linux / Docker**: Nạp trực tiếp tất cả các tệp cấu hình từ thư mục `conf.d/` qua chỉ thị `include /etc/nginx/conf.d/*.conf;`.
+> [!NOTE]
+> **Sự khác biệt giữa các bản phân phối Linux:**
+> - **Debian / Ubuntu**: Sử dụng mô hình liên kết mềm (`sites-available/` → `sites-enabled/`). Tệp `nginx.conf` nạp cấu hình qua chỉ thị `include /etc/nginx/sites-enabled/*;`.
+> - **RHEL / CentOS / Rocky Linux / Docker**: Nạp trực tiếp tất cả các tệp cấu hình từ thư mục `conf.d/` qua chỉ thị `include /etc/nginx/conf.d/*.conf;`.
 
 ---
 
 ## 4.2 Phân cấp Ngữ cảnh (Context Hierarchy)
 
-Tệp cấu hình NGINX được tổ chức thành các khối lồng nhau được gọi là **Ngữ cảnh (Contexts)**. Mỗi ngữ cảnh đóng vai trò một phạm vi hoạt động (scope) xác định tập hợp các directive có hiệu lực bên trong nó.
+Tệp cấu hình NGINX được phân thành các **Ngữ cảnh (Contexts)** hay khối cấu hình lồng nhau. Mỗi ngữ cảnh xác định một phạm vi áp dụng (scope) riêng biệt cho các chỉ thị bên trong.
 
 ```mermaid
 graph TD
+    accTitle: "Phân cấp Ngữ cảnh Cấu hình NGINX"
+    accDescr: "Cấu trúc cây phân cấp các Ngữ cảnh (Context) lồng nhau trong tệp cấu hình NGINX từ Main đến Location."
+
     Main["Main Context (Global - Cấp cao nhất)"]
     
     Main --> Events["events { } (Xử lý kết nối mạng)"]
@@ -58,14 +62,22 @@ graph TD
     Location2 --> NestedLocation["location /api/v1 { }"]
 ```
 
+| Ngữ cảnh (Context) | Vai trò/Mô tả | Chi tiết |
+| :--- | :--- | :--- |
+| **`main` (Global)** | Ngữ cảnh cấp cao nhất, nằm ngoài mọi khối `{}` | Chứa các chỉ thị toàn cục như `user`, `worker_processes`, `pid` |
+| **`events`** | Quản lý cấu hình xử lý kết nối mạng của Worker | Chứa `worker_connections`, `multi_accept` |
+| **`http` / `stream`** | Định nghĩa dịch vụ L7 (Web/HTTP) hoặc L4 (TCP/UDP) | Chứa cấu hình protocol, upstream pool, virtual hosts (`server`) |
+| **`server` / `location`** | Khai báo Virtual Host và định tuyến URI chi tiết | Xử lý request matching, `root`, `alias`, `proxy_pass` |
+
 ---
 
 ## 4.3 Chi tiết các Ngữ cảnh Cốt lõi
 
+
 | Ngữ cảnh (Context) | Phạm vi / Mục tiêu | Các Directive tiêu biểu |
 | :--- | :--- | :--- |
 | **`main`** | Cấu hình toàn cục hệ thống (nằm ngoài mọi khối `{}`) | `user`, `worker_processes`, `error_log`, `pid` |
-| **`events`** | Thiết lập mô hình xử lý kết nối mạng của Worker | `worker_connections`, `use epoll`, `multi_accept` |
+| **`events`** | Thiết lập mô hình xử lý kết nối mạng của Worker | `worker_connections`, `use epoll` *(tùy chọn; NGINX tự chọn cơ chế tối ưu theo OS)*, `multi_accept` |
 | **`http`** | Cấu hình toàn bộ giao thức HTTP/HTTPS và Web Service | `include mime.types`, `sendfile`, `keepalive_timeout` |
 | **`server`** | Định nghĩa một máy chủ ảo (Virtual Host / Domain / IP) | `listen`, `server_name`, `ssl_certificate` |
 | **`location`** | Định tuyến và xử lý các URI cụ thể thuộc `server` | `root`, `alias`, `proxy_pass`, `try_files` |
@@ -132,7 +144,7 @@ http {
 ### 2. Cạm bẫy Array-type Directives (Chỉ thị Dạng Mảng)
 Các directive như `add_header`, `proxy_set_header`, `fastcgi_param` thuộc loại chỉ thị dạng mảng.
 
-**Quy tắc kế thừa mảng của NGINX:** Các directive dạng mảng **không hợp nhất (No Merge)** dữ liệu từ cấp cha xuống cấp con. Nếu ngữ cảnh con khai báo **bất kỳ** chỉ thị dạng mảng nào cùng loại, toàn bộ các chỉ thị dạng mảng cùng loại ở ngữ cảnh cha sẽ bị **xóa sạch và thay thế hoàn toàn** trong phạm vi ngữ cảnh con đó.
+**Quy tắc kế thừa mảng của NGINX:** Mặc định các directive dạng mảng **không hợp nhất (No Merge)** dữ liệu từ cấp cha xuống cấp con. Nếu ngữ cảnh con khai báo **bất kỳ** chỉ thị dạng mảng nào cùng loại, toàn bộ các chỉ thị dạng mảng cùng loại ở ngữ cảnh cha sẽ bị **xóa sạch và thay thế hoàn toàn** trong phạm vi ngữ cảnh con đó.
 
 Ví dụ cấu hình bị rò rỉ bảo mật do hiểu sai cơ chế kế thừa:
 ```nginx
@@ -156,7 +168,9 @@ server {
 }
 ```
 
-**Giải pháp:** Khi cần thêm một directive mảng ở ngữ cảnh con mà vẫn muốn duy trì các giá trị của ngữ cảnh cha, bắt buộc phải **khai báo lại đầy đủ** tất cả các giá trị mảng tại ngữ cảnh con đó.
+**Giải pháp:** 
+- **Cách truyền thống**: Khai báo lại đầy đủ tất cả các giá trị mảng tại ngữ cảnh con khi cần bổ sung thêm header.
+- **Tính năng mới (`add_header_inherit` - NGINX 1.29.3+)**: Từ phiên bản 1.29.3 (tháng 10/2025), NGINX bổ sung chỉ thị `add_header_inherit` cho phép bật cơ chế kế thừa header từ ngữ cảnh cha (`add_header_inherit on;`), giải quyết triệt để cạm bẫy xóa sạch mảng header khi khai báo bổ sung ở ngữ cảnh con.
 
 ---
 [← Quay lại mục lục](README.md)

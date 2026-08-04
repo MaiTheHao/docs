@@ -23,6 +23,9 @@ NGINX nổi tiếng thế giới nhờ khả năng phục vụ các tệp tin t�
 
 ```mermaid
 graph LR
+    accTitle: "Luồng Phục vụ Tệp tĩnh Zero-Copy với sendfile"
+    accDescr: "Sơ đồ chuyển dữ liệu trực tiếp từ OS Page Cache tới Card mạng qua lời gọi hệ thống sendfile."
+
     User["Client Browser"] -->|"1. GET /static/banner.png"| NGINX["NGINX Web Server"]
     NGINX -->|"2. Direct Kernel Read (sendfile)"| OS["OS Page Cache / Disk Storage"]
     OS -->|"3. Zero-Copy DMA Data Transfer"| Net["Network Interface Card (NIC)"]
@@ -35,7 +38,7 @@ Sơ đồ trên thể hiện luồng phục vụ tài nguyên tĩnh của NGINX.
 
 Cơ chế Zero-Copy `sendfile` hoàn hảo đối với các kết nối HTTP thô (Unencrypted Plaintext). Tuy nhiên, đối với kết nối mã hóa **HTTPS**:
 - **Giới hạn kỹ thuật**: NGINX buộc phải đọc dữ liệu từ Disk/Page Cache lên không gian bộ nhớ người dùng (User Space Memory) để thực thi thuật toán mã hóa TLS (như AES hay ChaCha20) trước khi ghi vào Socket Buffer. Điều này khiến cơ chế `sendfile` truyền thống bị vô hiệu hóa.
-- **Giải pháp Kernel TLS (kTLS)**: Từ Linux Kernel $\ge 4.13$ kết hợp OpenSSL 3.0+, Linux giới thiệu cơ chế **kTLS**. Khi bật kTLS trong NGINX (thông qua cấu hình `ssl_conf Command Options=KTLS;`), công đoạn mã hóa TLS được chuyển giao trực tiếp xuống Kernel đảm nhận. Nhờ đó, NGINX duy trì được sức mạnh Zero-Copy `sendfile` ngay cả trên các kết nối HTTPS mã hóa cao cấp.
+- **Giải pháp Kernel TLS (kTLS)**: Từ Linux Kernel ≥ 4.13 (hỗ trợ TX) / ≥ 4.17 (hỗ trợ RX) kết hợp OpenSSL 3.0+ (build với tùy chọn `enable-ktls`) và NGINX ≥ 1.21.4, Linux giới thiệu cơ chế **kTLS**. Khi bật kTLS trong NGINX (thông qua chỉ thị `ssl_conf_command Options KTLS;` trong khối SSL), công đoạn mã hóa TLS được chuyển giao trực tiếp xuống Kernel đảm nhận. Nhờ đó, NGINX duy trì được sức mạnh Zero-Copy `sendfile` ngay cả trên các kết nối HTTPS mã hóa cao cấp.
 
 ---
 
@@ -45,6 +48,9 @@ Trong mô hình **Reverse Proxy**, NGINX đứng trước hệ thống backend (
 
 ```mermaid
 graph TD
+    accTitle: "Kiến trúc Reverse Proxy NGINX"
+    accDescr: "NGINX đứng trước hệ thống Backend Microservices làm trung gian tiếp nhận và điều hướng yêu cầu."
+
     Internet["Public Internet Clients"] -->|"HTTP / HTTPS Request"| NGINXProxy["NGINX Reverse Proxy (Port 80/443)"]
     
     subgraph PrivateNet ["Private Internal Network"]
@@ -61,7 +67,7 @@ Lợi ích kiến trúc của Reverse Proxy:
 
 ### 3.2.1 Cấu hình Bắt buộc cho HTTP Keep-Alive Connection Pool
 
-Mặc định, chỉ thị `proxy_pass` của NGINX sử dụng phiên bản **HTTP/1.0** khi gửi yêu cầu tới backend (mỗi yêu cầu sẽ tạo mới và đóng 1 TCP connection). Để NGINX thực sự duy trì Connection Pooling tới Backend Server, lập trình viên bắt buộc phải cấu hình đồng thời các chỉ thị sau:
+Trước phiên bản NGINX 1.29.7 (tháng 3/2026), chỉ thị `proxy_pass` mặc định sử dụng phiên bản **HTTP/1.0** khi gửi yêu cầu tới backend (mỗi yêu cầu tạo mới và đóng 1 TCP connection). Từ NGINX 1.29.7, `proxy_pass` đã cập nhật mặc định sang **HTTP/1.1** kết hợp keepalive (mặc định duy trì pool 32 kết nối/worker). Để đảm bảo tương thích trên mọi phiên bản NGINX và kiểm soát rõ ràng Connection Pooling tới Backend Server, việc khai báo các chỉ thị dưới đây vẫn là thực hành tốt được khuyến nghị:
 
 ```nginx
 upstream backend_pool {
@@ -73,8 +79,8 @@ server {
     listen 80;
     location /api/ {
         proxy_pass http://backend_pool;
-        proxy_http_version 1.1;        # Bắt buộc sử dụng HTTP/1.1
-        proxy_set_header Connection ""; # Xóa Header Connection 'close' mặc định
+        proxy_http_version 1.1;        # Khuyến nghị sử dụng HTTP/1.1
+        proxy_set_header Connection ""; # Xóa Header Connection 'close'
     }
 }
 ```
@@ -83,6 +89,8 @@ Sơ đồ trình tự dưới đây minh họa hiệu quả của Connection Poo
 
 ```mermaid
 sequenceDiagram
+    accTitle: "Cơ chế HTTP Keep-Alive Connection Pool"
+    accDescr: "Trình tự tái sử dụng kết nối TCP giữa NGINX Reverse Proxy và Upstream Backend."
     autonumber
     participant Client as Client Browser
     participant NGINX as NGINX Reverse Proxy
@@ -107,6 +115,9 @@ NGINX hỗ trợ cân bằng tải ở cả hai tầng trong mô hình OSI:
 
 ```mermaid
 graph TD
+    accTitle: "Mô hình Cân bằng tải Layer 4 vs Layer 7"
+    accDescr: "Sơ đồ phân định cơ chế cân bằng tải ở tầng ứng dụng L7 và tầng giao vận L4 trong NGINX."
+
     ClientReq["Client Traffic"] --> NGINXLB["NGINX Load Balancer"]
     
     subgraph Layer7 ["Layer 7 (HTTP / HTTPS / gRPC)"]
@@ -133,6 +144,8 @@ NGINX hoạt động ở tầng giao vận (Transport Layer), phân phối gói 
 
 ```mermaid
 sequenceDiagram
+    accTitle: "Cơ chế PROXY Protocol ở Layer 4"
+    accDescr: "Trình tự truyền dữ liệu IP/Port gốc của Client qua Header PROXY Protocol ở tầng L4."
     autonumber
     participant Client as Client (IP: 203.0.113.195)
     participant NGINX as NGINX L4 Load Balancer
@@ -149,7 +162,7 @@ sequenceDiagram
 
 Trong kiến trúc Microservices, NGINX đảm nhận vai trò điểm đầu vào tập trung (**API Gateway**):
 - **Định tuyến Yêu cầu (Request Routing)**: Điều hướng `/api/v1/users` về User Service và `/api/v1/orders` về Order Service.
-- **Xác thực Cổng vào (Authentication & Authorization)**: Kiểm tra tính hợp lệ của JWT Token, API Key trước khi chuyển tiếp yêu cầu tới microservices nội bộ.
+- **Xác thực Cổng vào (Authentication & Authorization)**: Kiểm tra tính hợp lệ của JWT Token, API Key trước khi chuyển tiếp yêu cầu tới microservices nội bộ. (Lưu ý: Tính năng xác thực JWT native qua `auth_jwt` chỉ có trên **NGINX Plus**; NGINX Open Source thực hiện qua `auth_request` kết hợp với njs hoặc mô-đun ngoài).
 - **Bảo vệ Hệ thống (Rate Limiting & Throttling)**: Giới hạn số lượng request tối đa trên mỗi IP/User để chống tấn công DDoS hoặc vét cạn tài nguyên.
 - **CORS Management**: Khai báo và xử lý tập trung các Header Cross-Origin Resource Sharing cho toàn bộ các dịch vụ frontend.
 
@@ -157,7 +170,7 @@ Trong kiến trúc Microservices, NGINX đảm nhận vai trò điểm đầu v�
 
 ## 3.5 SSL/TLS Termination Proxy
 
-Việc giải mã mã hóa TLS (RSA/ECC Key Exchange, AES Decryption) đòi hỏi năng lực tính toán CPU rất lớn. 
+Việc giải mã mã hóa TLS (ECDHE Key Exchange, AEAD Decryption như AES-GCM hay ChaCha20; lưu ý chuẩn TLS 1.3 theo RFC 8446 đã hoàn toàn loại bỏ cơ chế RSA Key Exchange) đòi hỏi năng lực tính toán CPU nhất định. 
 
 Bằng cách cấu hình NGINX làm **SSL/TLS Termination Proxy**:
 1. NGINX trực tiếp xử lý các quá trình bắt tay HTTPS (TLS Handshake) phức tạp với client.
@@ -172,6 +185,9 @@ NGINX hoạt động như một máy chủ đệm dữ liệu (Caching Server) t
 
 ```mermaid
 graph TD
+    accTitle: "Luồng Xử lý Edge Caching"
+    accDescr: "Sơ đồ luồng xử lý Cache HIT và Cache MISS trong NGINX Caching Subsystem."
+
     Client["Client Request"] --> NGINXCache{"NGINX Cache Subsystem"}
     
     NGINXCache -->|"Cache HIT (Dữ liệu có sẵn)"| ReturnClient["Trả kết quả ngay từ RAM / Disk Cache"]
@@ -191,6 +207,8 @@ Nút thắt cổ chai về hiệu năng của hầu hết các hệ thống web 
 
 ```mermaid
 sequenceDiagram
+    accTitle: "Giải pháp Chống Cache Stampede với proxy_cache_lock"
+    accDescr: "Trình tự khóa đệm ép 1 request duy nhất tới Backend khi xảy ra Cache Expired."
     autonumber
     actor C1 as Client 1
     actor C2 as Client 2 .. 10000
