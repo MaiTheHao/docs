@@ -23,4 +23,4 @@ Dưới đây là sơ đồ lộ trình học tập và tra cứu chi tiết đ�
 3.  **Tư duy Bảo mật (Security Mindset):** Biết cách rà soát code, phát hiện nhanh các lỗi cấu hình sai lầm phổ biến và vá lỗ hổng triệt để.
 
 ---
-[← Quay lại mục lục chính](../../README.md)
+[← Quay lại trang chủ](../../README.md)

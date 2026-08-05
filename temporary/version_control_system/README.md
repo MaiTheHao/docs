@@ -40,4 +40,4 @@ Tài liệu này cung cấp cái nhìn toàn diện và chi tiết nhất về h
 </details>
 
 ---
-[← Quay lại mục lục chính](../README.md)
+[← Quay lại trang chủ](../../README.md)

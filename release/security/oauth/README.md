@@ -54,4 +54,4 @@ Dưới đây là sơ đồ lộ trình học tập được phân chia thành 5
 3.  **Tư duy Phòng thủ Bảo mật:** Phát hiện nhanh các lỗi cấu hình Redirect URI, chống rò rỉ Client Secret trên trình duyệt và chặn đứng tấn công XSS/CSRF.
 
 ---
-[← Quay lại mục lục chính](../../README.md)
+[← Quay lại trang chủ](../../README.md)

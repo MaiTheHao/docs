@@ -28,4 +28,4 @@ Tài liệu này phân tích chuyên sâu các cơ chế nội tại của CSDL 
 </details>
 
 ---
-[← Quay lại mục lục chính](../README.md)
+[← Quay lại trang chủ](../../README.md)

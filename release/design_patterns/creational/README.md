@@ -89,4 +89,4 @@ Các mẫu khởi tạo thường có mối quan hệ bổ trợ hoặc thay th�
     *   Một lớp *Singleton* thường được dùng để quản lý thể hiện duy nhất của một lớp *Abstract Factory*.
 
 ---
-[← Quay lại mục lục chính](../README.md)
+[← Quay lại trang chủ](../../README.md)

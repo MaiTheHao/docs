@@ -13,5 +13,5 @@ Tài liệu này cung cấp bức tranh tổng thể và tinh gọn về NGINX �
 - [Chương 5. Các Tính năng Cốt lõi của NGINX (Core Features)](05_core_features.md)
 
 ---
-[← Quay lại mục lục chính](../README.md)
+[← Quay lại trang chủ](../../README.md)
 

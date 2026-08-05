@@ -1,47 +1,36 @@
 # REPO: Docs
 
-Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu** về lập trình, bảo mật, và công nghệ. Đây là những phần **mình cần thiết cho bản thân**, không phải một kho kiến thức đầy đủ toàn bộ. Tài liệu được tổng hợp từ các nguồn mở trên Internet và được tùy chỉnh theo nhu cầu riêng.
+Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu** về lập trình, bảo mật, và công nghệ. Đây là những phần **cần thiết cho cá nhân**, không phải một kho kiến thức đầy đủ toàn bộ. Tài liệu được tổng hợp từ các nguồn mở trên Internet và được tùy chỉnh theo nhu cầu riêng.
 
-> **Lưu ý:** Đây là **tài liệu cá nhân** của mình, không phải hướng dẫn chính thức hay kho tham khảo đầy đủ. Nội dung chỉ bao gồm những phần mình cần và dựa trên kinh nghiệm riêng.
+> **Lưu ý:** Đây là **tài liệu cá nhân**, không phải hướng dẫn chính thức hay kho tham khảo đầy đủ. Nội dung chỉ bao gồm những phần cần thiết dựa trên kinh nghiệm cá nhân.
 
 ---
 
-## Mục lục
+## Cấu trúc Phân nhánh Tài liệu
 
-### 1. [Programming Languages](programming_languages/) - Ngôn ngữ lập trình
-*   [Java](programming_languages/java/) - Tài liệu và PDF về Java
-*   [JavaScript](programming_languages/javascript/) - Tài liệu về JavaScript
+Repository được chia thành các phân nhánh chính:
+- **[Release Docs](release/README.md)**: Các tài liệu đã qua rà soát và tinh chỉnh, thích hợp để học tập và tra cứu cá nhân.
+- **[Temporary Docs](temporary/README.md)**: Các tài liệu tổng hợp, ghi chép nhanh chưa qua rà soát đối chứng, phù hợp để tham khảo.
+- **[Library](library/README.md)**: Thư viện tổng hợp sách kỹ thuật và các tài liệu văn bản/text do cá nhân tự tổng hợp.
 
-### 2. [Security](security/) - Xác thực và Bảo mật
-*   [JWT](security/jwt/README.md) - JSON Web Tokens - Xác thực và bảo mật
-*   [OAuth](security/oauth/) - Xác thực và ủy quyền OAuth
+---
 
-### 3. [Design Patterns](design_patterns/) - Mẫu thiết kế phần mềm
-*   [SOLID Principles](design_patterns/solid/) - 5 Nguyên lý thiết kế hướng đối tượng
-*   [Creational Patterns](design_patterns/creational/) - Các mẫu thiết kế khởi tạo
-*   [Behavioral Patterns](design_patterns/behavioral/) - Các mẫu thiết kế hành vi
+## Danh mục Tài liệu
 
-### 4. [Software Architecture](architecture/) - Kiến trúc phần mềm *(Đang triển khai)*
-*   MVC / MVVM / MVP - Các mẫu kiến trúc giao diện & ứng dụng
-*   DDD (Domain-Driven Design) - Thiết kế hướng tên miền
-*   Clean Architecture - Kiến trúc sạch
-*   Hexagonal Architecture - Kiến trúc lục giác (Ports & Adapters)
-*   Onion Architecture - Kiến trúc hành tây
+### Phân nhánh Release (`/release`)
+1. [Books](release/books/) - Tài liệu & Sách tham khảo
+2. [Computer Networking](release/computer_networking/) - Mạng máy tính & Các giao thức
+3. [Design Patterns](release/design_patterns/) - Mẫu thiết kế phần mềm (SOLID, Creational, Behavioral)
+4. [Programming Languages](release/programming_languages/) - Ngôn ngữ lập trình (Java, JavaScript)
+5. [Security](release/security/) - Xác thực & Bảo mật (JWT, OAuth)
 
-### 5. [Computer Networking](computer_networking/) - Mạng máy tính
-*   [Computer Networking](computer_networking/) - Các kiến thức về mạng máy tính và giao thức mạng
+### Phân nhánh Temporary (`/temporary`)
+1. [Database Internals](temporary/database/) - Cơ sở Dữ liệu (MVCC, Index, Case Studies)
+2. [NGINX](temporary/nginx/) - Web Server & Reverse Proxy
+3. [Version Control System](temporary/version_control_system/) - Git & GitHub
 
-### 6. [Web Notifications](web_notifications/) - Thông báo đẩy trên nền web
-*   [Web Notifications](web_notifications/) - Kiến trúc, luồng hoạt động FCM/Web Push API và hướng dẫn triển khai
-
-### 7. [NGINX](nginx/README.md) - Web Server & Reverse Proxy
-*   [NGINX](nginx/README.md) - Hướng dẫn toàn diện từ kiến trúc Event-Driven, C10K, Cấu hình, Caching, SSL/TLS đến Trade-offs
-
-### 8. [Database Internals](database/README.md) - Cơ sở Dữ liệu
-*   [MVCC, Index & Case Studies](database/README.md) - Phân tích chuyên sâu MVCC, B+Tree Index, Covering Index, Workload Trade-offs và Case Study Uber Migration
-
-### 9. [Version Control System](version_control_system/README.md) - Hệ thống Quản lý Phiên bản
-*   [Git & GitHub](version_control_system/README.md) - Hướng dẫn toàn diện từ Version Control đến cộng tác phần mềm
+### Thư viện Tài liệu (`/library`)
+1. [Technical Books & Texts](library/README.md) - Thư viện sách kỹ thuật (Clean Architecture, Continuous Delivery, Microservices, SQL, Design Patterns,...) và tài liệu dạng văn bản do cá nhân tự tổng hợp.
 
 ---
 

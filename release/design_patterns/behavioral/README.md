@@ -111,5 +111,5 @@ graph TD
 ```
 
 ---
-[← Quay lại mục lục chính](../README.md)
+[← Quay lại trang chủ](../../README.md)
 
