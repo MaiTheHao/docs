@@ -1,84 +1,272 @@
 ---
 name: standardize_doc_style
-description: Quy chuẩn hóa cấu trúc, phong cách, định dạng và tính nhất quán cho tài liệu kỹ thuật. LLM tuân thủ khi tạo hoặc chỉnh sửa Markdown.
+description: Enforce consistent structure, formatting, naming, diagrams, tables, and natural technical writing for Markdown documentation.
 ---
 
-# Technical Documentation Style Specification
+# Purpose
 
-Quy chuẩn bắt buộc cho mọi tài liệu Markdown trong repository.
+Apply this specification to every Markdown document created or modified.
 
-## 1. Naming Conventions
+---
 
-* **Root Category Directory:** `##_snake_case` (ví dụ: `01_java`, `02_spring_boot`, `03_design_patterns`).
-* **Child Directory & File:** `snake_case` viết thường toàn bộ (ví dụ: `single_responsibility_principle.md`). Không chứa khoảng trắng, chữ in hoa hoặc ký tự đặc biệt.
-* **Assets Directory:** Lưu trữ ảnh/biểu đồ tĩnh tại `assets/` nằm trong thư mục con tương ứng.
+# Naming
 
-## 2. Document Structure & Layout
+- Root directories: `##_snake_case`
+- Child directories/files: `snake_case`
+- Lowercase only.
+- No spaces or special characters.
+- Store static assets in `assets/`.
 
-Mọi file Markdown chi tiết tuân thủ phân cấp:
+---
 
-1. **H1 Title:** Duy nhất 1 tiêu đề H1 ở đầu trang (`# <Title>`).
-2. **Table of Contents (TOC):** Đặt ngay sau H1, dùng header `## Mục lục` chứa danh sách link neo đến các H2.
-3. **Logic Dividers:** Đặt đường phân tách `---` trước mỗi header H2.
-4. **Footer Navigation:** Bắt buộc ở cuối file chi tiết:
-   ```markdown
-   ---
-   [← Quay lại mục lục](README.md)
-   ```
+# Document Structure
 
-## 3. Technical Format & Syntax Rules
+- Exactly one `# H1`.
+- `## Table of Contents` immediately after H1.
+- TOC links only H2 sections.
+- Insert `---` before every H2.
+- Footer:
 
-### Code Blocks
-* **Language Tag Required:** Bắt buộc khai báo ngôn ngữ (ví dụ: ````java`, ````bash`, ````yaml`, ````mermaid`).
-* **Description:** 1-2 dòng mô tả vai trò trước mỗi khối code.
-
-### Mermaid Diagrams
-Quy chuẩn thiết kế sơ đồ Mermaid trực quan, chuẩn xác và tương thích tối đa với mọi IDE/GitHub:
-
-* **Strictly Plain Styling (No Custom Colors/Themes):**
-  * Cấm hardcode theme (ví dụ: `%%{init: {'theme': '...'}}%%` hoặc YAML theme).
-  * Cấm dùng `style`, `classDef`, `linkStyle`, `fill`, `stroke`, hoặc ép màu chữ (`color`). Giữ code sơ đồ dạng chuẩn (plain) để tự động thích ứng với Light/Dark mode của IDE/GitHub.
-* **Label Quoting & Escaping:**
-  * LUÔN bọc nhãn Node trong dấu nháy kép `""`, đặc biệt khi chứa khoảng trắng hoặc ký tự đặc biệt (ví dụ: `A["AreaCalculator (Bad Design)"]`).
-* **Node ID Rules:**
-  * Dùng camelCase, không chứa khoảng trắng.
-  * Cấm dùng từ khóa bảo lưu `end` làm ID (dùng `End` hoặc `A["end"]`).
-  * Tránh bắt đầu Node ID bằng chữ `o` hoặc `x` (gây lỗi render edge/arrowhead).
-* **Syntax & Formatting:**
-  * Xuống dòng trong nhãn dùng `<br/>`, KHÔNG dùng `\n`.
-  * Khai báo rõ hướng sơ đồ (`TD`/`TB` hoặc `LR`).
-  * Comment trong sơ đồ dùng `%%` ở đầu dòng.
-* **Accessibility & Title:**
-  * Mọi sơ đồ nên bao gồm `accTitle: <Tiêu đề ngắn>` và `accDescr: <Mô tả chi tiết>` ở đầu khối sơ đồ.
-* **Node Shapes & Sizing:**
-  * Nhất quán hình dạng node (`[...]` hành động, `{...}` rẽ nhánh, `[(...)]` CSDL, `([...])` Bắt đầu/Kết thúc).
-  * Giữ sơ đồ tinh gọn (tối ưu 5-15 nodes, tối đa 25 nodes).
-
-
-### Explanatory Tables
-Bắt buộc có bảng giải thích sau sơ đồ Mermaid hoặc khối logic phức tạp:
 ```markdown
-| Thành phần/Bước | Vai trò/Mô tả | Chi tiết |
+---
+[← Back to README](README.md)
+```
+
+---
+
+# Code Blocks
+
+- Every code block requires a language tag.
+- Add a concise description before every code block.
+
+---
+
+# Mermaid
+
+## Rendering
+
+- Plain Mermaid only.
+- No themes.
+- No colors.
+- No `style`.
+- No `classDef`.
+- No `linkStyle`.
+
+## Nodes
+
+- IDs use `camelCase`.
+- Never use reserved ID `end`.
+- Avoid IDs starting with `o` or `x`.
+- Quote every label.
+
+```mermaid
+nodeId["Node Label"]
+```
+
+- Use `<br/>` for line breaks.
+- Declare graph direction (`TD`, `TB`, `LR`).
+
+## Accessibility
+
+Every diagram includes
+
+```text
+accTitle:
+accDescr:
+```
+
+## Layout
+
+- Keep diagrams compact.
+- Preferred: 5-15 nodes.
+- Maximum: 25 nodes.
+
+## Shapes
+
+Use consistent semantics.
+
+| Shape | Meaning |
+|-------|---------|
+| `[...]` | Process |
+| `{...}` | Decision |
+| `[(...)]` | Database |
+| `([...])` | Start / End |
+
+---
+
+# Tables
+
+Complex diagrams or workflows require an explanatory table.
+
+```markdown
+| Component | Purpose | Details |
 | :--- | :--- | :--- |
 ```
-* **Chữ đậm (Bold):** Thuật ngữ chuyên môn chính.
-* **Inline code (`code`):** Tên file, command, class, variable, data type.
 
-### GitHub Alerts
-Sử dụng GitHub Alert syntax thay cho blockquote:
-* `> [!NOTE]` — Thông tin nền tảng, bối cảnh bổ sung.
-* `> [!TIP]` — Mẹo tối ưu hiệu năng, kinh nghiệm thực tế.
-* `> [!IMPORTANT]` — Yêu cầu nghiệp vụ cốt lõi, cấu hình bắt buộc.
-* `> [!WARNING]` — Rủi ro, lỗi phổ biến, nguy cơ Git conflict.
+Rules
 
-## 4. Quality Checklist
+- Bold for domain terminology.
+- Inline code for filenames, commands, classes, variables and types.
 
-Tài liệu hợp lệ khi đáp ứng đủ 100% tiêu chí:
-- [ ] Duy nhất 1 H1 ở đầu trang.
-- [ ] TOC (`## Mục lục`) liên kết đúng các H2 trong trang.
-- [ ] Không chứa broken link (link tương đối hợp lệ).
-- [ ] Khối code có language tag và giải thích phía trước.
-- [ ] Mermaid diagram tuân thủ plain style (không hardcode theme/custom color), nhãn có ký tự đặc biệt được bọc trong nháy kép `""`.
-- [ ] Bảng giải thích đúng cấu trúc 3 cột (`Thành phần/Bước | Vai trò/Mô tả | Chi tiết`).
-- [ ] Chân trang có link `[← Quay lại mục lục](README.md)`.
-- [ ] Ngôn ngữ: Tiếng Việt kỹ thuật chuyên ngành, thuật ngữ nhất quán.
+---
+
+# GitHub Alerts
+
+Prefer GitHub Alerts over blockquotes.
+
+- NOTE
+- TIP
+- IMPORTANT
+- WARNING
+
+---
+
+# Natural Technical Writing
+
+## Transition Diversity
+
+Avoid repeated transitions.
+
+Forbidden patterns
+
+- "The diagram below..."
+- "The table below..."
+- "The following diagram..."
+
+A repeated transition may appear at most twice per document.
+
+---
+
+## Section Diversity
+
+Avoid identical section layouts.
+
+Mix structures such as
+
+- Context → Definition
+- Example → Definition
+- Diagram → Explanation
+- Table → Analysis
+- Tradeoff → Conclusion
+
+---
+
+## Context First
+
+Present
+
+```
+Context
+→ Motivation
+→ Definition
+```
+
+instead of
+
+```
+Definition
+→ Explanation
+```
+
+Every section should contain at least one real-world context.
+
+---
+
+## Technical Storytelling
+
+Preferred flow
+
+```
+Why
+→ How
+→ Where
+→ Tradeoff
+```
+
+Include at least one engineering observation per section.
+
+---
+
+## Sentence Rhythm
+
+Mix short and long sentences.
+
+Avoid uniform paragraph lengths.
+
+---
+
+## Quantitative Language
+
+Prefer measurable statements over vague adjectives.
+
+Prefer
+
+- latency
+- throughput
+- memory
+- complexity
+- benchmark
+- percentage
+
+Avoid excessive use of
+
+- very
+- extremely
+- significant
+- powerful
+- comprehensive
+
+---
+
+## Captions
+
+Captions should describe value, not existence.
+
+Prefer
+
+- AES round transformation
+- Mathematical foundation of RSA
+- TLS hybrid encryption workflow
+
+Avoid
+
+- Diagram
+- Illustration
+- Overview
+
+---
+
+## Engineering Insight
+
+Each section should include one or two implementation insights beyond textbook definitions.
+
+Examples
+
+- production behavior
+- common pitfalls
+- engineering tradeoffs
+- performance implications
+- architectural rationale
+
+---
+
+# Validation Checklist
+
+A document is valid only if all conditions hold.
+
+- One H1.
+- TOC immediately after H1.
+- Valid internal links.
+- Language tag on every code block.
+- Mermaid follows plain style.
+- Labels quoted.
+- Accessibility metadata present.
+- Workflow tables provided where required.
+- Footer navigation exists.
+- Consistent terminology.
+- Transition repetition ≤ 2.
+- Diverse section layouts.
+- Context precedes definition.
+- Mixed sentence rhythm.
+- Quantitative wording preferred.
+- Engineering insights included.

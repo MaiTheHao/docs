@@ -10,7 +10,7 @@ Tài liệu nằm trong phân nhánh `/release` là những tài liệu đã qua
 2. [Computer Networking](computer_networking/) - Kiến thức về Mạng máy tính & Các giao thức
 3. [Design Patterns](design_patterns/) - Mẫu thiết kế phần mềm (SOLID, Creational, Behavioral)
 4. [Programming Languages](programming_languages/) - Ngôn ngữ lập trình (Java, JavaScript)
-5. [Security](security/) - Xác thực & Bảo mật (JWT, OAuth)
+5. [Security](security/) - Xác thực & Bảo mật (Encryption, JWT, OAuth)
 
 ---
 
