@@ -23,6 +23,8 @@ Repository được chia thành các phân nhánh chính:
 3. [Design Patterns](release/design_patterns/) - Mẫu thiết kế phần mềm (SOLID, Creational, Behavioral)
 4. [Programming Languages](release/programming_languages/) - Ngôn ngữ lập trình (Java, JavaScript)
 5. [Security](release/security/) - Xác thực & Bảo mật (JWT, OAuth)
+6. [Software Architecture](release/software_architecture/) - Kiến trúc phần mềm & Các quy luật thiết kế (Fundamentals, Characteristics, Styles)
+
 
 ### Phân nhánh Temporary (`/temporary`)
 1. [Database Internals](temporary/database/) - Cơ sở Dữ liệu (MVCC, Index, Case Studies)

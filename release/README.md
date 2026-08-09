@@ -10,6 +10,8 @@ Tài liệu nằm trong phân nhánh `/release` là những tài liệu đã qua
 2. [Design Patterns](design_patterns/) - Mẫu thiết kế phần mềm (SOLID, Creational, Behavioral)
 3. [Programming Languages](programming_languages/) - Ngôn ngữ lập trình (Java, JavaScript)
 4. [Security](security/) - Xác thực & Bảo mật (Encryption, JWT, OAuth)
+5. [Software Architecture](software_architecture/) - Kiến trúc phần mềm
+
 
 ---
 

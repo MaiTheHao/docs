@@ -1,0 +1,198 @@
+# Bối Cảnh Trong Kiến Trúc Phần Mềm (Architectural Context)
+
+## Table of Contents
+
+- [Khái niệm Bối cảnh Kiến trúc](#khái-niệm-bối-cảnh-kiến-trúc)
+- [Tác động của Chi phí Hạ tầng](#tác-động-của-chi-phí-hạ-tầng)
+- [Rào cản Kinh tế của Microservices trong Quá khứ](#rào-cản-kinh-tế-của-microservices-trong-quá-khứ)
+- [Tác động của Mã nguồn Mở đến Hạ tầng](#tác-động-của-mã-nguồn-mở-đến-hạ-tầng)
+- [Vai trò của Automation và DevOps](#vai-trò-của-automation-và-devops)
+- [Sự Tương tác của Các Yếu tố Hiện đại](#sự-tương-tác-của-các-yếu-tố-hiện-đại)
+- [Đánh giá Kiến trúc dựa trên Đánh đổi](#đánh-giá-kiến-trúc-dựa-trên-đánh-đổi)
+- [Tài liệu Tham khảo](#tài-liệu-tham-khảo)
+
+
+---
+
+## Khái niệm Bối cảnh Kiến trúc
+
+Kiến trúc phần mềm không tồn tại độc lập trong một môi trường lý thuyết. Mọi quyết định kiến trúc (architectural decision) đều được hình thành dựa trên các ràng buộc kỹ thuật, ngân sách vận hành và năng lực tổ chức tại thời điểm thiết kế. 
+
+Giống như nghệ thuật kiến trúc xây dựng, một thiết kế chỉ có thể hiểu đúng khi đặt vào context của thời đại đó. Chẳng hạn, ở cuối thế kỷ 20, mục tiêu hàng đầu là tối ưu hóa việc dùng chung tài nguyên hạ tầng (shared infrastructure) vì chi phí hệ điều hành, ứng dụng và cơ sở dữ liệu thương mại rất đắt đỏ.
+
+> [!IMPORTANT]
+> **Một kiến trúc không thể được đánh giá đơn thuần qua việc nó "trông hiện đại" hay "đúng sách giáo khoa". Architectural decision phải được đánh giá tương quan với bối cảnh cụ thể của hệ thống.**
+
+Sơ đồ sau đây tổng hợp các yếu tố ràng buộc trực tiếp hình thành nên bối cảnh kiến trúc:
+
+```mermaid
+graph TD
+    accTitle: Cấu trúc Yếu tố Bối cảnh Kiến trúc
+    accDescr: Sơ đồ phân nhánh các ràng buộc chính hình thành nên bối cảnh kiến trúc phần mềm
+
+    contextNode["Bối cảnh Kiến trúc<br/>(Architectural Context)"] --> bizReq["Yêu cầu Kinh doanh<br/>(Business Requirements)"]
+    contextNode --> scaleReq["Quy mô Hệ thống<br/>(System Scale)"]
+    contextNode --> teamCap["Năng lực & Quy mô Team<br/>(Team Size & Capability)"]
+    contextNode --> infraCost["Chi phí Hạ tầng<br/>(Infrastructure Economics)"]
+    contextNode --> techAvail["Công nghệ Sẵn có<br/>(Technology Availability)"]
+    contextNode --> secOps["An ninh & Vận hành<br/>(Security & Ops Capability)"]
+```
+
+Quy trình ra quyết định kiến trúc hiệu quả luôn bắt đầu từ việc phân tích kỹ lưỡng các ràng buộc này thay vì chọn ngay một framework hay pattern thời thượng.
+
+---
+
+## Tác động của Chi phí Hạ tầng
+
+Trong các thập niên trước, phần cứng và giấy phép phần mềm (commercial licensing) chiếm tỷ trọng chi phí rất lớn. Việc vận hành từng ứng dụng trên một máy chủ riêng biệt gây lãng phí tài nguyên và chi phí vượt khả năng chi trả.
+
+Mô hình chia sẻ hạ tầng được thiết kế để giải quyết bài toán kinh tế này:
+
+```mermaid
+graph TB
+    accTitle: Mô hình Hạ tầng Chia sẻ
+    accDescr: Sơ đồ mô tả các ứng dụng chạy chung trên một hạ tầng phần cứng và license thương mại
+
+    subgraph infraGroup["Shared Infrastructure Layer"]
+        sharedServer["Shared Hardware / OS / Server License"]
+    end
+
+    appA["Application A"] --> sharedServer
+    appB["Application B"] --> sharedServer
+    appC["Application C"] --> sharedServer
+```
+
+Bảng so sánh chỉ số giữa hai mô hình hạ tầng:
+
+| Tiêu chí | Hạ tầng Phân tán (Triển khai riêng) | Hạ tầng Chia sẻ (Shared Infrastructure) |
+| :--- | :--- | :--- |
+| **Chi phí License** | Cao (tỷ lệ thuận theo số node) | Tối ưu (dùng chung license thương mại) |
+| **Tận dụng CPU/RAM** | Thấp (phân mảnh tài nguyên) | Cao (tập trung workload) |
+| **Độ phức tạp Vận hành** | Phức tạp khi quản lý thủ công | Đơn giản hơn do tập trung |
+
+> [!NOTE]
+> Việc lựa chọn hạ tầng chia sẻ vào thời kỳ đó là một quyết định kiến trúc hoàn toàn đúng đắn dựa trên các chỉ số tài chính thực tế, không phải là một hạn chế kỹ thuật thuần túy.
+
+---
+
+## Rào cản Kinh tế của Microservices trong Quá khứ
+
+Microservices yêu cầu mức độ cô lập (isolation) cao giữa các dịch vụ độc lập. Nếu áp dụng microservices vào năm 2002, chi phí sở hữu phần mềm (TCO) sẽ bùng nổ do yêu cầu hàng chục license hệ điều hành, cơ sở dữ liệu thương mại và server phần cứng riêng biệt.
+
+Bản chất rào cản kinh tế của kiến trúc phân tán trong quá khứ được thể hiện qua sơ đồ sau:
+
+```mermaid
+graph TD
+    accTitle: Chuỗi Tăng Chi phí trong Kiến trúc Phân tán Quá khứ
+    accDescr: Sơ đồ dòng chảy dẫn đến chi phí hạ tầng cao khi triển khai microservices thời điểm chưa có open source
+
+    serviceCount["Số lượng Service tăng"] --> runtimeCount["Số lượng Runtime & Node tăng"]
+    runtimeCount --> licenseReq["Yêu cầu License thương mại tăng"]
+    licenseReq --> infraExpense["Chi phí Hạ tầng & Vận hành bùng nổ"]
+```
+
+Do đó, sự vắng mặt của microservices ở đầu những năm 2000 không phải vì thiếu ý tưởng thiết kế, mà do tính khả thi về mặt kinh tế (economic feasibility) chưa cho phép.
+
+---
+
+## Tác động của Mã nguồn Mở đến Hạ tầng
+
+Sự bùng nổ của phần mềm mã nguồn mở (Open Source Software - OSS) như Linux, PostgreSQL, Nginx, Docker và Kubernetes đã tái định hình toàn bộ nền kinh tế hạ tầng. Chi phí bản quyền phần mềm giảm xuống xấp xỉ 0 USD, cho phép chia tách tài nguyên ở mức ảo hóa nhẹ (containerization).
+
+Sơ đồ biểu diễn các tầng cô lập hạ tầng hiện đại:
+
+```mermaid
+graph TB
+    accTitle: Các Tầng Cô lập Hạ tầng Hiện đại
+    accDescr: Sơ đồ phân tầng từ phần cứng vật lý đến ảo hóa container mã nguồn mở
+
+    physInfra["Physical Infrastructure"] --> vmNode1["Virtual Machine 01"]
+    physInfra --> vmNode2["Virtual Machine 02"]
+
+    vmNode1 --> containerA["Container Service A"]
+    vmNode1 --> containerB["Container Service B"]
+    vmNode2 --> containerC["Container Service C"]
+```
+
+Nhờ mô hình này, việc tạo ra hàng chục microservice độc lập không còn kéo theo chi phí license tương ứng, mở đường cho các architectural styles phân tán phát triển.
+
+---
+
+## Vai trò của Automation và DevOps
+
+Mã nguồn mở giải quyết chi phí bản quyền, nhưng số lượng service tăng lên lại đẩy chi phí vận hành (operational cost) lên cao. Nếu thực hiện triển khai và theo dõi thủ công, hệ thống sẽ gặp bottleneck nghiêm trọng.
+
+Vấn đề này được giải quyết bằng cuộc cách mạng DevOps và tự động hóa quy trình phần mềm:
+
+```mermaid
+graph LR
+    accTitle: Luồng Tự động hóa Pipeline DevOps
+    accDescr: Quy trình từ nguồn code đến CI, kiểm thử tự động, build image, deployment và giám sát observability
+
+    srcCode["Source Code"] --> ciBuild["CI Engine"]
+    ciBuild --> autoTest["Kiểm thử Tự động"]
+    autoTest --> imgBuild["Build Container Image"]
+    imgBuild --> autoDeploy["Triển khai Tự động"]
+    autoDeploy --> observeMon["Observability & Metrics"]
+```
+
+> [!TIP]
+> DevOps không đơn thuần là tập hợp công cụ (Jenkins, GitHub Actions, Prometheus). DevOps là năng lực vận hành làm giảm rào cản chi phí quản trị của các kiến trúc phân tán.
+
+---
+
+## Sự Tương tác của Các Yếu tố Hiện đại
+
+Sự phổ biến của các kiến trúc hiện đại không đến từ một công nghệ riêng lẻ mà là tổng hòa của nhiều tiến bộ công nghệ và phương pháp vận hành:
+
+```mermaid
+graph TD
+    accTitle: Sự Tổng hòa Các Yếu tố Khả thi Kiến trúc Hiện đại
+    accDescr: Sơ đồ thể hiện sự kết hợp giữa Open Source, Cloud, Container và DevOps tạo nên tính khả thi của kiến trúc phân tán
+
+    openSource["Open Source"] --> lowCost["Giảm Chi phí Hệ thống Phân tán"]
+    cloudTech["Cloud & Virtualization"] --> lowCost
+    containerTech["Containers & Orchestration"] --> lowCost
+    devOpsOps["DevOps & Automation"] --> lowCost
+    lowCost --> feasibleArch["Nhiều Architectural Styles trở nên khả thi về mặt kinh tế"]
+```
+
+Tuy nhiên, "Hiện đại" không đồng nghĩa với "Tốt hơn". Với một đội ngũ 3 lập trình viên xây dựng hệ thống phục vụ 10,000 người dùng với nghiệp vụ CRUD cơ bản, việc áp dụng microservices là một dạng quá tay (over-engineering).
+
+Cấu trúc Modular Monolith trong ngữ cảnh đó mang lại hiệu quả cao hơn hẳn:
+
+```text
+Cấu trúc ứng dụng Modular Monolith đơn lẻ triển khai trên Spring Boot
+```
+
+```text
+Spring Boot Monolith Application
+│
+├── Identity Module
+├── Authentication Module
+├── Student Domain Module
+└── Academic Domain Module
+```
+
+---
+
+## Đánh giá Kiến trúc dựa trên Đánh đổi
+
+Thay vì tìm kiếm một kiến trúc tuyệt đối, nhà kiến trúc cần phân tích sự phù hợp giữa ngữ cảnh và các lựa chọn thiết kế:
+
+| Bối cảnh Hệ thống (Context) | Lựa chọn Kiến trúc Gợi ý | Rationale & Trade-off |
+| :--- | :--- | :--- |
+| **Team nhỏ, domain đơn giản** | Modular Monolith | Tối ưu tốc độ phát triển, latency thấp, vận hành đơn giản. |
+| **Ranh giới Domain rõ ràng, quy mô team lớn** | Microservices | Độc lập deploy/scale, nhưng tăng độ phức tạp mạng và data consistency. |
+| **Hạ tầng bị giới hạn ngân sách nghiêm ngặt** | Shared Infrastructure / Monolith | Tối ưu chi phí tài nguyên phần cứng tối đa. |
+| **Năng lực DevOps mạnh mẽ** | Distributed / Event-Driven | Khai thác tối đa khả năng mở rộng tự động và fault tolerance. |
+
+---
+
+## Tài liệu Tham khảo
+
+- 📘 **[Fundamentals of Software Architecture (2nd Edition)](../../../library/fundamentals_of_software_architecture_2nd.epub)** – Mark Richards & Neal Ford *(Chapter 1: Introduction & Context)*.
+- 📕 **[Clean Architecture: A Craftsman's Guide to Software Structure and Design](../../../library/clean_architecture_a_acraftsman_guide.pdf)** – Robert C. Martin *(Part I: Introduction & What is Architecture)*.
+
+---
+[← Back to README](README.md)
