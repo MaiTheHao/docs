@@ -1,35 +1,71 @@
-# Mục lục
+# Mục Lục Tài Liệu Design Patterns & OOP
 
-<details>
-<summary><strong>Giới thiệu Design Pattern</strong></summary>
+## Table of Contents
 
--   [Giới thiệu Design Pattern & SOLID Principles](./solid/README.md)
+- [Lập Trình Hướng Đối Tượng (OOP)](#lập-trình-hướng-đối-tượng-oop)
+- [Design Patterns & SOLID](#design-patterns--solid)
+- [Creational Patterns](#creational-patterns)
+- [Behavioral Patterns](#behavioral-patterns)
+
+---
+
+## Lập Trình Hướng Đối Tượng (OOP)
+
+<details open>
+<summary><strong>Các chủ đề Lập trình Hướng đối tượng</strong></summary>
+
+- [Tổng Quan OOP & Lịch Sử Paradigms](./oop/README.md)
+- [Mối Quan Hệ Giữa Các Lớp (Class Relationships)](./oop/class_relationships.md)
+- [Đóng Gói (Encapsulation)](./oop/encapsulation.md)
+- [Trừu Tượng Hóa & Interface (Abstraction)](./oop/abstraction.md)
+- [Kế Thừa (Inheritance)](./oop/inheritance.md)
+- [Đa Hình (Polymorphism)](./oop/polymorphism.md)
 
 </details>
+
+---
+
+## Design Patterns & SOLID
+
+<details>
+<summary><strong>Giới thiệu Design Pattern & Nguyên tắc SOLID</strong></summary>
+
+- [Giới Thiệu Design Pattern & SOLID Principles](./solid/README.md)
+
+</details>
+
+---
+
+## Creational Patterns
 
 <details>
 <summary><strong>Creational Patterns</strong></summary>
 
--   [Giới thiệu Creational Patterns](./creational/README.md)
--   [Singleton Pattern](./creational/singleton.md)
--   [Prototype Pattern](./creational/prototype.md)
--   [Factory Method Pattern](./creational/factory_method.md)
--   [Builder Pattern](./creational/builder.md)
--   [Abstract Factory Pattern](./creational/abstract_factory.md)
+- [Giới Thiệu Creational Patterns](./creational/README.md)
+- [Singleton Pattern](./creational/singleton.md)
+- [Prototype Pattern](./creational/prototype.md)
+- [Factory Method Pattern](./creational/factory_method.md)
+- [Builder Pattern](./creational/builder.md)
+- [Abstract Factory Pattern](./creational/abstract_factory.md)
 
 </details>
+
+---
+
+## Behavioral Patterns
 
 <details>
 <summary><strong>Behavioral Patterns</strong></summary>
 
--   [Giới thiệu Behavioral Patterns](./behavioral/README.md)
--   [Observer Pattern](./behavioral/observer.md)
--   [Strategy Pattern](./behavioral/strategy.md)
--   [Command Pattern](./behavioral/command.md)
--   [State Pattern](./behavioral/state.md)
--   [Template Method Pattern](./behavioral/template_method.md)
--   [Mediator Pattern](./behavioral/mediator.md)
--   [Chain of Responsibility Pattern](./behavioral/chain_of_responsibility.md)
+- [Giới Thiệu Behavioral Patterns](./behavioral/README.md)
+- [Observer Pattern](./behavioral/observer.md)
+- [Strategy Pattern](./behavioral/strategy.md)
+- [Command Pattern](./behavioral/command.md)
+- [State Pattern](./behavioral/state.md)
+- [Template Method Pattern](./behavioral/template_method.md)
+- [Mediator Pattern](./behavioral/mediator.md)
+- [Chain of Responsibility Pattern](./behavioral/chain_of_responsibility.md)
 
 </details>
+
 
