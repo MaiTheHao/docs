@@ -136,8 +136,16 @@ graph LR
     autoDeploy --> observeMon["Observability & Metrics"]
 ```
 
+### Lịch sử Ra đời của Phong trào DevOps
+
+Trước khi phong trào hình thành, những thảo luận ban đầu về việc xóa bỏ rào cản bức tường ngăn cách giữa Development (Dev) và Operations (Ops) đã xuất hiện rải rác từ năm 2007–2008. Tuy nhiên, phải đến năm **2009**, khái niệm **DevOps** mới chính thức được định hình và đặt tên thông qua hai cột mốc lịch sử quan trọng:
+
+*   **Bài thuyết trình truyền cảm hứng (tháng 6/2009):** tại hội nghị O'Reilly Velocity, John Allspaw và Paul Hammond từ Flickr đã trình bày bài tham luận kinh điển *"10+ Deploys per Day: Dev and Ops Cooperation at Flickr"*. Bài thuyết trình này đã tạo nên một làn sóng tư tưởng mạnh mẽ, chứng minh rằng Dev và Ops hoàn toàn có thể hợp tác để triển khai liên tục mà không gây sụp đổ hệ thống.
+*   **Sự kiện đặt tên chính thức (tháng 10/2009):** Lấy cảm hứng từ bài thuyết trình của Flickr, Patrick Debois đã đứng ra tổ chức hội nghị **DevOpsDays** đầu tiên tại Ghent, Bỉ. Chính Patrick Debois là người đã ghép hai từ "Development" và "Operations" để tạo ra thuật ngữ **"DevOps"**, đánh dấu cột mốc ra đời chính thức của phong trào.
+
 > [!TIP]
-> DevOps không đơn thuần là tập hợp công cụ (Jenkins, GitHub Actions, Prometheus). DevOps là năng lực vận hành làm giảm rào cản chi phí quản trị của các kiến trúc phân tán.
+> DevOps không đơn thuần là tập hợp công cụ (Jenkins, GitHub Actions, Prometheus). DevOps là sự chuyển dịch văn hóa và năng lực vận hành làm giảm rào cản chi phí quản trị của các kiến trúc phân tán.
+
 
 ---
 
