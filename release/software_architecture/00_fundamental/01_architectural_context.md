@@ -8,11 +8,10 @@
 - [Tác động của Mã nguồn Mở đến Hạ tầng](#tác-động-của-mã-nguồn-mở-đến-hạ-tầng)
 - [Vai trò của Automation và DevOps](#vai-trò-của-automation-và-devops)
 - [Sự Tương tác của Các Yếu tố Hiện đại](#sự-tương-tác-của-các-yếu-tố-hiện-đại)
-- [Đánh giá Kiến trúc dựa trên Đánh đổi](#đánh-giá-kiến-trúc-dựa-trên-đánh-đổi)
-- [Tài liệu Tham khảo](#tài-liệu-tham-khảo)
-
+- [Đánh giá Kiến trúc dựa trên Trade-off](#đánh-giá-kiến-trúc-dựa-trên-trade-off)
 
 ---
+
 
 ## Khái niệm Bối cảnh Kiến trúc
 
@@ -184,7 +183,7 @@ Spring Boot Monolith Application
 
 ---
 
-## Đánh giá Kiến trúc dựa trên Đánh đổi
+## Đánh giá Kiến trúc dựa trên Trade-off
 
 Thay vì tìm kiếm một kiến trúc tuyệt đối, nhà kiến trúc cần phân tích sự phù hợp giữa ngữ cảnh và các lựa chọn thiết kế:
 
@@ -196,11 +195,5 @@ Thay vì tìm kiếm một kiến trúc tuyệt đối, nhà kiến trúc cần 
 | **Năng lực DevOps mạnh mẽ** | Distributed / Event-Driven | Khai thác tối đa khả năng mở rộng tự động và fault tolerance. |
 
 ---
-
-## Tài liệu Tham khảo
-
-- 📘 **[Fundamentals of Software Architecture (2nd Edition)](../../../library/fundamentals_of_software_architecture_2nd.epub)** – Mark Richards & Neal Ford *(Chapter 1: Introduction & Context)*.
-- 📕 **[Clean Architecture: A Craftsman's Guide to Software Structure and Design](../../../library/clean_architecture_a_acraftsman_guide.pdf)** – Robert C. Martin *(Part I: Introduction & What is Architecture)*.
-
----
 [← Back to README](README.md)
+

@@ -3,28 +3,27 @@
 ## Table of Contents
 
 - [Tổng quan về các Quy luật Kiến trúc](#tổng-quan-về-các-quy-luật-kiến-trúc)
-- [Quy luật Thứ nhất: Mọi thứ đều là sự Đánh đổi](#quy-luật-thứ-nhất-mọi-thứ-đều-là-sự-đánh-đổi)
-- [Hệ quả 1: Đánh đổi Ẩn giấu](#hệ-quả-1-đánh-đổi-ẩn-giấu)
-- [Hệ quả 2: Phân tích Đánh đổi là Tiến trình Liên tục](#hệ-quả-2-phân-tích-đánh-đổi-là-tiến-trình-liên-tục)
+- [Quy luật Thứ nhất: Mọi thứ đều là Trade-off](#quy-luật-thứ-nhất-mọi-thứ-đều-là-trade-off)
+- [Hệ quả 1: Trade-off Ẩn giấu](#hệ-quả-1-trade-off-ẩn-giấu)
+- [Hệ quả 2: Phân tích Trade-off là Tiến trình Liên tục](#hệ-quả-2-phân-tích-trade-off-là-tiến-trình-liên-tục)
 - [Không có Lựa chọn Mặc định Tuyệt đối](#không-có-lựa-chọn-mặc-định-tuyệt-đối)
 - [Quy luật Thứ hai: Tại sao Quan trọng hơn Như thế nào](#quy-luật-thứ-hai-tại-sao-quan-trọng-hơn-như-thế-nào)
 - [Bảo tồn Lý do Ra Quyết định (Preserving the Why)](#bảo-tồn-lý-do-ra-quyết-định-preserving-the-why)
 - [Quy trình Phân tích và Đóng gói Quyết định](#quy-trình-phân-tích-và-đóng-gói-quyết-định)
-- [Tài liệu Tham khảo](#tài-liệu-tham-khảo)
-
 
 ---
 
+
 ## Tổng quan về các Quy luật Kiến trúc
 
-Kiến trúc phần mềm phụ thuộc rất mạnh vào bối cảnh (context), ràng buộc (constraints) và sự đánh đổi (trade-offs). Do đó, có rất ít nguyên lý có thể xem là quy luật phổ quát. Tuy nhiên, hai quy luật dưới đây được đúc kết bởi Mark Richards và Neal Ford nhằm định hướng cho mọi tư duy kiến trúc:
+Kiến trúc phần mềm phụ thuộc rất mạnh vào bối cảnh (context), ràng buộc (constraints) và các Trade-off. Do đó, có rất ít nguyên lý có thể xem là quy luật phổ quát. Tuy nhiên, hai quy luật dưới đây được đúc kết bởi Mark Richards và Neal Ford nhằm định hướng cho mọi tư duy kiến trúc:
 
-1. **First Law:** Everything in software architecture is a trade-off. (Mọi thứ trong kiến trúc phần mềm đều là sự đánh đổi).
+1. **First Law:** Everything in software architecture is a trade-off. (Mọi thứ trong kiến trúc phần mềm đều là Trade-off).
 2. **Second Law:** Why is more important than how. (Tại sao lại quan trọng hơn Như thế nào).
 
 ---
 
-## Quy luật Thứ nhất: Mọi thứ đều là sự Đánh đổi
+## Quy luật Thứ nhất: Mọi thứ đều là Trade-off
 
 > [!IMPORTANT]
 > **First Law of Software Architecture:** Everything in software architecture is a trade-off.
@@ -35,7 +34,7 @@ Sơ đồ phân tích thành tố của một quyết định kiến trúc:
 
 ```mermaid
 graph TD
-    accTitle: Các Thành tố Phân tích Đánh đổi Kiến trúc
+    accTitle: Các Thành tố Phân tích Trade-off Kiến trúc
     accDescr: Sơ đồ phân nhánh thể hiện Lợi ích, Chi phí, Ràng buộc và Rủi ro của một quyết định kiến trúc
 
     decNode["Architectural Decision"] --> benefitNode["Benefits<br/>(Lợi ích mang lại)"]
@@ -48,7 +47,7 @@ Ví dụ cụ thể khi đánh giá việc áp dụng Microservices:
 
 ```mermaid
 graph TB
-    accTitle: Phân tích Đánh đổi của Microservices
+    accTitle: Phân tích Trade-off của Microservices
     accDescr: Sơ đồ so sánh hai mặt lợi ích và chi phí khi chuyển sang kiến trúc Microservices
 
     microNode["Microservices Architecture"]
@@ -73,7 +72,7 @@ Do đó, câu hỏi chuẩn xác của kiến trúc sư không phải là *"Côn
 
 ---
 
-## Hệ quả 1: Đánh đổi Ẩn giấu
+## Hệ quả 1: Trade-off Ẩn giấu
 
 > [!WARNING]
 > **Corollary 1:** If you think you've discovered something that isn't a trade-off, more likely you just haven't identified the trade-off yet.
@@ -96,16 +95,16 @@ graph LR
 
 ---
 
-## Hệ quả 2: Phân tích Đánh đổi là Tiến trình Liên tục
+## Hệ quả 2: Phân tích Trade-off là Tiến trình Liên tục
 
 > [!NOTE]
 > **Corollary 2:** You can't just do trade-off analysis once and be done with it.
 
-Phân tích đánh đổi không phải là công việc làm một lần rồi kết thúc. Theo thời gian, bối cảnh kinh doanh, quy mô người dùng, hạ tầng và năng lực đội ngũ đều thay đổi, làm thay đổi cán cân đánh đổi.
+Phân tích Trade-off không phải là công việc làm một lần rồi kết thúc. Theo thời gian, bối cảnh kinh doanh, quy mô người dùng, hạ tầng và năng lực đội ngũ đều thay đổi, làm thay đổi cán cân Trade-off.
 
 ```mermaid
 graph TD
-    accTitle: Tiến trình Đánh giá lại Đánh đổi theo Thời gian
+    accTitle: Tiến trình Đánh giá lại Trade-off theo Thời gian
     accDescr: Sơ đồ thể hiện sự dịch chuyển từ Modular Monolith sang Microservices theo sự phát triển quy mô qua các năm
 
     year1["Năm 1: Team 4 người, Tải thấp<br/>Architecture: Modular Monolith<br/>(Trade-off tối ưu)"] --> contextChange["Tăng trưởng Người dùng & Team"]
@@ -171,11 +170,11 @@ graph TD
 ```mermaid
 graph LR
     accTitle: Mẫu Quy trình Phân tích Quyết định Kiến trúc
-    accDescr: Sơ đồ các bước từ Bối cảnh, Ràng buộc, Phương án đến Đánh đổi và Lý do chọn lựa
+    accDescr: Sơ đồ các bước từ Bối cảnh, Ràng buộc, Phương án đến Trade-off và Lý do chọn lựa
 
     ctxStep["Bối cảnh<br/>(Context)"] --> pbStep["Vấn đề<br/>(Problem)"]
     pbStep --> optStep["Các Lựa chọn<br/>(Options)"]
-    optStep --> tradeStep["Phân tích Đánh đổi<br/>(Trade-offs)"]
+    optStep --> tradeStep["Phân tích Trade-off"]
     tradeStep --> decStep["Quyết định & Lý do<br/>(Decision & Why)"]
     decStep --> consStep["Hệ quả<br/>(Consequences)"]
 ```
@@ -184,14 +183,7 @@ graph LR
 
 Một quyết định kiến trúc tốt không phải là một quyết định không có nhược điểm. Một quyết định kiến trúc tốt là quyết định mà:
 
-> **Các đánh đổi đã được nhận diện và chấp nhận một cách có chủ đích dựa trên bối cảnh thực tế.**
-
----
-
-## Tài liệu Tham khảo
-
-- 📘 **[Fundamentals of Software Architecture (2nd Edition)](../../../library/fundamentals_of_software_architecture_2nd.epub)** – Mark Richards & Neal Ford *(Chapter 2: Architectural Laws & Trade-off Analysis)*.
-- 📕 **[Clean Architecture: A Craftsman's Guide to Software Structure and Design](../../../library/clean_architecture_a_acraftsman_guide.pdf)** – Robert C. Martin *(Part III: Design Principles - SOLID & Boundary Trade-offs)*.
+> **Các Trade-off đã được nhận diện và chấp nhận một cách có chủ đích dựa trên bối cảnh thực tế.**
 
 ---
 [← Back to README](README.md)

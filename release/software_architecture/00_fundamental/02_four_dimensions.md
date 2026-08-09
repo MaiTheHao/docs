@@ -9,8 +9,6 @@
 - [Dimension 4: Architecture Decisions](#dimension-4-architecture-decisions)
 - [Chuỗi Tương tác và Vòng lặp Suy luận Kiến trúc](#chuỗi-tương-tác-và-vòng-lặp-suy-luận-kiến-trúc)
 - [Mô hình Tư duy Cốt lõi](#mô-hình-tư-duy-cốt-lõi)
-- [Tài liệu Tham khảo](#tài-liệu-tham-khảo)
-
 
 ---
 
@@ -127,8 +125,8 @@ graph TD
 
     reqs["System Requirements"] --> checkScale{"Yêu cầu Scale & Team?"}
 
-    checkScale -- "Team nhỏ,<br/>Đồng bộ dữ liệu cao" --> modMono["Modular Monolith Style"]
-    checkScale -- "Nhiều team độc lập,<br/>Tải phân tán lớn" --> microServ["Microservices Style"]
+    checkScale -->|"Team nhỏ, Đồng bộ dữ liệu cao"| modMono["Modular Monolith Style"]
+    checkScale -->|"Nhiều team độc lập, Tải phân tán lớn"| microServ["Microservices Style"]
 ```
 
 > [!TIP]
@@ -151,7 +149,7 @@ graph TD
     servLayer --> bizLayer["Business / Domain Layer"]
     bizLayer --> dbLayer[("Database Layer")]
 
-    presLayer -- "❌ BỊ CẤM (Decision Rule)" -.-X dbLayer
+    presLayer -.->|"Bị cấm truy cập trực tiếp"| dbLayer
 ```
 
 Architecture decisions biến định hướng kiến trúc thành các quy tắc thực tế điều hướng hành vi của lập trình viên:
@@ -183,9 +181,9 @@ graph TD
     step3 --> step4["4. Formulate Architecture Decisions"]
     step4 --> step5["5. Evaluate Trade-offs"]
 
-    step5 -- "Phát hiện Đánh đổi Mới" --> step6{"Cần điều chỉnh?"}
-    step6 -- "Có" --> step1
-    step6 -- "Không" --> stepDone(["Hoàn thiện Kiến trúc Concrete"])
+    step5 -->|"Phát hiện Trade-off Mới"| step6{"Cần điều chỉnh?"}
+    step6 -->|"Có"| step1
+    step6 -->|"Không"| stepDone(["Hoàn thiện Kiến trúc Concrete"])
 ```
 
 ---
@@ -203,12 +201,4 @@ Có thể cô đọng toàn bộ 4 Dimensions bằng 4 câu hỏi định hướ
 > **Software Architecture = Capabilities + Behavior + Structural Style + Governance Decisions.** Một thiết kế kiến trúc hoàn chỉnh bắt buộc phải bao quát đầy đủ 4 chiều này.
 
 ---
-
-## Tài liệu Tham khảo
-
-- 📘 **[Fundamentals of Software Architecture (2nd Edition)](../../../library/fundamentals_of_software_architecture_2nd.epub)** – Mark Richards & Neal Ford *(Part I: Architectural Foundations & Dimensions)*.
-- 📕 **[Clean Architecture: A Craftsman's Guide to Software Structure and Design](../../../library/clean_architecture_a_acraftsman_guide.pdf)** – Robert C. Martin *(Part V: Architecture & Components)*.
-
----
 [← Back to README](README.md)
-
