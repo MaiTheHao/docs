@@ -9,6 +9,8 @@
 - [Không có Lựa chọn Mặc định Tuyệt đối](#không-có-lựa-chọn-mặc-định-tuyệt-đối)
 - [Quy luật Thứ hai: Tại sao Quan trọng hơn Như thế nào](#quy-luật-thứ-hai-tại-sao-quan-trọng-hơn-như-thế-nào)
 - [Bảo tồn Lý do Ra Quyết định (Preserving the Why)](#bảo-tồn-lý-do-ra-quyết-định-preserving-the-why)
+- [Quy luật Thứ ba: Các Quyết định Tồn tại trên một Phổ Trung gian](#quy-luật-thứ-ba-các-quyết-định-tồn-tại-trên-một-phổ-trung-gian)
+- [Phổ Kiến trúc trong Thực tế Triển khai](#phổ-kiến-trúc-trong-thực-tế-triển-khai)
 - [Quy trình Phân tích và Đóng gói Quyết định](#quy-trình-phân-tích-và-đóng-gói-quyết-định)
 
 ---
@@ -16,10 +18,11 @@
 
 ## Tổng quan về các Quy luật Kiến trúc
 
-Kiến trúc phần mềm phụ thuộc rất mạnh vào bối cảnh (context), ràng buộc (constraints) và các Trade-off. Do đó, có rất ít nguyên lý có thể xem là quy luật phổ quát. Tuy nhiên, hai quy luật dưới đây được đúc kết bởi Mark Richards và Neal Ford nhằm định hướng cho mọi tư duy kiến trúc:
+Kiến trúc phần mềm phụ thuộc rất mạnh vào bối cảnh (context), ràng buộc (constraints) và các Trade-off. Do đó, có rất ít nguyên lý có thể xem là quy luật phổ quát. Tuy nhiên, ba quy luật dưới đây được đúc kết bởi Mark Richards và Neal Ford nhằm định hướng cho mọi tư duy kiến trúc:
 
 1. **First Law:** Everything in software architecture is a trade-off. (Mọi thứ trong kiến trúc phần mềm đều là Trade-off).
 2. **Second Law:** Why is more important than how. (Tại sao lại quan trọng hơn Như thế nào).
+3. **Third Law:** Most architecture decisions aren't binary but rather exist on a spectrum between extremes. (Hầu hết các quyết định kiến trúc không phải là đúng/sai mà tồn tại trên một phổ giữa các thái cực).
 
 ---
 
@@ -163,9 +166,35 @@ graph TD
 
 ---
 
+## Quy luật Thứ ba: Các Quyết định Tồn tại trên một Phổ Trung gian
+
+> [!IMPORTANT]
+> **Third Law of Software Architecture:** Most architecture decisions aren't binary but rather exist on a spectrum between extremes.
+
+Các quyết định kiến trúc hiếm khi chỉ đơn giản là sự lựa chọn nhị phân "đen hoặc trắng" (A hay B), mà tồn tại trên một phổ rộng gồm nhiều cấp độ và giải pháp trung gian giữa các thái cực.
+
+Minh họa khái niệm phổ kiến trúc giữa hai thái cực thiết kế:
+
+```mermaid
+graph LR
+    accTitle: Phổ Quyết định Kiến trúc giữa hai Thái cực
+    accDescr: Sơ đồ thể hiện phổ liên tục từ Thái cực A sang Thái cực B thông qua các phương án cân bằng trung gian
+
+    extremeA["Thái cực A<br/>(Extreme A)"] <--> midOption1["Phương án Trung gian 1"]
+    midOption1 <--> midOption2["Phương án Cân bằng<br/>(Balanced Compromise)"]
+    midOption2 <--> midOption3["Phương án Trung gian 2"]
+    midOption3 <--> extremeB["Thái cực B<br/>(Extreme B)"]
+```
+
+---
+
+Thay vì chọn một trong hai cực đoan, kiến trúc sư cần xác định đúng vị trí phù hợp trên phổ thiết kế tùy thuộc vào mục tiêu hệ thống:
+
+---
+
 ## Quy trình Phân tích và Đóng gói Quyết định
 
-Để áp dụng 2 quy luật kiến trúc vào thực tế, mọi quyết định kiến trúc nên được đóng gói theo cấu trúc Architecture Decision Record (ADR) tiêu chuẩn:
+Để áp dụng 3 quy luật kiến trúc vào thực tế, mọi quyết định kiến trúc nên được đóng gói theo cấu trúc Architecture Decision Record (ADR) tiêu chuẩn:
 
 ```mermaid
 graph LR
