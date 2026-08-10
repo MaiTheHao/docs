@@ -6,7 +6,7 @@ Tài liệu trong danh mục này bao gồm các kiến thức tổng hợp, ngu
 
 ## Mục lục Danh mục
 
-1. **[00. Introduction](00_introduction/)** - Kiến thức nền tảng: Bối cảnh kiến trúc, 4 chiều (Characteristics, Components, Style, Decisions) và các quy luật Trade-off trong thiết kế.
+1. **[00. Introduction](00_introduction/)** - Kiến thức nền tảng: Bối cảnh kiến trúc, 4 chiều (Characteristics, Components, Style, Decisions), các quy luật Trade-off và 8 Kỳ vọng đối với Kiến trúc sư.
 
 ---
 
