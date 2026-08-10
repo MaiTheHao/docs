@@ -14,10 +14,10 @@ Tài liệu trong danh mục này bao gồm các kiến thức tổng hợp, ngu
 
 Toàn bộ nội dung trong phân nhánh này được tổng hợp và đối chiếu từ các tài liệu sách kỹ thuật chuẩn mực có trong thư viện [`/library`](../../library/README.md):
 
-| Sách Tham khảo | Định dạng File | Tác giả & Mô tả |
+| Sách Tham khảo | Path | Tác giả |
 | :--- | :--- | :--- |
-| **Fundamentals of Software Architecture (2nd Edition)** | [`fundamentals_of_software_architecture_2nd.epub`](../../library/fundamentals_of_software_architecture_2nd.epub) | Mark Richards & Neal Ford - Nguồn tham khảo chính về phong cách kiến trúc, 4 dimensions và quy luật Trade-off. |
-| **Clean Architecture: A Craftsman's Guide to Software Structure and Design** | [`clean_architecture_a_acraftsman_guide.pdf`](../../library/clean_architecture_a_acraftsman_guide.pdf) | Robert C. Martin (Uncle Bob) - Nguồn tham khảo về các nguyên tắc SOLID, ranh giới kiến trúc (boundaries) và Dependency Rule. |
+| **Fundamentals of Software Architecture (2nd Edition)** | [`fundamentals_of_software_architecture_2nd.epub`](../../library/fundamentals_of_software_architecture_2nd.epub) | Mark Richards & Neal Ford |
+| **Clean Architecture: A Craftsman's Guide to Software Structure and Design** | [`clean_architecture_a_acraftsman_guide.pdf`](../../library/clean_architecture_a_acraftsman_guide.pdf) | Robert C. Martin (Uncle Bob) |
 
 ---
 [← Quay lại Release Docs](../README.md)

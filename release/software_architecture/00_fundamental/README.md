@@ -17,17 +17,6 @@ Mục tiêu của phần này là xây dựng tư duy kiến trúc đúng đắn
 
 ---
 
-## Nguồn Tham khảo Chính
-
-Nội dung trong mục này được tổng hợp và trích xuất từ 2 cuốn sách gốc thuộc thư viện [`/library`](../../../library/README.md):
-
-1. 📘 **[Fundamentals of Software Architecture (2nd Edition)](../../../library/fundamentals_of_software_architecture_2nd.epub)** - Mark Richards & Neal Ford  
-   *Nguồn gốc chính của các lý thuyết về bối cảnh kiến trúc, 4 Dimensions và 3 Quy luật Kiến trúc Phần mềm.*
-2. 📕 **[Clean Architecture: A Craftsman's Guide to Software Structure and Design](../../../library/clean_architecture_a_acraftsman_guide.pdf)** - Robert C. Martin (Uncle Bob)  
-   *Nguồn bổ trợ về tư duy tổ chức mô-đun, ranh giới hệ thống (architectural boundaries) và quy tắc phụ thuộc (Dependency Rule).*
-
----
-
 ## Danh mục Tài liệu
 
 | Bài học | Chủ đề Trọng tâm | Mô tả Chi tiết |
