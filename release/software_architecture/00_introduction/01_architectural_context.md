@@ -92,6 +92,22 @@ graph TD
 
 Do đó, sự vắng mặt của microservices ở đầu những năm 2000 không phải vì thiếu ý tưởng thiết kế, mà do tính khả thi về mặt kinh tế (economic feasibility) chưa cho phép.
 
+### Mở rộng: Bài học từ Lịch sử Công nghiệp
+
+Tương tự như Microservices trong ngành phần mềm, lịch sử công nghiệp ô tô cũng chứng kiến câu chuyện tương tự về các kiến trúc xuất hiện sớm nhưng bị bối cảnh hạ tầng và kinh tế cản trở:
+
+#### Động cơ Điện (Electric Vehicles)
+
+*   **Ý tưởng thế kỷ 19:** Xe điện không phải phát minh mới của Tesla. Từ những năm 1830–1880, xe điện đã xuất hiện. Đến năm 1900, xe điện chiếm gần 1/3 tổng số ô tô chạy trên đường phố Mỹ vì vận hành êm ái, không mùi hôi.
+*   **Sự sụp đổ do bối cảnh (Đầu thế kỷ 20):** Xe điện biến mất hoàn toàn khi xe chạy xăng (ICE) ra đời. Bối cảnh lúc đó ủng hộ xe xăng: dầu mỏ phát hiện vô tận và cực rẻ, dòng xe Model T của Ford sản xuất hàng loạt hạ giá thành thảm hại, ắc quy chì thời đó quá nặng và phạm vi hoạt động quá ngắn, mạng lưới điện chưa phủ rộng.
+*   **Sự tái sinh nhờ bối cảnh hiện đại (Thế kỷ 21):** Xe điện quay trở lại không phải vì nguyên lý động cơ điện thay đổi, mà vì yếu tố hạ tầng xung quanh đã thay đổi: Pin Lithium-ion (mật độ năng lượng cao), công nghệ bán dẫn công suất (Power Electronics), mạng lưới trạm sạc phủ rộng và áp lực cắt giảm khí thải.
+
+#### Động cơ Hybrid (Động cơ lai Xăng - Điện)
+
+*   **Xuất hiện năm 1900:** Ferdinand Porsche đã sáng tạo ra chiếc xe Hybrid đầu tiên (Lohner-Porsche Mixte-Break) dùng động cơ xăng làm máy phát điện cấp nguồn cho các động cơ điện gắn ở bánh xe.
+*   **Rào cản bối cảnh:** Thời điểm đó, hệ thống quá cồng kềnh, trọng lượng xe quá nặng do pin kém, và quan trọng nhất là thiếu các bộ vi xử lý (ECU) để điều phối việc khi nào dùng xăng, khi nào dùng điện. Chi phí sản xuất đắt đỏ khiến dự án phá sản về mặt thương mại.
+*   **Bùng nổ cùng Toyota Prius (1997):** Khi máy tính nhúng (Microcontrollers) trở nên siêu nhỏ và rẻ, thuật toán quản lý pin (BMS) đủ thông minh để chuyển đổi linh hoạt giữa điện và xăng, kết hợp với giá nhiên liệu tăng cao, Hybrid mới trở thành mô hình kiến trúc thống trị thị trường chuyển tiếp.
+
 ---
 
 ## Tác động của Mã nguồn Mở đến Hạ tầng
