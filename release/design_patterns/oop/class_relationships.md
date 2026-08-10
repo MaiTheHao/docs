@@ -10,13 +10,15 @@
 
 ## Tổng Quan Các Mối Quan Hệ
 
-Trong thiết kế Hướng Đối Tượng, các lớp không hoạt động cô lập mà liên kết với nhau qua các mối quan hệ cấu trúc. Việc xác định đúng dạng quan hệ giúp kiến trúc phần mềm đạt tiêu chuẩn **`High Cohesion`** và **`Low Coupling`**.
+Trong thiết kế Hướng Đối Tượng, các lớp không hoạt động cô lập mà liên kết với nhau qua các mối quan hệ cấu trúc. Việc xác định đúng dạng quan hệ giúp kiến trúc phần mềm đạt tiêu chuẩn **`High Cohesion`** và **`Low Coupling`**:
 
+- **`High Cohesion` (Tính gắn kết cao)**: Mỗi lớp/module tập trung xử lý một trách nhiệm duy nhất và các thành phần bên trong có liên kết chặt chẽ với mục tiêu đó, giúp hệ thống dễ hiểu, dễ bảo trì và dễ kiểm thử.
+- **`Low Coupling` (Tính liên kết lỏng)**: Giảm thiểu tối đa sự phụ thuộc trực tiếp giữa các lớp. Thay đổi tại một lớp sẽ ít hoặc không gây ảnh hưởng chân dây chuyền tới các lớp khác, tăng tính linh hoạt và khả năng mở rộng.
 ---
 
 ## Chi Tiết Các Dạng Quan Hệ
 
-### 1. Association (Liên kết)
+### 1. Association
 
 **Association** biểu diễn mối quan hệ giao tiếp thông thường giữa 2 lớp. Một lớp sử dụng dịch vụ của lớp kia thông qua phương thức hoặc tham số truyền vào mà không có quan hệ sở hữu.
 
@@ -51,7 +53,7 @@ public class Order {
 }
 ```
 
-### 2. Aggregation (Gom tụ - Has-A lỏng)
+### 2. Aggregation
 
 **Aggregation** là quan hệ sở hữu dạng **`Has-A`** nhưng có **vòng đời độc lập**. Lớp sở hữu chứa tham chiếu đến đối tượng khác, nhưng nếu đối tượng sở hữu bị hủy, đối tượng thành phần vẫn tiếp tục tồn tại độc lập.
 
@@ -91,7 +93,7 @@ public class Department {
 }
 ```
 
-### 3. Composition (Thành phần - Has-A chặt)
+### 3. Composition
 
 **Composition** là quan hệ sở hữu mạnh dạng **`Has-A`** với **vòng đời phụ thuộc tuyệt đối**. Lớp sở hữu trực tiếp tạo và quản lý đối tượng thành phần. Khi đối tượng cha bị xóa khỏi bộ nhớ, toàn bộ đối tượng thành phần con cũng bị tiêu hủy theo.
 
@@ -213,8 +215,8 @@ Bảng so sánh tổng hợp các mối quan hệ giữa các lớp trong OOP:
 | Mối quan hệ | Ngữ nghĩa bản chất | Ràng buộc vòng đời | Mức độ phụ thuộc (`Coupling`) |
 | :--- | :--- | :--- | :--- |
 | **Association** | Giao tiếp / Sử dụng | Độc lập hoàn toàn | Rất lỏng (`Very Loose`) |
-| **Aggregation** | **`Has-A`** (Sở hữu lỏng) | Độc lập (Xóa cha, con vẫn tồn tại) | Lỏng (`Loose`) |
-| **Composition** | **`Has-A`** (Sở hữu chặt) | Phụ thuộc (Xóa cha, con bị xóa theo) | Trung bình (`Moderate`) |
+| **Aggregation** | **`Has-A`** (Sở hữu lỏng lẽo) | Độc lập (Xóa cha, con vẫn tồn tại) | Lỏng lẽo (`Loose`) |
+| **Composition** | **`Has-A`** (Sở hữu chặt chẽ) | Phụ thuộc (Xóa cha, con bị xóa theo) | Trung bình (`Moderate`) |
 | **Inheritance** | **`Is-A`** (Là một) | Biên dịch compile-time | Rất chặt (`Tight Coupling`) |
 | **Realization** | **`Can-Do`** (Có thể làm) | Hợp đồng interface | Lỏng (`Loose Coupling`) |
 

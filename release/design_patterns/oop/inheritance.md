@@ -44,7 +44,7 @@ classDiagram
 
 ## Lưu Ý & Ví Dụ Triển Khai
 
-Khi thiết kế Kế thừa, lớp con phải tuân thủ **Nguyên lý Thay thế Liskov (LSP)**: Đối tượng của lớp cha có thể được thay thế bằng đối tượng của lớp con mà không làm hỏng tính đúng đắn của ứng dụng.
+Khi thiết kế Kế thừa, lớp con phải tuân thủ [**Nguyên lý Thay thế Liskov (LSP)**](../solid/liskov_substitution_principle.md): Đối tượng của lớp cha có thể được thay thế bằng đối tượng của lớp con mà không làm hỏng tính đúng đắn của ứng dụng.
 
 Ví dụ Kế thừa hợp lệ trong Java:
 
