@@ -37,7 +37,7 @@
 
 # 1. Tổng quan về NAT (Network Address Translation)
 
-<img src="imgs/nat_flow.png" style="width: 100%; margin: 0 auto" />
+<img src="assets/nat_flow.png" style="width: 100%; margin: 0 auto" />
 
 **NAT (Network Address Translation)** là một kỹ thuật nền tảng trong mạng máy tính hiện đại. Ban đầu được sinh ra như một giải pháp tình thế cho vấn đề cạn kiệt địa chỉ IPv4, NAT đã phát triển và trở thành một công cụ mạnh mẽ với nhiều ứng dụng quan trọng, từ việc tăng cường bảo mật cho đến cân bằng tải.
 

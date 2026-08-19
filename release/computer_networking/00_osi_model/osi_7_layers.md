@@ -14,6 +14,10 @@ Mô hình tham chiếu **OSI (Open Systems Interconnection)** được phát tri
 
 Kiến trúc phân tầng của OSI tuân thủ nguyên tắc mô-đun hóa, phân tách rõ rệt vai trò của từng tầng nhằm cô lập lỗi và cho phép thay thế hoặc nâng cấp công nghệ ở một tầng mà không làm ảnh hưởng đến các tầng khác.
 
+### Kiến trúc Tổng quan 7 Tầng OSI
+
+![Mô hình Phân tầng và Chức năng của 7 Tầng OSI](../_assets/OSI.png)
+
 ### Bảng 1: Cấu trúc chi tiết của Mô hình Tham chiếu OSI 7 Tầng
 
 | Tầng (Layer) | Đơn vị Dữ liệu (PDU) | Chức năng Kỹ thuật Chính | Giao thức & Tiêu chuẩn Tiêu biểu |

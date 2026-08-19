@@ -8,7 +8,7 @@
 
 ## Sơ đồ UML
 
-![alt text](imgs/abstract_factory_uml.png)
+![alt text](assets/abstract_factory_uml.png)
 
 ---
 

@@ -18,7 +18,7 @@
 
 ## 1. Phân tích Header của UDP
 
-<img src="imgs/udp_packet.png" style="width: 100%; margin: 0 auto"/>
+<img src="assets/udp_packet.png" style="width: 100%; margin: 0 auto"/>
 
 Header 8-byte của UDP chứa **4 trường thông tin quan trọng**, mỗi trường dài 2 bytes (16-bit):
 

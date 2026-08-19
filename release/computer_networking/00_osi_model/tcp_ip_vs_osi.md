@@ -26,6 +26,10 @@ Trong lịch sử tài liệu hóa kỹ thuật mạng, tồn tại hai phiên b
 *   **Mô hình Bốn Tầng Tiêu chuẩn (RFC 1122)**: Đây là mô hình chính thức được định nghĩa trong tài liệu đặc tả của IETF. Bốn tầng bao gồm: *Application* (Ứng dụng), *Transport/Host-to-Host* (Giao vận), *Internet* (Mạng) và *Link/Network Access* (Liên kết/Truy cập mạng). Trong đó, tầng *Link* gộp chung toàn bộ các đặc tính vật lý và liên kết logic của phần cứng.
 *   **Mô hình Năm Tầng Hiện đại (Mô hình Lai)**: Để giúp các kỹ sư dễ dàng liên hệ với mô hình OSI trong thực tế giảng dạy và thiết kế phần cứng, mô hình 5 tầng đã được phát triển bằng cách tách tầng *Link* của mô hình cũ thành hai tầng riêng biệt: Tầng Vật lý (*Physical*) và Tầng Liên kết dữ liệu (*Data Link*).
 
+### Sơ đồ Đối chiếu Kiến trúc Phân tầng OSI và TCP/IP
+
+![Sơ đồ Ánh xạ Phân tầng giữa Mô hình OSI và TCP/IP](../_assets/OSIvsTCPIP.png)
+
 ### Bảng 2: So sánh Cấu trúc Phân tầng giữa TCP/IP (4 tầng & 5 tầng) và OSI
 
 | Tầng OSI | Mô hình TCP/IP 4 Tầng (RFC 1122) | Mô hình TCP/IP 5 Tầng (Mô hình Lai) | Đơn vị Dữ liệu (PDU) | Giao thức Cốt lõi |

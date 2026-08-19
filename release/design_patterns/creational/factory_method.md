@@ -28,7 +28,7 @@ Nhưng với Simple Factory, nó không đáp ứng được **Open/Closed Princ
 
 ### Sơ đồ UML
 
-![alt text](imgs/factory_method_uml.png)
+![alt text](assets/factory_method_uml.png)
 
 ### Phân tích các thành phần trong Factory Method
 
