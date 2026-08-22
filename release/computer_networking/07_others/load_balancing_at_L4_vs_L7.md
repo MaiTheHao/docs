@@ -2,118 +2,309 @@
 
 ## Mục lục
 
-*   [1. Load Balancer là gì?](#load-balancer-là-gì)
-*   [2. Cân bằng tải Lớp 4 (L4): Người Giao hàng Tốc độ](#cân-bằng-tải-lớp-4-l4-người-giao-hàng-tốc-độ)
-*   [3. Ưu và Nhược điểm của L4](#ưu-và-nhược-điểm-của-l4)
-*   [4. Cân bằng tải Lớp 7 (L7): Người Quản lý Thông minh](#cân-bằng-tải-lớp-7-l7-người-quản-lý-thông-minh)
-*   [5. Ưu và Nhược điểm của L7](#ưu-và-nhược-điểm-của-l7)
-*   [6. Tổng kết](#tổng-kết)
+*   [1. Load Balancer là gì?](#1-load-balancer-là-gì)
+*   [2. Cân bằng tải Lớp 4 (L4): Người Giao hàng Tốc độ](#2-cân-bằng-tải-lớp-4-l4-người-giao-hàng-tốc-độ)
+*   [3. Ưu và Nhược điểm của L4](#3-ưu-và-nhược-điểm-của-l4)
+*   [4. Cân bằng tải Lớp 7 (L7): Người Quản lý Thông minh](#4-cân-bằng-tải-lớp-7-l7-người-quản-lý-thông-minh)
+*   [5. Ưu và Nhược điểm của L7](#5-ưu-và-nhược-điểm-của-l7)
+*   [6. Ma trận So sánh Kỹ thuật](#6-ma-trận-so-sánh-kỹ-thuật)
+*   [7. Tổng kết & Tiêu chí Lựa chọn](#7-tổng-kết--tiêu-chí-lựa-chọn)
 
 ---
+
 ## 1. Load Balancer là gì?
 
-Một **Bộ cân bằng tải (Load Balancer - LB)** là một hệ thống được thiết kế để có **khả năng chịu lỗi (fault tolerant)**.
+Một **Bộ cân bằng tải (Load Balancer - LB)** là một hệ thống được thiết kế nhằm nâng cao tính sẵn sàng và khả năng chịu lỗi (**fault tolerance**) cho toàn bộ hạ tầng mạng.
 
-Từ góc độ của Client, bạn chỉ nói chuyện với _một_ địa chỉ duy nhất (của LB). Nhưng đằng sau đó, LB sẽ âm thầm nói chuyện với _rất nhiều_ máy chủ backend để xử lý yêu cầu của bạn.
+Từ góc độ của Client, mọi tương tác chỉ diễn ra với một địa chỉ IP/Virtual IP (VIP) duy nhất đại diện cho Load Balancer. Phía sau bức màn đó, LB điều phối lưu lượng tới một cụm gồm nhiều máy chủ backend.
 
-> **Công thức:**
+> [!NOTE]
+> **Công thức cốt lõi:**
 >
-> **Load Balancer = Reverse Proxy + Logic Cân bằng tải**
+> $$\text{Load Balancer} = \text{Reverse Proxy} + \text{Logic Cân bằng tải}$$
 >
-> _Giải thích:_ Mọi Load Balancer đều là một Reverse Proxy, nhưng không phải mọi Reverse Proxy đều là Load Balancer. Một Reverse Proxy đơn thuần có thể chỉ chuyển tiếp yêu cầu đến _một_ backend, trong khi Load Balancer _bắt buộc_ phải có logic (như Round Robin, Least Connections) để phân phối yêu cầu cho _nhiều_ backend.
+> Mọi Load Balancer đều hoạt động như một Reverse Proxy, nhưng Reverse Proxy đơn thuần có thể chỉ trỏ cố định về một backend duy nhất. Load Balancer bắt buộc phải sở hữu thuật toán phân phối lưu lượng (như Round Robin, Least Connections, IP Hash) để dàn đều tải cho hạ tầng.
+
+Kiến trúc tổng quan luồng đi của gói tin qua một hệ thống cân bằng tải:
+
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart LR
+    accTitle: "Kiến trúc tổng quan Load Balancer"
+    accDescr: "Mô hình Client gửi yêu cầu tới Load Balancer đại diện, sau đó Load Balancer phân phối tải tới các máy chủ Backend"
+
+    client1["fa:fa-user Client A"]
+    client2["fa:fa-user Client B"]
+    lb["fa:fa-network-wired Load Balancer<br/>(Virtual IP / Reverse Proxy)"]
+
+    subgraph BackendCluster["Hạ tầng Backend Servers"]
+        serverA["fa:fa-server Server 1<br/>192.168.1.10"]
+        serverB["fa:fa-server Server 2<br/>192.168.1.11"]
+        serverC["fa:fa-server Server 3<br/>192.168.1.12"]
+    end
+
+    client1 -->|"Gửi Request"| lb
+    client2 -->|"Gửi Request"| lb
+
+    lb -->|"Điều phối tải 1"| serverA
+    lb -->|"Điều phối tải 2"| serverB
+    lb -->|"Điều phối tải 3"| serverC
+```
+
+| Thành phần | Vai trò | Chi tiết kỹ thuật |
+| :--- | :--- | :--- |
+| **Client** | Điểm khởi tạo kết nối | Giao tiếp với duy nhất một địa chỉ Virtual IP (VIP) của Load Balancer. |
+| **Load Balancer** | Trạm trung chuyển & điều phối | Tiếp nhận kết nối, áp dụng thuật toán phân phối tải và quản lý kết nối tới backend. |
+| **Backend Cluster** | Xử lý logic nghiệp vụ | Cụm máy chủ nhận request phân bổ, đảm bảo tính dự phòng và khả năng mở rộng ngang (*horizontal scaling*). |
 
 ---
 
 ## 2. Cân bằng tải Lớp 4 (L4): Người Giao hàng Tốc độ
 
-Một Bộ cân bằng tải Lớp 4 hoạt động ở **Lớp Vận chuyển (Transport Layer)**.
+Bộ cân bằng tải Lớp 4 hoạt động tại **Lớp Vận chuyển (Transport Layer)** trong mô hình OSI.
 
-Điều này có nghĩa là nó chỉ "nhìn thấy" thông tin của Lớp 4: **Địa chỉ IP** và **Cổng (Port)**. Nó _hoàn toàn không biết_ (và không cần biết) nội dung bên trong các gói tin là gì. Đối với nó, HTTP, gRPC, hay WebSocket đều chỉ là một dòng chảy của các **segment (phân đoạn)** dữ liệu.
+Ở tầng này, bộ cân bằng tải chỉ trích xuất và xử lý thông tin tiêu đề L4: **Địa chỉ IP nguồn/đích** và **Cổng (Port)**. Nó hoàn toàn không giải mã hoặc phân tích nội dung dữ liệu bên trong các gói tin. Đối với L4 LB, mọi giao thức như HTTP, gRPC, WebSocket hay database payload đều chỉ là một dòng chảy của các **TCP segment** hoặc **UDP datagram**.
 
-> **Ví dụ trừu tượng (Bưu điện Lớp 4):**
->
-> -   **Nhiệm vụ:** Một nhân viên giao hàng (LB L4) chỉ nhìn vào **địa chỉ IP và cổng (port)** - giống như chỉ nhìn vào **màu sắc của phong bì**.
-> -   **Quy tắc:** "Tất cả phong bì màu xanh (Client Connection A) phải được giao cho Người đưa thư 1 (Backend Connection 1)."
-> -   **Hành động:** Nhân viên này _không mở thư_, _không đọc nội dung_ (không đọc HTTP path). Anh ta chỉ chuyển tiếp (forward) các segment một cách "mù quáng". Cứ thấy phong bì xanh là đưa cho Người 1. Cực kỳ nhanh, nhưng "ngốc".
+> [!TIP]
+> **Ẩn dụ Bưu điện Lớp 4:**
+> - **Nhiệm vụ:** Nhân viên giao hàng chỉ nhìn vào mã màu trên nhãn phong bì (IP:Port).
+> - **Quy tắc:** "Tất cả gói mang nhãn Client A phải chuyển thẳng vào hòm thư Backend 1."
+> - **Hành động:** Nhân viên không mở thư kiểm tra nội dung. Quá trình xử lý diễn ra trực tiếp ở cấp độ packet-forwarding, đem lại tốc độ cực nhanh và mức tiêu thụ CPU tối thiểu.
 
 ### 2.1. Cơ chế Hoạt động Cốt lõi (Sticky Connection)
 
-Đây là điểm mấu chốt của L4:
+Mô hình ánh xạ 1:1 theo kết nối TCP của L4 Load Balancing:
 
-1.  **"Làm ấm" (Warm-up):** Khi LB khởi động, nó tạo sẵn các kết nối TCP đến các máy chủ backend (ví dụ: 10 kết nối đến mỗi backend) và giữ "ấm" chúng.
-2.  **Client Kết nối:** Khi một Client tạo kết nối TCP mới đến LB, logic cân bằng tải được kích hoạt.
-3.  **Ánh xạ 1:1:** LB sẽ chọn _một_ trong các kết nối backend (đã "làm ấm") và "ghép cặp" (map) nó với kết nối của Client.
-4.  **Dính chặt (Sticky):** Kể từ thời điểm đó, **TẤT CẢ** các segment dữ liệu từ Client trên kết nối đó _bắt buộc_ phải được chuyển tiếp đến _chính xác_ kết nối backend đã được ghép cặp.
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    accTitle: "Cơ chế Sticky Connection tại Lớp 4"
+    accDescr: "Luồng hoạt động của L4 Load Balancer: bắt tay TCP với Client, chọn kết nối backend tương ứng và chuyển tiếp segment cố định theo kết nối"
 
-LB L4 không thể gửi segment 1 đến backend A và segment 2 đến backend B, vì điều đó sẽ phá vỡ hoàn toàn kết nối TCP (lỗi sequence number, v.v.). Do đó, nó "dính chặt" theo kết nối.
+    subgraph ClientSpace["Phía Client"]
+        clientConn["fa:fa-desktop Client TCP Connection<br/>(198.51.100.2:54321)"]
+    end
+
+    subgraph L4Layer["L4 Load Balancer"]
+        l4Decision{"fa:fa-microchip Đọc IP:Port Header<br/>Áp dụng thuật toán L4"}
+        natEngine["Chuyển tiếp TCP Segment<br/>(NAT / DSR / IP Tunneling)"]
+    end
+
+    subgraph BackendSpace["Backend Servers"]
+        backendA["fa:fa-server Backend A<br/>(10.0.0.1:80)"]
+        backendB["fa:fa-server Backend B<br/>(10.0.0.2:80)"]
+    end
+
+    clientConn ==>|"TCP Handshake & Segments"| l4Decision
+    l4Decision -->|"Gán cố định vào Backend A"| natEngine
+    natEngine ==>|"Forward Segment 1, 2, 3..."| backendA
+    natEngine -.->|"Không thể chia rẽ segment"| backendB
+```
+
+Chu trình xử lý diễn ra theo 4 giai đoạn kỹ thuật:
+
+1. **Khởi tạo & Duy trì Pool:** LB có thể duy trì pool kết nối sẵn hoặc thiết lập cơ chế NAT / Direct Server Return (DSR) tới backend.
+2. **Client bắt tay kết nối:** Khi Client khởi tạo bắt tay TCP 3 bước (`SYN`, `SYN-ACK`, `ACK`) tới VIP, thuật toán L4 được kích hoạt.
+3. **Ánh xạ 1:1 (Stateful Table):** LB ghi nhận entry vào bảng trạng thái (Connection Tracking Table), ghép nối socket Client với một backend được chọn.
+4. **Chuyển tiếp cố định (Sticky):** Mọi segment tiếp theo trên cùng socket TCP này bắt buộc phải đi đúng tới backend đó. L4 không thể chuyển segment 1 sang Backend A và segment 2 sang Backend B vì sẽ làm sai lệch TCP Sequence Number và phá vỡ phiên truyền thông.
 
 ---
 
 ## 3. Ưu và Nhược điểm của L4
 
-| Ưu điểm (Pros)                                                                                                                                                                              | Nhược điểm (Cons)                                                                                                                                                                                                       |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Đơn giản & Siêu hiệu quả (Nhanh):** Không cần đọc hay "hiểu" dữ liệu L7. Chỉ đọc IP/port. Nó chỉ đọc và ghi (read/write) segment, không cần buffering.                                    | **Không cân bằng tải "thông minh":** Không thể đọc URL (ví dụ: `/api/analyze`) để điều hướng đến một máy chủ "khỏe" hơn.                                                                                                |
-| **An toàn hơn (Không giải mã):** Không cần "chạm" vào nội dung. Không cần giải mã TLS (gần như là end-to-end).                                                                              | **"Dính chặt" (Sticky) theo kết nối:** Mọi segment trên cùng 1 kết nối _phải_ đi đến 1 máy chủ duy nhất. Không thể cân bằng tải _bên trong_ một kết nối.                                                                |
-| **Hỗ trợ MỌI giao thức (Protocol Agnostic):** Đây là vẻ đẹp của L4. Vì nó không quan tâm nội dung, nó có thể chuyển tiếp MySQL, PostgreSQL, gRPC, WebSocket... bất cứ thứ gì chạy trên TCP. | **Không thể Caching:** Vì không đọc được nội dung, nó không biết cái gì có thể cache được (ví dụ: một request `GET /image.jpg`).                                                                                        |
-| (Có thể dùng chế độ NAT để tạo 1 kết nối TCP duy nhất)                                                                                                                                      | **Nguy hiểm khi "hạ cấp" (Downgrade):** Khi một L7 LB gặp giao thức lạ (như `Upgrade: WebSocket`), nó có thể bị "hạ cấp" xuống L4. Điều này _bỏ qua_ mọi quy tắc bảo mật L7 (như chặn header, auth) mà bạn đã cấu hình. |
+| Ưu điểm (Pros) | Nhược điểm (Cons) |
+| :--- | :--- |
+| **Đơn giản & Thông lượng cực cao:** Không tốn chi phí CPU để parse payload hay buffering. Chỉ đọc/ghi packet header ở kernel space (như IPVS, DPDK). | **Không thể định tuyến thông minh:** Không đọc được URI path, HTTP headers hoặc payload để điều phối yêu cầu theo ngữ cảnh. |
+| **Bảo mật End-to-End:** Traffic TLS đi xuyên suốt (pass-through) từ Client tới Backend. LB không cần lưu trữ Certificate/Private Key. | **Dính chặt (Connection-bound):** Tất cả requests trên cùng 1 kết nối TCP (ví dụ HTTP/2 multiplexing) đều đổ dồn vào duy nhất 1 backend server. |
+| **Độc lập giao thức (Protocol-Agnostic):** Hỗ trợ toàn bộ các giao thức chạy trên TCP/UDP (MySQL, PostgreSQL, Redis, DNS, Game UDP, gRPC raw TCP). | **Không hỗ trợ Caching & L7 Security:** Không thể tự động cache tài nguyên tĩnh, không kiểm tra được WAF rules hay payload injection. |
+| **Hỗ trợ Direct Server Return (DSR):** Cho phép backend phản hồi trực tiếp cho Client mà không cần đi vòng lại qua LB, tối ưu hóa băng thông tải về khổng lồ. | **Rủi ro khi giao thức nâng cấp:** Khi gặp giao thức chuyển tiếp như WebSocket qua HTTP Upgrade, L4 không kiểm soát được các policy mức ứng dụng sau đó. |
 
 ---
 
 ## 4. Cân bằng tải Lớp 7 (L7): Người Quản lý Thông minh
 
-Một Bộ cân bằng tải Lớp 7 hoạt động ở **Lớp Ứng dụng (Application Layer)**.
+Bộ cân bằng tải Lớp 7 hoạt động ở **Lớp Ứng dụng (Application Layer)**, phụ thuộc chặt chẽ vào giao thức ứng dụng (**protocol-specific**) như HTTP/1.1, HTTP/2, HTTP/3, gRPC, WebSocket.
 
-Điều này có nghĩa là nó **phụ thuộc vào giao thức (protocol-specific)**. Nó _bắt buộc_ phải "hiểu" được ngôn ngữ của ứng dụng, ví dụ như **HTTP**, **gRPC**, v.v.
+Ở tầng này, LB đóng vai trò là một điểm kết thúc kết nối đầy đủ. Nó nhận dữ liệu, giải mã TLS, gom các segment thành một thông điệp HTTP hoàn chỉnh, sau đó đọc từng thành phần: Request Method, Path, Header, Cookie và Body.
 
-> **Ví dụ trừu tượng (Bưu điện Lớp 7):**
->
-> -   **Nhiệm vụ:** Một người quản lý bưu điện (LB L7) _bắt buộc_ phải **mở từng phong bì** (giải mã TLS) và **đọc kỹ nội dung** (buffer và parse HTTP).
-> -   **Quy tắc:** "OK, thư này (Request 1) từ anh A đòi xem `/billing`, chuyển cho phòng Kế toán (Backend 1). Thư tiếp theo (Request 2), cũng từ anh A, đòi xem `/images`, chuyển cho kho Ảnh (Backend 2)."
-> -   **Hành động:** Anh ta thông minh, có thể ra quyết định phức tạp, nhưng _chậm hơn_ vì phải đọc thư. Và anh ta phải biết _thứ tiếng_ của lá thư (phải hiểu giao thức HTTP).
+> [!IMPORTANT]
+> **Ẩn dụ Bưu điện Lớp 7:**
+> - **Nhiệm vụ:** Người quản lý bưu điện mở từng phong bì (giải mã TLS) và đọc kỹ văn bản bên trong.
+> - **Quy tắc:** "Nếu thư yêu cầu thanh toán (`/api/v1/billing`), chuyển tới phòng Tài chính (Backend 1). Nếu yêu cầu tải ảnh (`/static/images`), chuyển tới kho Lưu trữ (Backend 2)."
+> - **Hành động:** Khả năng định tuyến linh hoạt tuyệt đối, nhưng tốn nhiều chi phí xử lý và yêu cầu LB phải thông thạo ngôn ngữ giao thức của thông điệp.
 
-### 4.1. Cơ chế Hoạt động Cốt lõi (Buffering & Decryption)
+### 4.1. Cơ chế Hoạt động Cốt lõi (Buffering, TLS Termination & Multiplexing)
 
-Đây là điểm khác biệt lớn nhất so với L4:
+Mô hình định tuyến dựa trên nội dung (Content-based Routing) và tách biệt kết nối tại L7:
 
-1.  **Buffering (Đệm):** L7 LB _không_ chuyển tiếp (forward) từng segment. Thay vào đó, nó **nhận và đệm** tất cả các segment (ví dụ: segment 1, 2, 3) cho đến khi nó ráp lại được một **yêu cầu logic (logical request)** hoàn chỉnh (ví dụ: một request `GET /api/v1` đầy đủ, từ dòng đầu tiên đến hết header).
-2.  **TLS Termination (Chấm dứt TLS):** Để đọc được nội dung (ví dụ `GET /api/v1`), L7 LB _bắt buộc_ phải **giải mã (decrypt)** traffic. Điều này có nghĩa là kết nối TLS/SSL của Client sẽ _kết thúc_ tại LB. LB sẽ "giả vờ" là máy chủ web. Do đó, bạn phải cài đặt Certificate và Private Key của mình lên LB.
-3.  **Ra quyết định (Smart Routing):** _Sau khi_ đã có request hoàn chỉnh, L7 LB sẽ đọc nội dung (ví dụ: path, header) và _lúc này mới_ quyết định chọn một backend server để gửi request đó đến.
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    accTitle: "Cơ chế Content-based Routing tại Lớp 7"
+    accDescr: "Luồng hoạt động của L7 Load Balancer: tiếp nhận kết nối Client, giải mã TLS, đệm dữ liệu thành request hoàn chỉnh và định tuyến tới microservices tương ứng"
 
-> **Ghi nhớ:**
->
-> Trên L4, 1 Client Connection -> 1 Backend Connection.
->
-> Trên L7, nhiều _requests_ từ _cùng 1 Client Connection_ có thể được gửi đến _nhiều Backend Server khác nhau_. (ví dụ: `GET /v2` trên cùng kết nối có thể được gửi đến một server khác với `GET /v1`).
+    subgraph ClientTraffic["Lưu lượng từ Client"]
+        conn1["Client Connection 1<br/>(TLS Encrypted)"]
+    end
+
+    subgraph L7Engine["L7 Load Balancer (Nginx / Envoy / HAProxy)"]
+        tlsTerm["fa:fa-key Chấm dứt TLS<br/>(TLS Termination & Decrypt)"]
+        bufferEngine["fa:fa-layer-group Request Buffering<br/>& Parsing Header/Path"]
+        routeDecision{"Phân tích URI Path / Header"}
+    end
+
+    subgraph BackendServices["Hạ tầng Microservices"]
+        authService["fa:fa-shield-alt Auth Service<br/>(Backend 1)"]
+        apiService["fa:fa-cogs Order API Service<br/>(Backend 2)"]
+        staticStorage["fa:fa-images Static CDN / S3<br/>(Backend 3)"]
+    end
+
+    conn1 ==>|"Encrypted Traffic"| tlsTerm
+    tlsTerm --> bufferEngine
+    bufferEngine --> routeDecision
+
+    routeDecision -->|"GET /auth/login"| authService
+    routeDecision -->|"POST /api/v1/orders"| apiService
+    routeDecision -->|"GET /static/banner.png"| staticStorage
+```
+
+### 4.2. Trình tự Xử lý Kỹ thuật (Sequence Flow)
+
+Trình tự tách biệt 2 phiên TCP riêng biệt giữa Client - LB và LB - Backend:
+
+```mermaid
+---
+config:
+  layout: elk
+---
+sequenceDiagram
+    autonumber
+    actor Client
+    participant L7 as fa:fa-network-wired L7 Load Balancer
+    participant Auth as fa:fa-shield-alt Auth Backend
+    participant Order as fa:fa-cogs Order Backend
+
+    Client->>L7: TCP Handshake & TLS Client Hello
+    L7-->>Client: TLS Certificate & Key Exchange (TLS Terminated)
+    Note over Client,L7: Kết nối Client-LB được mã hóa
+
+    Client->>L7: HTTP Request 1 (GET /api/auth/token)
+    Note over L7: L7 đệm đủ segment, giải mã & phân tích path
+    L7->>Auth: Chuyển tiếp Request 1 (Upstream Connection Pool)
+    Auth-->>L7: 200 OK + Payload
+    L7-->>Client: HTTP Response 1
+
+    Client->>L7: HTTP Request 2 (POST /api/orders) [Cùng TCP Conn]
+    Note over L7: Phân tích thấy path /orders khác biệt
+    L7->>Order: Chuyển tiếp Request 2 sang Server Order
+    Order-->>L7: 201 Created
+    L7-->>Client: HTTP Response 2
+```
+
+| Bước | Hành động | Giải thích kỹ thuật |
+| :--- | :--- | :--- |
+| **1 - 2** | **TLS Termination** | Kết nối TLS giữa Client và LB hoàn tất độc lập. LB nắm giữ SSL Certificate. |
+| **3 - 4** | **Đệm & Định tuyến Request 1** | LB nhận các segment, ráp thành request `/api/auth/token` và đẩy sang Auth Backend. |
+| **5 - 6** | **Phản hồi Request 1** | Nhận kết quả từ Auth Backend và trả về qua socket mã hóa của Client. |
+| **7 - 9** | **Multiplexing Request 2** | Dù cùng 1 kết nối Client, request `/api/orders` được định tuyến độc lập sang Order Backend. |
 
 ---
 
 ## 5. Ưu và Nhược điểm của L7
 
-| Ưu điểm (Pros)                                                                                                                                                                                                      | Nhược điểm (Cons)                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Cân bằng tải thông minh:** Có thể đọc URL (path-based routing), header, cookie để điều hướng. Rất quan trọng cho **Microservices** / **API Gateway** (ví dụ: `/posts` -> Post service, `/users` -> User service). | **Đắt đỏ & Tốn kém (CPU):** Phải làm nhiều việc hơn: buffering, parsing (phân tích cú pháp), và đặc biệt là _giải mã_ traffic.                                                                      |
-| **Sử dụng kết nối backend hiệu quả:** Có thể ghép (multiplex) nhiều request từ nhiều client vào một connection backend. (Ngược lại với L4, nơi 1 client có thể "chiếm" 1 connection backend).                       | **Phải giải mã (TLS Termination):** LB _phải_ giữ private key, là một rủi ro bảo mật (vì LB có thể đọc mọi traffic).                                                                                |
-| **Có thể Caching:** Vì nó hiểu nội dung (ví dụ: `GET /image.jpg`), nó có thể lưu cache lại và tự trả lời mà không cần hỏi backend.                                                                                  | **Phải "Hiểu" Giao thức:** Đây là nhược điểm lớn nhất. Nếu L7 LB không hiểu gRPC, nó _không thể_ cân bằng tải gRPC. Đây là lý do người ta liên tục yêu cầu Nginx/Envoy "hỗ trợ" thêm giao thức mới. |
-| **Logic API Gateway:** Có thể xử lý xác thực (authentication), rate limiting... ngay tại cổng vào.                                                                                                                  | **Gây trễ (Buffering):** Phải đợi nhận đủ các segment để ráp thành một request hoàn chỉnh rồi mới gửi đi. (Trong khi L4 chỉ nhận segment và chuyển tiếp ngay).                                      |
+| Ưu điểm (Pros) | Nhược điểm (Cons) |
+| :--- | :--- |
+| **Định tuyến thông minh (Content-aware):** Phân luồng dựa trên URL Path, Query string, HTTP Method, Header, Cookie. Tối ưu cho kiến trúc Microservices và API Gateway. | **Tốn tài nguyên tính toán (High CPU & RAM):** Tốn chu kỳ CPU đáng kể cho tác vụ giải mã TLS, đệm bộ nhớ (buffering) và phân tích chuỗi ký tự HTTP. |
+| **Tối ưu hóa kết nối Backend:** Hỗ trợ connection pooling và multiplexing: hàng ngàn client connections có thể chia sẻ một số lượng nhỏ persistent connections tới backend. | **Bắt buộc hỗ trợ giao thức:** LB phải tích hợp parser cụ thể cho từng giao thức. Nếu LB không hỗ trợ gRPC streaming hay HTTP/3, nó không thể hoạt động ở chế độ L7 cho giao thức đó. |
+| **Tích hợp Caching & Compression:** Tự động phản hồi các tài nguyên tĩnh từ bộ nhớ cache hoặc nén gzip/brotli trực tiếp, giảm tải tới 80% lưu lượng cho backend. | **Độ trễ bổ sung (Latency Overhead):** Quá trình gom đủ segment tạo thành full logical request trước khi gửi làm tăng độ trễ thêm một khoảng nhỏ (thường vài mili-giây). |
+| **Tính năng API Gateway toàn diện:** Hỗ trợ JWT validation, rate limiting theo IP/User, WAF injection inspection, header modification và canary deployment. | **Rủi ro bảo mật tập trung:** Vì TLS bị ngắt tại LB, toàn bộ dữ liệu ở dạng cleartext bên trong bộ nhớ của LB và yêu cầu quản lý khóa bí mật (Private Key) an toàn tuyệt đối. |
 
 ---
 
-## 6. Tổng kết
+## 6. Ma trận So sánh Kỹ thuật
 
-Không có lựa chọn nào là "đúng" hay "sai". Đây là sự đánh đổi:
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart LR
+    accTitle: "Cây quyết định lựa chọn L4 vs L7 Load Balancer"
+    accDescr: "Lược đồ cây quyết định giúp kỹ sư lựa chọn giữa L4 hoặc L7 Load Balancer dựa trên yêu cầu hệ thống"
 
--   **Chọn Lớp 4 (L4)** khi bạn cần:
+    rootCheck{"Nhu cầu chính của hệ thống?"}
+    
+    rootCheck -->|"Định tuyến theo URL / Microservices / API Gateway"| needL7["fa:fa-check-circle Lựa chọn L7 Load Balancer<br/>(Nginx, Envoy, Traefik, ALB)"]
+    rootCheck -->|"Cần Caching / WAF / Header Manipulation"| needL7
+    
+    rootCheck -->|"Hiệu năng tối đa / Siêu băng thông / Hàng triệu RPS"| needL4["fa:fa-bolt Lựa chọn L4 Load Balancer<br/>(IPVS, Katran, AWS NLB, HAProxy TCP)"]
+    rootCheck -->|"Giao thức không phải HTTP (DB, Game, raw TCP/UDP)"| needL4
+    rootCheck -->|"TLS Pass-through / Mã hóa End-to-End"| needL4
+```
 
-    -   **Tốc độ tối đa** và hiệu suất cao nhất.
-    -   Sự đơn giản.
-    -   Cân bằng tải cho các giao thức **không phải HTTP** (như cơ sở dữ liệu, game server, MQTT...).
+Bảng so sánh chi tiết các chỉ số kỹ thuật giữa hai kiến trúc:
 
--   **Chọn Lớp 7 (L7)** khi bạn cần:
-    -   **Sự thông minh** (điều hướng dựa trên path, header).
-    -   Các tính năng của **API Gateway** (xác thực, rate limiting).
-    -   **Caching** nội dung.
-    -   Kiến trúc **Microservices**.
+| Tiêu chí | Cân bằng tải Lớp 4 (L4) | Cân bằng tải Lớp 7 (L7) |
+| :--- | :--- | :--- |
+| **Tầng hoạt động** | Transport Layer (TCP / UDP) | Application Layer (HTTP, HTTPS, gRPC, WebSocket) |
+| **Đơn vị xử lý** | IP Packet / TCP Segment | Logical Application Message (HTTP Request/Response) |
+| **Khả năng định tuyến** | Địa chỉ IP và Port đích | URI Path, HTTP Headers, Cookie, Payload data |
+| **TLS / SSL** | Pass-through (Không can thiệp giải mã) | TLS Termination (Giải mã và mã hóa lại nếu cần) |
+| **Độ trễ (Latency)** | Cực thấp (Microseconds - $\mu s$) | Thấp tới Trung bình (Milliseconds - $ms$) |
+| **Thông lượng (Throughput)** | Hàng triệu RPS với chi phí phần cứng tối thiểu | Giới hạn hơn do ràng buộc CPU/RAM cho việc parse |
+| **Mô hình kết nối** | 1 Client Connection $\rightarrow$ 1 Backend Connection | Nhiều Client Requests $\rightarrow$ Ghép Pool Backend Connections |
+| **Giải pháp tiêu biểu** | AWS NLB, Linux IPVS, Katran (Meta), HAProxy (TCP mode) | AWS ALB, Nginx, Envoy Proxy, Traefik, Kong |
+
+---
+
+## 7. Tổng kết & Tiêu chí Lựa chọn
+
+Trong thực tế thiết kế hệ thống quy mô lớn, kiến trúc hiện đại thường **kết hợp cả hai**: Sử dụng L4 Load Balancer ở tuyến đầu (như Maglev, Katran hoặc AWS NLB) để đón đầu hàng triệu luồng kết nối Internet, sau đó phân phối lưu lượng tới cụm L7 Load Balancers (như Envoy, Nginx) để thực hiện định tuyến microservices, lọc bảo mật và quản lý giao thức.
+
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    accTitle: "Mô hình kiến trúc kết hợp L4 và L7 trong thực tế"
+    accDescr: "Mô hình phối hợp hai tầng: L4 đón lưu lượng Internet quy mô lớn rồi chuyển tiếp cho tầng L7 điều phối Microservices"
+
+    internetTraffic["fa:fa-globe Lưu lượng Internet diện rộng"]
+    l4Layer["fa:fa-bolt Tuyến đầu: L4 Load Balancer<br/>(Chịu tải cao / DDOS mitigation / DSR)"]
+    
+    subgraph L7Tier["Tầng L7 Load Balancers (Ingress / API Gateway)"]
+        l7Node1["fa:fa-shield-alt Envoy / Nginx Ingress 1"]
+        l7Node2["fa:fa-shield-alt Envoy / Nginx Ingress 2"]
+    end
+
+    subgraph ServiceMesh["Backend Microservices"]
+        userService["User Service"]
+        paymentService["Payment Service"]
+    end
+
+    internetTraffic ==> l4Layer
+    l4Layer -->|"Phân bổ kết nối L4"| l7Node1
+    l4Layer -->|"Phân bổ kết nối L4"| l7Node2
+
+    l7Node1 -->|"Route /users"| userService
+    l7Node1 -->|"Route /payments"| paymentService
+    l7Node2 -->|"Route /users"| userService
+    l7Node2 -->|"Route /payments"| paymentService
+```
+
+- **Chọn Lớp 4 (L4)** khi ưu tiên hàng đầu là hiệu năng thô, độ trễ tối thiểu, tải lượng dữ liệu khổng lồ hoặc các giao thức phi HTTP.
+- **Chọn Lớp 7 (L7)** khi hệ thống vận hành theo kiến trúc Microservices đòi hỏi khả năng điều hướng thông minh theo đường dẫn, kiểm soát chính sách bảo mật và tối ưu hóa tài nguyên ứng dụng.
 
 ---
 [← Quay lại mục lục](../README.md)
+
