@@ -2,127 +2,126 @@
 
 ## Mục lục
 
-*   [1. Proxy là gì?](#proxy-là-gì)
-*   [2. Các trường hợp sử dụng Proxy](#các-trường-hợp-sử-dụng-proxy)
-*   [3. Reverse Proxy là gì?](#reverse-proxy-là-gì)
-*   [4. Các trường hợp sử dụng Reverse Proxy](#các-trường-hợp-sử-dụng-reverse-proxy)
-*   [5. Các câu hỏi thường gặp (FAQs)](#các-câu-hỏi-thường-gặp-faqs)
-*   [6. Tổng kết](#tổng-kết)
+*   [1. Proxy là gì?](#1-proxy-là-gì)
+*   [2. Các trường hợp sử dụng Proxy](#2-các-trường-hợp-sử-dụng-proxy)
+*   [3. Reverse Proxy là gì?](#3-reverse-proxy-là-gì)
+*   [4. Các trường hợp sử dụng Reverse Proxy](#4-các-trường-hợp-sử-dụng-reverse-proxy)
+*   [5. So sánh nhanh Proxy và Reverse Proxy](#5-so-sánh-nhanh-proxy-và-reverse-proxy)
+*   [6. Các câu hỏi thường gặp (FAQs)](#6-các-câu-hỏi-thường-gặp-faqs)
+*   [7. Tổng kết](#7-tổng-kết)
 
 ---
+
 ## 1. Proxy là gì?
 
-**Proxy** (hay "Forward Proxy") là một máy chủ trung gian **thực hiện các yêu cầu thay mặt cho bạn** (client).
+**Proxy** (hay "Forward Proxy") là một máy chủ trung gian **thực hiện các yêu cầu thay mặt cho bạn** (client) khi đi ra ngoài Internet.
 
-> **Ví dụ trừu tượng (Người Quản gia):**
+> **Ví dụ trực quan (Người Quản gia):**
 >
 > -   **Bạn (Client):** Muốn lấy một cuốn sách từ Thư viện (ví dụ: `google.com`).
-> -   **Đích đến:** Bạn _biết rõ_ địa chỉ Thư viện là `google.com`.
+> -   **Đích đến:** Bạn *biết rõ* địa chỉ Thư viện là `google.com`.
 > -   **Người Quản gia (Proxy):** Bạn không tự đi. Thay vào đó, bạn nói với người Quản gia (`my-proxy.com`): "Hãy đến `google.com` và lấy cuốn sách này cho tôi."
-> -   **Hành động:** Người Quản gia _tự mình_ đi đến Thư viện, lấy sách và mang về cho bạn.
-> -   **Kết quả:** Thư viện (`google.com`) chỉ biết rằng ông Quản gia (`my-proxy.com`) đã đến lấy sách. Họ _không hề biết_ cuốn sách đó là dành cho bạn.
+> -   **Hành động:** Người Quản gia *tự mình* đi đến Thư viện, lấy sách và mang về cho bạn.
+> -   **Kết quả:** Thư viện (`google.com`) chỉ biết rằng ông Quản gia (`my-proxy.com`) đã đến lấy sách. Họ *không hề biết* cuốn sách đó là dành cho bạn.
 
 ### 1.1. Luồng hoạt động Kỹ thuật
 
-Hãy xem xét điều gì xảy ra ở các lớp mạng:
+1.  **Bước 1 - Cấu hình:** Máy Client (bạn) được cấu hình để trỏ traffic đến máy chủ Proxy (ví dụ: `my-proxy.com`).
+2.  **Bước 2 - Kết nối Client -> Proxy:** Khi bạn truy cập `google.com`, máy của bạn tạo một **kết nối TCP** trực tiếp với `my-proxy.com`.
+3.  **Bước 3 - Gửi yêu cầu:** Bên trong kết nối đó, bạn gửi một yêu cầu HTTP/HTTPS chỉ định đích đến (ví dụ: `CONNECT google.com:443` hoặc `GET http://google.com`).
+4.  **Bước 4 - Kết nối Proxy -> Server:** Proxy nhận yêu cầu, tạo một **kết nối TCP hoàn toàn mới** từ chính IP của nó đến `google.com`.
+5.  **Bước 5 - Che giấu IP:** Từ góc độ máy chủ đích, `google.com` *chỉ* thấy kết nối đến từ IP của Proxy, hoàn toàn ẩn danh IP gốc của bạn.
 
-1.  **Bước 1: Cấu hình:** Máy Client (bạn) được cấu hình để "biết" hai thứ:
-    -   Đích đến cuối cùng (ví dụ: `google.com`).
-    -   Địa chỉ của máy chủ Proxy (ví dụ: `my-proxy.com`).
-2.  **Bước 2: Kết nối Client -> Proxy:** Khi bạn truy cập `google.com`, máy của bạn _không_ tạo kết nối TCP với `google.com`. Thay vào đó, nó tạo một **kết nối TCP** với `my-proxy.com`.
-3.  **Bước 3: Gửi yêu cầu (Lớp 7):** Bên trong kết nối TCP đó, bạn gửi một yêu cầu Lớp 7 (ví dụ: `GET google.com ...`).
-4.  **Bước 4: Kết nối Proxy -> Server:** Máy chủ Proxy nhận yêu cầu của bạn, "quay lại", và tạo một **kết nối TCP hoàn toàn mới** từ chính nó (với IP của Proxy) đến `google.com`.
-5.  **Bước 5: Che giấu (Lớp 4):** Từ góc độ Lớp 4 (TCP/IP), `google.com` _chỉ_ thấy kết nối đến từ IP của Proxy. Nó hoàn toàn không biết gì về IP gốc của bạn.
-
-> **Định nghĩa (Proxy):**
+> **Định nghĩa cốt lõi:**
 >
-> -   **Client (Bạn) BIẾT** máy chủ đích cuối cùng (Thư viện).
-> -   **Máy chủ (Thư viện) KHÔNG BIẾT** Client gốc là ai (chỉ thấy Quản gia).
-
-> **Câu hỏi hay:** Máy chủ có _thực sự_ không biết Client là ai?
-> **Trả lời:** Ở Lớp 4 (TCP/IP) thì không. Nhưng ở Lớp 7 (HTTP), Proxy _có thể_ chọn cách "mách" cho máy chủ đích bằng cách thêm một header đặc biệt, ví dụ: `X-Forwarded-For: [IP_gốc_của_bạn]`.
+> -   **Client (Bạn) BIẾT** máy chủ đích cuối cùng.
+> -   **Máy chủ đích KHÔNG BIẾT** Client thực sự là ai (chỉ thấy Proxy).
 
 ---
 
 ## 2. Các trường hợp sử dụng Proxy
 
-Tại sao chúng ta lại cần "người quản gia" này?
-
--   **Anonymity (Ẩn danh):** Ẩn địa chỉ IP thật của bạn khỏi máy chủ đích. Tuy nhiên, bạn phải tin tưởng Proxy (vì Proxy biết bạn là ai).
--   **Caching (Bộ nhớ đệm):** Các Proxy trong tổ chức (trường học, công ty) có thể lưu cache các trang web tĩnh. Nếu 1000 sinh viên cùng truy cập một trang, Proxy chỉ cần tải nó một lần và phục vụ 999 người còn lại từ cache.
--   **Block Sites (Chặn trang web):** Rất phổ biến trong các tổ chức. Vì mọi traffic đều đi qua Proxy, Proxy có thể "nhìn" vào yêu cầu (ví dụ: `GET facebook.com`) và từ chối, chặn truy cập.
--   **Logging & Monitoring (Ghi log & Giám sát):** Đây là khái niệm cốt lõi của **Service Mesh (Lưới dịch vụ)**. Mỗi ứng dụng (microservice) sẽ có một "sidecar proxy" (như Envoy) chạy bên cạnh. Mọi request đi ra/đi vào ứng dụng đều phải đi qua Proxy này, cho phép ghi log, đo lường độ trễ, và theo dõi.
--   **Debugging (Gỡ lỗi):** Các công cụ như **Fiddler** hay Charles Proxy hoạt động như một Proxy. Chúng đứng giữa ứng dụng của bạn và Internet, cho phép bạn "nhìn trộm" và thậm chí là giải mã (decrypt) các yêu cầu HTTPS để gỡ lỗi.
+-   **Anonymity (Ẩn danh):** Ẩn địa chỉ IP thật của bạn khỏi máy chủ đích để bảo vệ quyền riêng tư.
+-   **Caching (Bộ nhớ đệm):** Proxy trong mạng doanh nghiệp hoặc trường học lưu bản sao các trang web tĩnh. Nếu nhiều người cùng truy cập một tài liệu, Proxy chỉ tải một lần từ Internet và phân phối nội bộ.
+-   **Content Filtering (Chặn truy cập):** Kiểm soát và chặn các tên miền không mong muốn (mạng xã hội, cờ bạc, website độc hại) trước khi request rời khỏi mạng nội bộ.
+-   **Logging & Monitoring (Giám sát):** Ghi nhận toàn bộ luồng request ra ngoài của hệ thống. Trong kiến trúc **Service Mesh**, Sidecar Proxy (như Envoy) chạy cạnh microservice để đo lường độ trễ và tracing.
+-   **Debugging (Gỡ lỗi mạng):** Các công cụ như Charles Proxy hay Fiddler đứng giữa ứng dụng và Internet, hỗ trợ can thiệp và kiểm tra cấu trúc request/response.
 
 ---
 
 ## 3. Reverse Proxy là gì?
 
-**Reverse Proxy (Proxy Đảo ngược)** là khái niệm _hoàn toàn ngược lại_ với Proxy.
+**Reverse Proxy (Proxy Đảo ngược)** là máy chủ trung gian đại diện cho **hệ thống backend**, đứng trước các máy chủ dịch vụ để tiếp nhận toàn bộ traffic từ client gửi đến.
 
-> **Ví dụ trừu tượng (Người Lễ tân Tổng đài):**
+> **Ví dụ trực quan (Người Lễ tân Tổng đài):**
 >
 > -   **Bạn (Client):** Muốn gọi điện cho một công ty lớn (ví dụ: `google.com`).
-> -   **Đích đến:** Bạn _chỉ biết_ số Tổng đài duy nhất (`google.com`). Bạn _không hề biết_ số máy lẻ của phòng Kế toán hay phòng Nhân sự.
-> -   **Người Lễ tân (Reverse Proxy):** Người Lễ tân (`google.com`) nhấc máy. Đây là "máy chủ" duy nhất mà bạn nói chuyện.
-> -   **Hành động:** Bạn nói: "Tôi muốn gặp phòng Kế toán" (ví dụ: truy cập `/api/billing`). Người Lễ tân sẽ _tự động chuyển hướng_ cuộc gọi của bạn đến máy chủ Kế toán (backend-server-1). Nếu bạn nói "Tôi muốn xem tin tức" (truy cập `/news`), Lễ tân sẽ chuyển bạn đến máy chủ Tin tức (backend-server-2).
-> -   **Kết quả:** Bạn (Client) hoàn toàn không biết rằng mình đang nói chuyện với các máy chủ backend khác nhau. Bạn chỉ nghĩ rằng mình đang nói chuyện với `google.com`.
+> -   **Đích đến:** Bạn *chỉ biết* số Tổng đài duy nhất (`google.com`). Bạn *không hề biết* số máy lẻ của phòng Kế toán hay phòng Kỹ thuật.
+> -   **Người Lễ tân (Reverse Proxy):** Người Lễ tân nhấc máy. Đây là điểm chạm duy nhất mà bạn kết nối.
+> -   **Hành động:** Bạn nói: "Tôi muốn thanh toán hóa đơn" (`/api/billing`). Lễ tân tự động chuyển tiếp cuộc gọi đến máy chủ Kế toán nội bộ. Nếu bạn nói "Tôi muốn đọc tin tức" (`/news`), Lễ tân chuyển hướng đến máy chủ Tin tức.
+> -   **Kết quả:** Bạn hoàn toàn không biết cấu trúc cụ thể đằng sau gồm bao nhiêu máy chủ, chỉ tương tác với duy nhất một đầu mối.
 
 ### 3.1. Luồng hoạt động Kỹ thuật
 
-1.  **Bước 1: Kết nối Client -> Reverse Proxy:** Client tạo một kết nối TCP đến `google.com`, và _tin rằng_ đây chính là máy chủ cuối cùng sẽ phục vụ mình.
-2.  **Bước 2: Ẩn giấu Backend:** Client _hoàn toàn không biết_ về sự tồn tại của các máy chủ backend thực sự (ví dụ: `app-server-1`, `app-server-2`).
-3.  **Bước 3: Kết nối Reverse Proxy -> Backend:** Reverse Proxy (ví dụ: Nginx, HAProxy) nhận yêu cầu. Dựa trên các quy tắc (ví dụ: đường dẫn, header), nó "quay lại" và tạo một **kết nối TCP mới** đến một máy chủ backend (mà nó lựa chọn) để xử lý yêu cầu.
+1.  **Bước 1 - Client gọi Reverse Proxy:** Client kết nối TCP đến địa chỉ công khai của Reverse Proxy (ví dụ qua DNS của `google.com`) và tin rằng đó là máy chủ cuối.
+2.  **Bước 2 - Ẩn giấu Hạ tầng:** Client không thể nhìn thấy IP nội bộ hoặc topology của các máy chủ backend phía sau.
+3.  **Bước 3 - Điều phối Backend:** Reverse Proxy nhận request, phân tích quy tắc (routing rules, header, path) rồi mở kết nối nội bộ đến máy chủ upstream phù hợp để lấy dữ liệu trả về cho Client.
 
-> **Định nghĩa (Reverse Proxy):**
+> **Định nghĩa cốt lõi:**
 >
-> -   **Client (Bạn) KHÔNG BIẾT** máy chủ đích thực sự (Kế toán, Nhân sự).
-> -   **Client (Bạn) CHỈ BIẾT** Reverse Proxy (Tổng đài) và coi đó là đích đến cuối cùng.
+> -   **Client (Bạn) KHÔNG BIẾT** máy chủ nội bộ nào thực sự xử lý yêu cầu.
+> -   **Client (Bạn) CHỈ BIẾT** Reverse Proxy là điểm đến duy nhất.
 
 ---
 
 ## 4. Các trường hợp sử dụng Reverse Proxy
 
-Đây là một khái niệm cực kỳ mạnh mẽ và là nền tảng của kiến trúc web hiện đại:
-
--   **Load Balancing (Cân bằng tải):** Trường hợp sử dụng phổ biến nhất. Reverse Proxy đứng trước 5 máy chủ backend giống hệt nhau và phân phối các yêu cầu đến (round-robin, least connections, v.v.) để đảm bảo không máy chủ nào bị quá tải.
--   **Ingress / API Gateway:** Cổng vào của kiến trúc **Microservices**. Reverse Proxy (như Kubernetes Ingress) đọc đường dẫn URL và điều hướng thông minh:
-    -   `GET /api/posts` -> Chuyển đến Dịch vụ Post (Post Service).
-    -   `GET /api/messages` -> Chuyển đến Dịch vụ Tin nhắn (Message Service).
--   **Caching (Bộ nhớ đệm):** Một **CDN (Content Delivery Network)** về cơ bản là một "Reverse Proxy được tôn vinh". Nó là một Reverse Proxy đặt cache (ví dụ: ảnh, video) ở các vị trí địa lý gần người dùng, sau đó nó sẽ kết nối về máy chủ gốc (origin server) ở Mỹ để lấy nội dung nếu cache không có.
--   **Canary Deployment (Triển khai Canary):** Cho phép bạn kiểm thử tính năng mới một cách an toàn. Bạn cấu hình Reverse Proxy để:
-    -   90% request đi đến các server đang chạy code cũ (v9).
-    -   10% request đi đến 1 server duy nhất chạy code mới (v10).
--   **Authentication (Xác thực):** Reverse Proxy có thể xử lý việc xác thực (ví dụ: kiểm tra JWT token) ngay tại "cổng vào", trước khi cho phép bất kỳ yêu cầu nào đi vào hệ thống microservice bên trong.
+-   **Load Balancing (Cân bằng tải):** Phân phối traffic đồng đều đến cụm máy chủ backend qua các thuật toán (Round-robin, Least connections, IP Hash), tránh quá tải cục bộ.
+-   **SSL/TLS Termination:** Đảm nhận toàn bộ việc giải mã HTTPS và quản lý chứng chỉ SSL ngay tại cổng vào, giúp các máy chủ backend giảm tải xử lý CPU mã hóa/giải mã.
+-   **API Gateway / Ingress Routing:** Cổng phân luồng trung tâm cho kiến trúc Microservices (như Nginx, Kong, Traefik, K8s Ingress), điều hướng request theo URI:
+    -   `/api/users` -> Tới User Service.
+    -   `/api/orders` -> Tới Order Service.
+-   **CDN (Content Delivery Network):** Mạng lưới phân phối nội dung thực chất là hệ thống Reverse Proxy phân tán toàn cầu, lưu cache dữ liệu tĩnh gần người dùng nhất để tối ưu tốc độ tải.
+-   **Security & WAF (Tường lửa ứng dụng):** Ngăn chặn các cuộc tấn công DDoS, SQL Injection, XSS và ẩn giấu hoàn toàn địa chỉ IP thật của máy chủ ứng dụng.
+-   **Canary & Blue-Green Deployment:** Điều phối tỷ lệ traffic (ví dụ 95% request vào phiên bản v1, 5% vào phiên bản v2) để kiểm thử tính năng mới mà không gây gián đoạn dịch vụ.
 
 ---
 
-## 5. Các câu hỏi thường gặp (FAQs)
+## 5. So sánh nhanh Proxy và Reverse Proxy
 
-> **Câu hỏi hay:** Có thể sử dụng Proxy và Reverse Proxy cùng một lúc không?
-> **Trả lời:** Có. Bạn (Client) _biết_ mình đang dùng Proxy (vì bạn tự cấu hình nó trong trình duyệt hoặc hệ điều hành). Nhưng bạn _không thể biết_ liệu máy chủ đích (ví dụ `google.com`) có phải là một Reverse Proxy hay không. Hoàn toàn có thể xảy ra trường hợp: Bạn (Client) -> Proxy của công ty bạn -> Internet -> Reverse Proxy (Load Balancer) của Google -> Backend Server của Google.
-
-> **Câu hỏi hay:** Tôi có thể dùng Proxy thay cho VPN để ẩn danh không?
-> **Trả lời:** Đây là một ý không hay, vì chúng hoạt động ở các lớp khác nhau.
->
-> -   **Proxy** (như HTTP Proxy) thường hoạt động ở Lớp 4 hoặc Lớp 7. Nó _cần biết_ giao thức bạn đang dùng (HTTP, SOCKS) và _có thể_ nhìn thấy nội dung traffic của bạn (vì nó giải mã yêu cầu để đọc URL, header).
-> -   **VPN** hoạt động ở Lớp 3 (IP). Nó _mã hóa toàn bộ_ gói tin IP và không quan tâm bên trong là giao thức gì. Do đó, VPN an toàn hơn cho việc ẩn danh.
-
-> **Câu hỏi hay:** Proxy có phải chỉ dành cho traffic HTTP không?
-> **Trả lời:** Không. HTTP Proxy là phổ biến nhất, nhưng cũng có các loại khác như SOCKS Proxy, TCP Proxy, v.v.
->
-> **Ghi nhớ (Bonus):** Ngay cả với HTTPS, có một chế độ đặc biệt gọi là **HTTP Tunnel (Đường hầm HTTP)**. Client gửi một lệnh `CONNECT` đến Proxy (ví dụ: `CONNECT google.com:443`). Proxy sẽ mở một "đường ống TCP" (dumb pipe) từ Client đến Server. Sau đó, Client thực hiện bắt tay TLS/SSL _xuyên qua_ đường hầm đó. Trong chế độ này, Proxy chỉ truyền byte qua lại và _không thể_ đọc được nội dung đã bị mã hóa.
+| Tiêu chí | Forward Proxy | Reverse Proxy |
+| :--- | :--- | :--- |
+| **Đại diện cho** | Client (Người gửi yêu cầu) | Máy chủ Backend (Hệ thống tiếp nhận) |
+| **Bảo vệ / Che giấu** | IP và danh tính thật của Client | Cấu trúc mạng và IP thật của Server |
+| **Vị trí đứng** | Cổng ra mạng nội bộ Client (Egress) | Cổng vào hạ tầng máy chủ (Ingress) |
+| **Use case chính** | Vượt tường lửa, lọc web, ẩn danh, client cache | Cân bằng tải, SSL Termination, API Gateway, WAF |
 
 ---
 
-## 6. Tổng kết
+## 6. Các câu hỏi thường gặp (FAQs)
+
+> **Có thể sử dụng Proxy và Reverse Proxy cùng một lúc không?**
+>
+> **Có.** Khi bạn ngồi trong mạng công ty dùng **Forward Proxy** để duyệt web, request đi qua Forward Proxy ra ngoài Internet, sau đó chạm vào **Reverse Proxy** (như Cloudflare/Nginx) của nhà cung cấp dịch vụ trước khi tới cụm máy chủ Backend.
+
+> **Proxy có thể dùng thay VPN để bảo mật hoàn toàn không?**
+>
+> **Không hẳn.** Proxy thông thường hoạt động ở tầng ứng dụng hoặc phiên (Layer 4/Layer 7), chỉ chuyển tiếp traffic cho các ứng dụng được cấu hình cụ thể. VPN hoạt động ở tầng mạng (Layer 3), mã hóa toàn bộ dữ liệu IP xuất phát từ thiết bị của bạn.
+
+> **Proxy có đọc được nội dung traffic HTTPS không?**
+>
+> -   **Chế độ HTTP Tunneling (`CONNECT`):** Proxy chỉ mở kết nối TCP thô giữa Client và Server. Dữ liệu TLS được mã hóa đầu cuối nên Proxy hoàn toàn không đọc được nội dung bên trong.
+> -   **Chế độ SSL Interception (MitM):** Proxy của tổ chức có thể giải mã và đọc được HTTPS nếu thiết bị Client cài đặt sẵn chứng chỉ gốc (Root CA) do chính tổ chức đó cung cấp.
+
+---
+
+## 7. Tổng kết
 
 ```mermaid
 sequenceDiagram
     autonumber
 
     %% --- KỊCH BẢN 1: FORWARD PROXY ---
-    %% Định nghĩa vùng mạng
     box "Mạng Nội Bộ (Internal Network)"
         participant Client as Internal Client
         participant FProxy as Forward Proxy
@@ -132,15 +131,13 @@ sequenceDiagram
     Note over Client, Origin: CASE 1: FORWARD PROXY (Kiểm soát Outbound Traffic)
 
     Client->>FProxy: 1. Khởi tạo Request (Target: Origin)
-    
     activate FProxy
-    Note right of FProxy: Action: Masking Client IP<br/>Filtering / Caching
-    
+    Note right of FProxy: Masking Client IP<br/>Filtering / Caching
     FProxy->>Origin: 2. Chuyển tiếp (Source IP: Proxy)
     deactivate FProxy
 
     activate Origin
-    Note left of Origin: Visibility: Chỉ thấy IP Proxy<br/>(Client ẩn danh)
+    Note left of Origin: Origin chỉ thấy IP của Proxy
     Origin-->>FProxy: 3. Phản hồi Response
     deactivate Origin
 
@@ -161,11 +158,9 @@ sequenceDiagram
     Note over ExtUser, Upstream: CASE 2: REVERSE PROXY (Kiểm soát Inbound Traffic)
 
     ExtUser->>RProxy: 1. Gửi Request (Target: Public IP)
-    
     activate RProxy
-    Note left of RProxy: Visibility: Client chỉ thấy Proxy<br/>(Topology Server ẩn)
-    Note right of RProxy: Action: Load Balancing<br/>SSL Termination / Routing
-    
+    Note left of RProxy: Client chỉ thấy Reverse Proxy
+    Note right of RProxy: Load Balancing<br/>SSL Termination / WAF
     RProxy->>Upstream: 2. Điều phối Request
     deactivate RProxy
 
@@ -176,12 +171,3 @@ sequenceDiagram
     activate RProxy
     RProxy-->>ExtUser: 4. Trả về Client
     deactivate RProxy
-```
-
-| Thành phần/Bước | Vai trò/Mô tả | Chi tiết |
-| :--- | :--- | :--- |
-| **FORWARD PROXY (CASE 1)** | Máy chủ đại diện cho Client để gửi yêu cầu đi ra ngoài. | Bảo vệ mạng nội bộ bằng cách kiểm soát các yêu cầu đi ra ngoài (**Outbound Traffic**), che giấu IP thật của Client và hỗ trợ Caching dữ liệu tĩnh. |
-| **REVERSE PROXY (CASE 2)** | Máy chủ đại diện cho hệ thống Backend để nhận các yêu cầu đi vào. | Bảo vệ hệ thống máy chủ bằng cách quản lý các yêu cầu đi vào (**Inbound Traffic**), thực hiện cân bằng tải (**Load Balancing**), mã hóa TLS/SSL Termination, che giấu kiến trúc mạng nội bộ. |
-
----
-[← Quay lại mục lục](../README.md)
