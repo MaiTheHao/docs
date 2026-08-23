@@ -14,9 +14,9 @@
 Mỗi ứng dụng có mẫu truy cập dữ liệu (Traffic Pattern) khác nhau. Việc hiểu rõ đặc tính Workload là yếu tố quyết định lựa chọn Storage Engine và hệ CSDL phù hợp.
 
 ```mermaid
-accTitle: Phan loai Workload va CSDL khuyen nghi
-accDescr: So do minh hoa nhanh phan loai Workload Read-Heavy va Write-Heavy cho PostgreSQL va MySQL InnoDB.
 graph TD
+    accTitle: Phan loai Workload va CSDL khuyen nghi
+    accDescr: So do minh hoa nhanh phan loai Workload Read-Heavy va Write-Heavy cho PostgreSQL va MySQL InnoDB.
     workloadType["Đặc tính Workload"] --> readHeavy["Read-Heavy / Ingestion Heavy"]
     workloadType --> writeHeavy["Write / Update-Heavy (Dòng cũ)"]
 
@@ -55,9 +55,9 @@ Năm 2016, nhóm kỹ sư Uber Engineering đăng tải bài viết gây chú ý
 Dịch vụ Uber xử lý vị trí GPS của hàng triệu tài xế và hành khách. Vị trí di chuyển được **cập nhật liên tục từng giây** trên các bảng chứa nhiều Secondary Index để phục vụ tìm kiếm chuyến đi.
 
 ```mermaid
-accTitle: Bon nguyen nhan Uber chuyen sang MySQL
-accDescr: So do minh hoa 4 van de ky thuat Uber gap phai tren PostgreSQL 9x nam 2016.
 graph TD
+    accTitle: Bon nguyen nhan Uber chuyen sang MySQL
+    accDescr: So do minh hoa 4 van de ky thuat Uber gap phai tren PostgreSQL 9x nam 2016.
     driverApp["Tài xế GPS update mỗi giây"] --> dbPostgres["PostgreSQL 9.x<br/>(Write/Update-Heavy)"]
 
     dbPostgres --> prob1["1. Write Amplification<br/>(Secondary Indexes ctid)"]

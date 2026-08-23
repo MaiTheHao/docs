@@ -30,31 +30,6 @@ Theo thời gian, NGINX phát triển thành một giải pháp đa năng trong 
 
 Dự án NGINX được kỹ sư phần mềm người Nga **Igor Sysoev** bắt đầu phát triển từ năm 2002 nhằm giải quyết vấn đề hiệu năng cho website Rambler.ru (một trong những cổng thông tin lượng truy cập lớn nhất nước Nga thời điểm đó).
 
-```mermaid
-timeline
-    accTitle: "Lịch sử phát triển NGINX"
-    accDescr: "Các cột mốc lịch sử quan trọng từ năm 2002 đến 2024 trong quá trình phát triển của NGINX."
-    title "Lịch sử phát triển NGINX"
-    2002 : "Igor Sysoev bắt đầu phát triển NGINX"
-         : "Mục tiêu: Giải quyết bài toán C10K cho Rambler.ru"
-    2004 : "Phát hành chính thức NGINX v0.1.0 (4/10/2004)"
-         : "Giới thiệu kiến trúc Event-Driven đến cộng đồng"
-    2011 : "Thành lập NGINX, Inc. (Tháng 7/2011)"
-         : "Cung cấp dịch vụ hỗ trợ thương mại và giải pháp doanh nghiệp"
-    2013 : "Phát hành NGINX Plus (22/8/2013)"
-         : "Tích hợp Health Check chủ động và Dynamic Reconfiguration API"
-    2019 : "F5 Networks thâu tóm NGINX, Inc. với giá 670 triệu USD"
-         : "Sự cố khiếu kiện bản quyền từ Rambler (tháng 12/2019)"
-    2022 : "Igor Sysoev chính thức rời NGINX / F5 (tháng 1/2022)"
-    2024 : "F5 chính thức ra mắt NGINX One GA (tháng 9/2024)"
-```
-
-| Thành phần/Bước | Vai trò/Mô tả | Chi tiết |
-| :--- | :--- | :--- |
-| **Giai đoạn khởi đầu (2002–2004)** | Igor Sysoev viết NGINX phục vụ Rambler.ru | Nhắm tới bài toán C10K, phát hành v0.1.0 ngày 04/10/2004 |
-| **Thương mại hóa (2011–2013)** | Thành lập NGINX Inc. và ra mắt NGINX Plus | Cung cấp tính năng thương mại và hỗ trợ doanh nghiệp |
-| **Sáp nhập & Đổi mới (2019–2024)** | F5 thâu tóm ($670M), Igor Sysoev rời F5, ra mắt NGINX One | Khép lại vụ Rambler 2019, ra mắt nền tảng NGINX One GA 09/2024 |
-
 **Nguồn gốc tên gọi:** Tên gọi **NGINX** xuất phát từ thuật ngữ *"Engine-X"*, biểu thị một bộ máy động cơ (Engine) với khả năng mở rộng không giới hạn (ký tự $X$).
 
 ---
@@ -71,9 +46,9 @@ graph TD
     accTitle: "Mô hình Đa luồng Truyền thống"
     accDescr: "Sơ đồ kiến trúc Web Server truyền thống phân bổ luồng/tiến trình riêng biệt cho từng kết nối."
 
-    Client1["Client 1"] -->|"HTTP Request"| Thread1["Thread / Process 1 (RAM: 2-4MB+)"]
-    Client2["Client 2"] -->|"HTTP Request"| Thread2["Thread / Process 2 (RAM: 2-4MB+)"]
-    ClientN["Client 10,000"] -->|"HTTP Request"| ThreadN["Thread / Process 10,000 (RAM: 2-4MB+)"]
+    Client1["Client 1"] -->|"HTTP Request"| Thread1["Thread / Process 1"]
+    Client2["Client 2"] -->|"HTTP Request"| Thread2["Thread / Process 2"]
+    ClientN["Client 10,000"] -->|"HTTP Request"| ThreadN["Thread / Process 10,000"]
 
     Thread1 --> Backend["App / Storage"]
     Thread2 --> Backend
@@ -83,65 +58,77 @@ graph TD
 | Thành phần/Bước | Vai trò/Mô tả | Chi tiết |
 | :--- | :--- | :--- |
 | **Client Request** | Yêu cầu kết nối HTTP từ trình duyệt client | Mỗi kết nối yêu cầu giữ 1 thread/process riêng |
-| **Worker Thread/Process** | Khối xử lý đồng bộ gán riêng cho từng kết nối | Chiếm 2–4MB stack RAM (MPM Prefork có thể tốn 10–30MB+ RAM/process) |
+| **Worker Thread/Process** | Khối xử lý đồng bộ gán riêng cho từng kết nối | Chiếm 2–4MB RAM |
 | **Backend Storage** | Tầng ứng dụng hoặc cơ sở dữ liệu xử lý logic | Bị nghẽn do quá tải Context Switching ở cấp CPU |
 
 Những hạn chế cốt lõi của mô hình đa luồng khi quy mô kết nối tăng vọt bao gồm:
-1. **Dung lượng bộ nhớ tăng tuyến tính**: Mỗi luồng/tiến trình tiêu tốn từ 2MB đến 4MB bộ nhớ đệm stack (tùy thuộc MPM và các mô-đun nạp kèm; với mô hình MPM Prefork, mỗi tiến trình có thể chiếm 10MB–30MB+ RAM). Với 10.000 kết nối, hệ thống mất từ 20GB đến 40GB+ RAM chỉ để duy trì trạng thái luồng.
+1. **Dung lượng bộ nhớ tăng tuyến tính**: Mỗi luồng/tiến trình tiêu tốn từ 2MB đến 4MB RAM. Với 10.000 kết nối, hệ thống mất từ 20GB đến 40GB+ RAM chỉ để duy trì trạng thái luồng.
 2. **Quá tải chuyển đổi ngữ cảnh (Context Switching)**: Khi số lượng luồng vượt xa số lõi CPU vật lý, CPU phải liên tục hoán đổi ngữ cảnh giữa các luồng. Chi phí overhead này chiếm phần lớn năng lực xử lý, gây tắc nghẽn hệ thống (Thread Thrashing).
-3. **Chế độ Blocking I/O**: Các socket mặc định ở chế độ blocking. Khi một luồng gọi `read()` trên socket chưa có dữ liệu, luồng đó bị đẩy vào trạng thái đứng chờ (**sleep**). Hàng nghìn luồng bị kẹt ngủ tiếp tục chiếm dụng RAM, khiến tài nguyên máy chủ nhanh chóng cạn kiệt.
+3. **Chế độ Blocking I/O**: Các socket mặc định ở chế độ blocking. Khi một luồng gọi `read()` trên socket chưa có dữ liệu, luồng đó bị đẩy vào trạng thái đứng chờ. Hàng nghìn luồng bị kẹt ngủ tiếp tục chiếm dụng RAM, khiến tài nguyên máy chủ nhanh chóng cạn kiệt.
 
 ---
 
 ## 1.4 Bước ngoặt lịch sử: I/O Multiplexing & Kiến trúc Multi-Worker
 
-Để kiến trúc Event-Driven vận hành hiệu quả trên CPU đa nhân, hệ điều hành đã bổ sung các cơ chế I/O Multiplexing thế hệ mới ở cấp độ Kernel.
+Để kiến trúc Event-Driven vận hành hiệu quả và mở rộng tối đa trên CPU đa nhân, các hệ điều hành đã bổ sung các cơ chế **I/O Multiplexing thế hệ mới** trực tiếp ở cấp độ Kernel. Đây chính là bước ngoặt kỹ thuật giải quyết trọn vẹn bài toán C10K (hàng chục nghìn kết nối đồng thời).
 
 ### 1.4.1 Cơ chế I/O Multiplexing từ Kernel
 
-Giai đoạn 2000 – 2002, các hệ điều hành giới thiệu cơ chế theo dõi sự kiện I/O tối ưu:
+Giai đoạn 2000 – 2002, các hệ điều hành lớn lần lượt giới thiệu các giao diện theo dõi sự kiện I/O hiệu năng cao:
 
-* 🍎 **`kqueue`** (FreeBSD - 2000): NGINX ban đầu được tối ưu trên FreeBSD nhờ tận dụng cơ chế này.
-* 🐧 **`epoll`** (Linux - 2002): Cơ chế theo dõi sự kiện hiệu năng cao trên Linux.
+* 🍎 **`kqueue`** (FreeBSD - 2000 / macOS): Cơ chế theo dõi sự kiện tổng quát (socket, file, signal, timer) với hiệu năng vượt trội.
+* 🐧 **`epoll`** (Linux - 2002): Cơ chế thông báo sự kiện I/O có khả năng mở rộng cực cao trên nhân Linux, thay thế cho các syscall cũ bị nghẽn cổ chai như `select()` hay `poll()`.
+* 🪟 **`IOCP`** (Windows): Mô hình Asynchronous I/O dựa trên cơ chế completion notification.
 
-**Cơ chế hoạt động:** NGINX đăng ký danh sách socket kết nối với Kernel thông qua `epoll_ctl()`, sau đó gọi `epoll_wait()`. Kernel theo dõi trạng thái các socket và trả về danh sách các socket thực sự có sự kiện (ready sockets). NGINX chỉ việc duyệt danh sách trả về này để thực thi callback tương ứng trong vòng lặp sự kiện (Event Loop), loại bỏ hoàn toàn thời gian đứng chờ (sleep).
+#### Nền tảng cốt lõi của hệ sinh thái phần mềm hiện đại
 
-### 1.4.2 Mô hình tiến trình Multi-Worker
+Sự xuất hiện của các cơ chế này đã định hình lại hoàn toàn cách các web server, runtime và framework xử lý I/O:
 
-NGINX kết hợp I/O Multiplexing với mô hình tiến trình **Master-Worker** theo nguyên lý **Shared-nothing** (không chia sẻ request context):
+* **Web Server / Reverse Proxy:** **NGINX**, **Envoy**, **HAProxy** tận dụng trực tiếp `epoll`/`kqueue` để duy trì hàng trăm nghìn kết nối đồng thời với lượng RAM và CPU tiêu thụ tối thiểu.
+* **JavaScript / Node.js:** Thư viện **`libuv`** được xây dựng như một lớp trừu tượng (abstraction layer) bọc quanh `epoll`, `kqueue`, `IOCP` để tạo nên vòng lặp sự kiện (Event Loop) nổi tiếng của Node.js.
+* **Java:** Tầng **Java NIO (Non-blocking I/O)** và framework **Netty** (nền tảng của Spring WebFlux, gRPC Java, Cassandra, Kafka client) ánh xạ trực tiếp các selector xuống `epoll`/`kqueue` dưới tầng OS.
+* **Go / Rust:** Hệ thống **Netpoller** trong Go runtime và thư viện **Tokio / Mio** trong Rust đều trực tiếp ủy thác việc giám sát network socket cho `epoll` và `kqueue`.
 
-* **1 Master Process**: Đọc cấu hình, quản lý vòng đời tiến trình, tạo listening sockets (`bind()`/`listen()`) và fork các Worker Process.
-* **N Worker Process**: Mặc định với `worker_processes auto;`, NGINX tạo số Worker tương ứng với số **logical CPU** (`sysconf(_SC_NPROCESSORS_ONLN)`).
-* **Độc lập xử lý request**: Mỗi Worker vận hành một Event Loop (`epoll`/`kqueue`) riêng biệt với request context độc lập, giúp giảm tối đa tranh chấp khóa đồng bộ (locking contention). Việc gán Worker vào lõi CPU (CPU Affinity) có thể thiết lập qua directive `worker_cpu_affinity`.
-* **Bộ nhớ dùng chung (Shared Memory)**: NGINX dùng shared memory cho các tác vụ cần dùng chung dữ liệu toàn hệ thống như `limit_req_zone`, `limit_conn_zone`, SSL session cache, upstream zone và cache metadata, được bảo vệ bằng mutex khi truy cập. Trạng thái của từng request riêng lẻ không bị chia sẻ giữa các Worker.
+> [!NOTE]
+> **💡 Easter Egg: Phát biểu gây sốt của Linus Torvalds (7/2025)**
+>
+> Mới đây (tháng 7/2025), chính **Linus Torvalds** đã đưa ra một tuyên bố rất thẳng thắn về `epoll`. Ông thông báo sẽ **KHÔNG chấp nhận BẤT KỲ bản vá lỗi nào cho epoll** trừ khi đó là lỗi hiển nhiên hoặc được chia nhỏ và giải thích cực kỳ cẩn thận. Lý do ông đưa ra:
+>
+> > *"Về lâu dài, epoll cần phải được khai tử, hoặc ít nhất là bị coi như một giao diện kế thừa cần được cắt giảm, chứ không phải là thứ để cải tiến thêm."*
+>
+> > *(Nguyên văn: "epoll needs to die, or at least be seen as a legacy interface that should be cut down, not something to be improved upon".)*
+>
+> **Bối cảnh đằng sau phát biểu này:**
+> * **Sự trỗi dậy của `io_uring`:** `io_uring` đang nổi lên như một giải pháp I/O hiệu năng cao và toàn diện hơn nhiều trên Linux. Nó không chỉ vượt trội ở network I/O mà còn xử lý trọn vẹn cả Disk I/O (điểm yếu cố hữu của `epoll`), giúp vượt qua các giới hạn kiến trúc cũ.
+> * **Định hướng tiến hóa dài hạn:** Đây là tuyên bố về triết lý thiết kế hệ thống hơn là lệnh cấm dùng ngay lập tức. Khi công nghệ mới ưu việt hơn ra đời, các giao diện cũ cần được xem là *legacy* để giảm bớt sự phức tạp và nợ kỹ thuật của kernel.
+> * **Thực tế hiện tại:** Mặc dù được xếp vào diện "kế thừa", `epoll` vẫn là API cốt lõi và là xương sống phục vụ phần lớn Internet ngày nay (gồm cả NGINX). `io_uring` rất mạnh mẽ nhưng đòi hỏi mô hình lập trình bất đồng bộ khác biệt và phức tạp hơn, khiến nó chưa thể là sự thay thế trực tiếp tức thì cho mọi ứng dụng `epoll`.
+
+---
+
+### 1.4.2 Kiến trúc Master-Worker trong NGINX
+
+NGINX sử dụng mô hình kiến trúc **Master-Worker** kết hợp với cơ chế hướng sự kiện (Event-driven), giúp hệ thống xử lý hàng chục nghìn kết nối đồng thời mà tốn rất ít tài nguyên:
+
+* **1 Tiến trình Quản lý (Master Process):** Đóng vai trò điều phối chính — đọc file cấu hình, quản lý vòng đời và tự động khởi tạo lại các Worker nếu xảy ra sự cố.
+* **N Tiến trình Xử lý (Worker Processes):** Chạy độc lập trên từng lõi CPU, trực tiếp nhận và xử lý các yêu cầu từ phía người dùng thông qua Event Loop.
+* **Không tranh chấp dữ liệu (Shared-Nothing):** Mỗi Worker xử lý yêu cầu hoàn toàn độc lập, không phải chờ đợi lẫn nhau. Dữ liệu dùng chung (như bộ nhớ đệm Cache, giới hạn Rate Limit) được quản lý qua vùng nhớ chung (Shared Memory).
 
 ```mermaid
 graph TD
-    accTitle: "Kiến trúc Multi-Worker & OS Kernel I/O Multiplexing"
-    accDescr: "Sơ đồ minh họa sự phối hợp giữa I/O Multiplexing ở Kernel Space và mô hình Multi-Worker ở User Space."
-
-    subgraph OSKernel["OS Kernel (Kernel Space)"]
-        Epoll["I/O Multiplexing (epoll / kqueue)"]
-        Sockets["10,000+ Active Sockets"]
-        Sockets -->|"Event Trigger"| Epoll
+    Client["Client Requests (Hàng ngàn kết nối)"]
+    
+    subgraph NGINX["Kiến trúc NGINX"]
+        Master["Master Process\n(Quản lý & Cấu hình)"]
+        
+        Master -->|"Quản lý / Fork"| W1["Worker 1 (CPU Core 1)"]
+        Master -->|"Quản lý / Fork"| W2["Worker 2 (CPU Core 2)"]
+        Master -->|"Quản lý / Fork"| WN["Worker N (CPU Core N)"]
     end
-
-    subgraph NginxSpace["NGINX Space (User Space)"]
-        Master["Master Process (Management / Config)"]
-        Master -->|"fork"| Worker1["Worker 1 (epoll Event Loop)"]
-        Master -->|"fork"| Worker2["Worker 2 (epoll Event Loop)"]
-
-        Epoll -.->|"epoll_wait() trả về Socket sẵn sàng"| Worker1
-        Epoll -.->|"epoll_wait() trả về Socket sẵn sàng"| Worker2
-    end
+    
+    Client -->|"Xử lý bất đồng bộ"| W1
+    Client -->|"Xử lý bất đồng bộ"| W2
+    Client -->|"Xử lý bất đồng bộ"| WN
 ```
-
-| Thành phần/Khái niệm | Vai trò/Mô tả | Chi tiết |
-| :--- | :--- | :--- |
-| **Blocking I/O (Cũ)** | Luồng gọi `read()` bị khóa (sleep) cho tới khi socket có dữ liệu | Tốn 2-4MB RAM/thread, gây quá tải Context Switching |
-| **`kqueue` / `epoll`** | Cơ chế Kernel thông báo danh sách socket đã sẵn sàng dữ liệu | Đăng ký/Hủy $O(1)$; `epoll_wait()` chỉ trả về socket sẵn sàng, không tốn thời gian chờ |
-| **Master Process** | Đọc cấu hình `nginx.conf`, quản lý tiến trình con, nạp lại cấu hình (hot reload) | Đảm bảo tính sẵn sàng, tự động khởi tạo lại Worker nếu bị lỗi |
-| **Worker Process** | Xử lý yêu cầu HTTP và điều hướng sự kiện trong Event Loop đơn luồng | Tối ưu hóa bộ nhớ, tận dụng tối đa năng lực phần cứng đa nhân |
 
 ---
 
@@ -151,7 +138,7 @@ Nhờ kết hợp kiến trúc **Event-Driven**, **Asynchronous**, **Non-blockin
 
 Mỗi Worker Process chạy một vòng lặp sự kiện đơn luồng xử lý hàng nghìn kết nối đồng thời. Với các tác vụ I/O đĩa có nguy cơ gây nghẽn, NGINX sử dụng thêm luồng phụ (Thread Pool hoặc `aio threads`) để tránh làm gián đoạn Event Loop chính.
 
-| Tiêu chí | Mô hình Đa luồng / Đa tiến trình (như Apache MPM Prefork) | Mô hình Hướng sự kiện (NGINX) |
+| Tiêu chí | Mô hình Đa luồng / Đa tiến trình | Mô hình Hướng sự kiện (NGINX) |
 | :--- | :--- | :--- |
 | **Phân bổ tài nguyên** | 1 Luồng hoặc Tiến trình cho mỗi kết nối | 1 Worker Process quản lý hàng nghìn kết nối đồng thời |
 | **Tiêu thụ bộ nhớ RAM** | Tăng tuyến tính theo số kết nối ($O(N)$) | Tăng rất chậm / duy trì ở mức thấp khi quy mô kết nối tăng |
@@ -164,26 +151,4 @@ Mỗi Worker Process chạy một vòng lặp sự kiện đơn luồng xử lý
 
 ---
 
-## 1.6 NGINX Open Source vs NGINX Plus
-
-NGINX được phát hành dưới hai phiên bản chính:
-
-### NGINX Open Source
-Phiên bản mã nguồn mở miễn phí, cung cấp đầy đủ các tính năng cốt lõi: Web Server, Reverse Proxy, Cân bằng tải L4/L7, SSL Termination và Content Caching. Từ phiên bản 1.29.6 (tháng 3/2026), tính năng Session Persistence (`sticky`) đã được đưa vào NGINX Open Source, và thuật toán `least_time` được hỗ trợ từ NGINX 1.31.0 (tháng 5/2026).
-
-### NGINX Plus
-Phiên bản thương mại bổ sung các tính năng nâng cao phục vụ môi trường doanh nghiệp:
-
-| Tính năng | NGINX Open Source | NGINX Plus |
-| :--- | :--- | :--- |
-| **Cân bằng tải** | Phổ biến (Round Robin, Least Conn, IP Hash, `sticky` từ 1.29.6, `least_time` từ 1.31.0) | Tích hợp thuật toán Random LB, Slow Start và Session Persistence nâng cao |
-| **Kiểm tra sức khỏe** | Thụ động (Passive Health Check) | Chủ động gửi probe định kỳ (Active Health Check) |
-| **Cấu hình động** | Cần reload tiến trình khi sửa cấu hình | Cấu hình qua Dynamic Configuration API thời gian thực |
-| **Bảo mật & Xác thực** | Cần tích hợp qua `auth_request` hoặc njs/module ngoài | Tích hợp sẵn chuẩn xác thực doanh nghiệp native (`auth_jwt`, OpenID Connect) |
-| **Giám sát hệ thống** | Thống kê chỉ số cơ bản (`stub_status`) | Dashboard theo dõi chỉ số thời gian thực (Real-time Metrics API) |
-| **Hỗ trợ kỹ thuật** | Cộng đồng mã nguồn mở | Hỗ trợ kỹ thuật 24/7 từ F5 NGINX |
-
-**Câu hỏi suy ngẫm hướng tới các chương tiếp theo:** Khi NGINX làm **Load Balancer** đứng trước 3 server backend Node.js, điều gì sẽ xảy ra nếu 1 trong 3 server backend bị crash? NGINX xử lý tình huống đó ở cấp độ Event Loop và Upstream Health Check như thế nào?
-
----
 [← Quay lại mục lục](README.md)

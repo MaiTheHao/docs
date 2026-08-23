@@ -118,9 +118,9 @@ Khi một Transaction thực hiện `SELECT`, InnoDB tạo ra một **Read View*
 Nhược điểm phình bảng (*Table Bloat*) và nghẽn I/O do `AUTOVACUUM` gây ra trên các phiên bản cũ (Postgres 9.x) đã được giải quyết qua các đợt nâng cấp hạ tầng VACUUM từ v13 đến v17:
 
 ```mermaid
-accTitle: Tien hoa VACUUM trong PostgreSQL
-accDescr: So do minh hoa cac tinh nang cai tien cua VACUUM qua cac phien ban PostgreSQL tu v13 den v17.
 graph TD
+    accTitle: Tien hoa VACUUM trong PostgreSQL
+    accDescr: So do minh hoa cac tinh nang cai tien cua VACUUM qua cac phien ban PostgreSQL tu v13 den v17.
     V1314["Parallel VACUUM & Index Cleaning (v13, v14)<br/>Tận dụng đa nhân CPU dọn dẹp Index song song"] --> V14["B-Tree Index Vacuuming (v14+)<br/>Loại bỏ dead tuples ngay trong lúc SELECT"]
     V14 --> V16["Buffer Usage & Cost Limit Fine-Tuning (v16+)<br/>Nâng vacuum_cost_limit từ vài MB lên vài GB"]
     V16 --> V17["Auto-tuning / Micro-vacuuming (v17)<br/>Điều tiết tần suất linh hoạt theo nhịp tải"]

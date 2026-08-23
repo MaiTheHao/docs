@@ -14,9 +14,9 @@
 Hầu hết các CSDL quan hệ sử dụng **B+Tree** làm cấu trúc chỉ mục tiêu chuẩn. Cấu trúc B+Tree gồm 3 tầng:
 
 ```mermaid
-accTitle: Cau truc B+Tree trong CSDL
-accDescr: So do minh hoa 3 tang Root Node, Internal Nodes va Leaf Nodes cua B+Tree Index.
 graph TD
+    accTitle: Cau truc B+Tree trong CSDL
+    accDescr: So do minh hoa 3 tang Root Node, Internal Nodes va Leaf Nodes cua B+Tree Index.
     rootNode["Root Node<br/>(Điểm điều hướng đầu tiên)"]
 
     rootNode --> internalNode1["Internal Node<br/>(Chỉ chứa Key điều hướng)"]
@@ -27,7 +27,9 @@ graph TD
     internalNode2 --> leafNode3["Leaf Node<br/>(Key + Data/Con trỏ)"]
     internalNode2 --> leafNode4["Leaf Node<br/>(Key + Data/Con trỏ)"]
 
-    leafNode1 <-->|"Doubly Linked List"| leafNode2 <-->|"Doubly Linked List"| leafNode3 <-->|"Doubly Linked List"| leafNode4
+    leafNode1 <-->|"Doubly Linked List"| leafNode2
+    leafNode2 <-->|"Doubly Linked List"| leafNode3
+    leafNode3 <-->|"Doubly Linked List"| leafNode4
 ```
 
 | Thành phần | Vai trò/Mô tả | Details |
@@ -45,9 +47,9 @@ graph TD
 Bảng chính **chính là Clustered Index** — toàn bộ dữ liệu được sắp xếp và lưu trữ trong B+Tree theo thứ tự Primary Key.
 
 ```mermaid
-accTitle: Clustered Index vs Secondary Index trong InnoDB
-accDescr: Sơ đồ mô tả quy trình Bookmark Lookup từ Secondary Index sang Clustered Index trong MySQL InnoDB.
 graph TD
+    accTitle: Clustered Index vs Secondary Index trong InnoDB
+    accDescr: Sơ đồ mô tả quy trình Bookmark Lookup từ Secondary Index sang Clustered Index trong MySQL InnoDB.
     subgraph secondaryIdx ["Secondary Index"]
         sLeaf["Leaf Node<br/>Index_Key + Primary_Key_Value"]
     end
