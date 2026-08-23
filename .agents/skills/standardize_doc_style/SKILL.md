@@ -38,6 +38,7 @@ Apply this specification to every Markdown document created or modified.
 
 - Every code block requires a language tag.
 - Add a concise description before every code block.
+- **Vietnamese in code blocks**: All Vietnamese text, comments, and strings inside code blocks MUST use fully accented Vietnamese (`tiếng Việt có dấu đầy đủ`), never unaccented text.
 
 ---
 
@@ -270,3 +271,4 @@ A document is valid only if all conditions hold.
 - Mixed sentence rhythm.
 - Quantitative wording preferred.
 - Engineering insights included.
+- Vietnamese text and comments in code blocks are fully accented.

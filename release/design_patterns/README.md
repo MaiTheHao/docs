@@ -6,6 +6,7 @@
 - [Design Patterns & SOLID](#design-patterns--solid)
 - [Creational Patterns](#creational-patterns)
 - [Behavioral Patterns](#behavioral-patterns)
+- [Inversion of Control & Dependency Injection](#inversion-of-control--dependency-injection)
 
 ---
 
@@ -31,6 +32,11 @@
 <summary><strong>Giới thiệu Design Pattern & Nguyên tắc SOLID</strong></summary>
 
 - [Giới Thiệu Design Pattern & SOLID Principles](./solid/README.md)
+- [S - Single Responsibility Principle (SRP)](./solid/single_responsibility_principle.md)
+- [O - Open Closed Principle (OCP)](./solid/open_closed_principle.md)
+- [L - Liskov Substitution Principle (LSP)](./solid/liskov_substitution_principle.md)
+- [I - Interface Segregation Principle (ISP)](./solid/interface_segregation_principle.md)
+- [D - Dependency Inversion Principle (DIP)](./solid/dependency_inversion_principle.md)
 
 </details>
 
@@ -68,4 +74,13 @@
 
 </details>
 
+---
 
+## Inversion of Control & Dependency Injection
+
+<details open>
+<summary><strong>Triết lý Inversion of Control & IoC Container</strong></summary>
+
+- [IoC, DI và DIP: Từ triết lý Inversion of Control đến IoC Container hiện đại](./ioc.md)
+
+</details>

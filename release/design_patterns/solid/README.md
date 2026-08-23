@@ -6,7 +6,9 @@
 
 Áp dụng **Design Pattern** giúp source trở nên sạch sẽ, dễ sửa đổi.
 
-# Cách học tốt
+---
+
+## Cách học tốt
 
 Bạn không cần phải học thuộc tất cả các Design Pattern (DP). Hãy tập trung vào:
 
@@ -28,3 +30,11 @@ Dưới đây là chi tiết từng nguyên lý thuộc SOLID:
 -   [**L** - Liskov Substitution Principle (LSP)](./liskov_substitution_principle.md): Lớp con thay thế hoàn hảo cho lớp cha mà không phá vỡ tính đúng đắn.
 -   [**I** - Interface Segregation Principle (ISP)](./interface_segregation_principle.md): Client không nên phụ thuộc vào interface chứa các method không sử dụng.
 -   [**D** - Dependency Inversion Principle (DIP)](./dependency_inversion_principle.md): Phụ thuộc vào Abstraction, không phụ thuộc vào chi tiết.
+
+---
+
+> [!TIP]
+> Để tìm hiểu sâu về mối quan hệ giữa **DIP**, **Dependency Injection (DI)** và các kiến trúc **IoC Container**, hãy đọc thêm: [IoC, DI và DIP: Từ triết lý Inversion of Control đến IoC Container hiện đại](../ioc.md).
+
+---
+[← Quay lại mục lục Design Patterns](../README.md)
