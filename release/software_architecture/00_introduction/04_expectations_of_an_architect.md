@@ -11,34 +11,30 @@
 - [6. Know the Business Domain](#6-know-the-business-domain)
 - [7. Possess Interpersonal Skills](#7-possess-interpersonal-skills)
 - [8. Understand and Navigate Organizational Politics](#8-understand-and-navigate-organizational-politics)
-- [Bảng Ma Trận Năng Lực Kiến Trúc Sư](#bảng-ma-trận-năng-lực-kiến-trúc-sư)
 
 ---
 
 ## Tổng quan về Vai trò và Kỳ vọng
 
-Vai trò của một software architect có thể trải rộng từ một lập trình viên chuyên gia xuất sắc cho đến người định hình chiến lược công nghệ toàn diện cho doanh nghiệp. Do tính đa dạng này, việc định nghĩa một chức danh cố định cho kiến trúc sư thường không khả thi. Tuy nhiên, điều có thể xác định rõ ràng chính là những **kỳ vọng cốt lõi (core expectations)** đặt lên vai họ.
-
 Dù giữ bất kỳ danh xưng công việc nào, một kiến trúc sư phần mềm luôn được kỳ vọng phải đáp ứng 8 trụ cột năng lực chính:
 
-```mermaid
-graph TD
-    accTitle: Sơ đồ 8 Kỳ vọng Cốt lõi của Kiến trúc sư Phần mềm
-    accDescr: Sơ đồ phân nhánh 8 trụ cột năng lực và kỳ vọng đối với vị trí kiến trúc sư phần mềm
+### Trụ cột Kỹ thuật & Thiết kế (Technical & Design Pillars)
 
-    archRoot["Expectations of an Architect"] --> techPillar["Năng lực Kỹ thuật & Thiết kế"]
-    archRoot --> bizPillar["Năng lực Quản trị & Con người"]
+| Kỳ vọng | Ý nghĩa & Trọng tâm cốt lõi |
+| :--- | :--- |
+| **1. Make Architecture Decisions** | Định hướng nguyên tắc kiến trúc (guide) thay vì áp đặt công nghệ chi tiết (specify). |
+| **2. Continually Analyze the Architecture** | Đánh giá sức sống kiến trúc (vitality) và ngăn ngừa suy thoái cấu trúc (decay). |
+| **3. Keep Current with Latest Trends** | Cập nhật xu hướng công nghệ đón đầu làn sóng mới, tránh lỗi thời. |
+| **4. Ensure Compliance with Decisions** | Đảm bảo hệ thống thực tế tuân thủ đúng các nguyên tắc và ranh giới đã đặt ra. |
+| **5. Understand Diverse Technologies** | Mở rộng bề rộng kiến thức kỹ thuật (technical breadth) và so sánh trade-off đa công nghệ. |
 
-    techPillar --> exp1["1. Make Architecture Decisions"]
-    techPillar --> exp2["2. Continually Analyze Architecture"]
-    techPillar --> exp3["3. Keep Current with Trends"]
-    techPillar --> exp4["4. Ensure Compliance"]
-    techPillar --> exp5["5. Understand Diverse Technologies"]
+### Trụ cột Nghiệp vụ & Con người (Business & Human Pillars)
 
-    bizPillar --> exp6["6. Know the Business Domain"]
-    bizPillar --> exp7["7. Possess Interpersonal Skills"]
-    bizPillar --> exp8["8. Navigate Org Politics"]
-```
+| Kỳ vọng | Ý nghĩa & Trọng tâm cốt lõi |
+| :--- | :--- |
+| **6. Know the Business Domain** | Hiểu sâu nghiệp vụ và nói chung ngôn ngữ với các bên liên quan (stakeholders). |
+| **7. Possess Interpersonal Skills** | Khả năng giao tiếp, lắng nghe, coaching và dẫn dắt đội ngũ kỹ thuật. |
+| **8. Understand and Navigate Org Politics** | Thấu hiểu chính trị doanh nghiệp và sở hữu kỹ năng đàm phán để bảo vệ quyết định. |
 
 Trở thành một kiến trúc sư thành công đòi hỏi sự cân bằng tinh tế giữa technical breadth, tư duy nghiệp vụ và kỹ năng mềm xử lý xung đột trong tổ chức.
 
@@ -76,21 +72,13 @@ Kiến trúc phần mềm không phải là một bản vẽ cố định đư�
 
 ### Architecture Vitality & Structural Decay
 
-Khái niệm **Architecture Vitality** (Sức sống kiến trúc) đo lường mức độ phù hợp của một kiến trúc được thiết kế từ 3-5 năm trước so với bối cảnh kinh doanh và công nghệ hiện tại. Khi các lập trình viên liên tục thay đổi mã nguồn dưới áp lực tiến độ mà thiếu đi sự giám sát kiến trúc, hệ thống sẽ rơi vào **Structural Decay** (suy hao cấu trúc).
+Khái niệm **Architecture Vitality** (Sức sống kiến trúc) đo lường mức độ phù hợp và hiệu quả của một bản thiết kế kiến trúc qua thời gian. Một giải pháp từng tối ưu cách đây 3–5 năm hoàn toàn có thể trở thành rào cản lớn khi quy mô tải dữ liệu, hành vi người dùng và mục tiêu kinh doanh thay đổi.
 
-```mermaid
-graph TD
-    accTitle: Sơ đồ Vòng lặp Phân tích và Cải tiến Kiến trúc
-    accDescr: Sơ đồ mô tả quy trình phân tích liên tục giúp duy trì sức sống kiến trúc và ngăn ngừa suy hao cấu trúc
+Trong khi đó, **Structural Decay** (Suy thoái cấu trúc / Xói mòn kiến trúc) xảy ra khi mã nguồn liên tục bị chỉnh sửa, vá víu gấp rút dưới áp lực tiến độ mà thiếu đi sự rà soát kiến trúc định kỳ. Sự suy thoái này diễn ra âm thầm thông qua các vi phạm ranh giới module, coupling tăng cao và nợ kỹ thuật (technical debt) tích tụ.
 
-    archDesign["Initial Architecture"] --> codeChanges["Business & Code Changes"]
-    codeChanges --> decayRisk["Structural Decay Risk"]
-    decayRisk --> continuousAnalysis["Continuous Analysis & Vitality Assessment"]
-    continuousAnalysis -->|"Phát hiện điểm nghẽn"| refactorPlan["Architecture Refactoring"]
-    refactorPlan --> archDesign
-```
+Để đối phó với hiện tượng xói mòn này, kiến trúc sư cần thiết lập cơ chế **Continuous Analysis** (Phân tích liên tục). Việc đánh giá thường xuyên giúp phát hiện sớm các nút thắt cổ chai về hiệu năng, các điểm phụ thuộc vòng (circular dependencies) hoặc các thành phần không còn khả năng mở rộng trước khi chúng gây tê liệt hệ thống.
 
-Một khía cạnh thường bị các kiến trúc sư bỏ quên khi phân tích hệ thống là **môi trường Testing và Release**. Việc tối ưu hóa coding agility sẽ trở nên vô nghĩa nếu quy trình kiểm thử mất nhiều tuần và quy trình release mất nhiều tháng. Kiến trúc sư phải phân tích toàn diện toàn bộ software delivery pipeline.
+Bên cạnh mã nguồn và thiết kế tĩnh, một khía cạnh trọng yếu thường bị bỏ quên khi phân tích hệ thống là **môi trường Testing và Release**. Việc tối ưu hóa tính linh hoạt của mã nguồn (coding agility) sẽ trở nên vô nghĩa nếu quy trình kiểm thử mất nhiều tuần và quy trình phát hành mất nhiều tháng. Kiến trúc sư phải phân tích toàn diện toàn bộ software delivery pipeline.
 
 > [!NOTE]
 > Phân tích kiến trúc liên tục là cơ chế phòng ngự duy nhất giúp doanh nghiệp tránh khỏi việc phải đập đi xây lại toàn bộ hệ thống (legacy rewrite) sau mỗi vài năm.
@@ -134,29 +122,21 @@ Phương pháp hiện đại nhất để đảm bảo tuân thủ không phải
 
 ## 5. Understand Diverse Technologies
 
-Một kiến trúc sư không bắt buộc phải là chuyên gia thượng thừa trong từng ngôn ngữ hay framework, nhưng họ bắt buộc phải có sự am hiểu rộng lớn về nhiều nền tảng và môi trường khác nhau.
+### Chiều Rộng vs Chiều Sâu Kỹ Thuật (Technical Breadth vs Depth)
 
-### Mô hình T-Shaped Architect: Technical Breadth vs Depth
+Sự khác biệt lớn nhất giữa một Senior Developer và một Software Architect nằm ở định hướng năng lực:
 
-Lập trình viên thường tập trung vào **Technical Depth** (chiều sâu kỹ thuật) — hiểu rất sâu về một ngôn ngữ hoặc một framework cụ thể. Ngược lại, kiến trúc sư phải dịch chuyển trọng tâm sang **Technical Breadth** (chiều rộng kỹ thuật) — biết sự tồn tại, ưu nhược điểm và ngữ cảnh áp dụng của hàng loạt công nghệ khác nhau.
+- **Chiều sâu kỹ thuật (Technical Depth)**: Là thế mạnh truyền thống của lập trình viên — am hiểu rất sâu, tường tận từng ngóc ngách, cú pháp, tối ưu chi tiết (low-level) của một ngôn ngữ hoặc framework cụ thể.
+- **Chiều rộng kỹ thuật (Technical Breadth)**: Là yêu cầu sống còn của kiến trúc sư — biết sự tồn tại của hàng loạt giải pháp khác nhau trên thị trường, hiểu rõ điểm mạnh, điểm yếu, chi phí vận hành và ngữ cảnh phù hợp để đưa ra lựa chọn.
 
-```mermaid
-graph TB
-    accTitle: Mô hình Năng lực T-Shaped cho Kiến trúc sư
-    accDescr: Sơ đồ mô tả sự kết hợp giữa Chiều rộng Kỹ thuật (Technical Breadth) và Chiều sâu Chuyên môn (Technical Depth)
+Kiến trúc sư không cần phải là chuyên gia lập trình số một trong mọi ngôn ngữ hay thư viện, nhưng bắt buộc phải có kiến thức bao quát về:
+- Các loại cơ sở dữ liệu (Relational, Document, Key-Value, Columnar, Vector DB)
+- Các giải pháp giao tiếp và truyền thông (REST, gRPC, GraphQL, Message Brokers, Event Streaming)
+- Hạ tầng và điện toán đám mây (Kubernetes, Serverless, Multi-region Deployment)
+- Các giải pháp bảo mật, định danh và ủy quyền (OAuth2, OIDC, Zero-Trust)
 
-    subgraph breadthGroup["Technical Breadth (Chiều rộng Kiến thức)"]
-        b1["SQL / NoSQL / Vector DB"] --- b2["Caching Solutions"] --- b3["Message Queues / Streaming"] --- b4["Cloud & Kubernetes"] --- b5["Security & OAuth2"]
-    end
-
-    subgraph depthGroup["Technical Depth (Chiều sâu)"]
-        d1["Chuyên gia sâu về Distributed Systems & Storage Engines"]
-    end
-
-    breadthGroup --- depthGroup
-```
-
-Việc am hiểu 10 giải pháp Caching khác nhau (Redis, Memcached, Hazelcast, Dragonfly, v.v.) với ưu nhược điểm cụ thể sẽ giúp kiến trúc sư chọn đúng giải pháp cho bài toán hơn là việc chỉ biết duy nhất một công nghệ nhưng ở trình độ chuyên gia tuyệt đối.
+> [!TIP]
+> Việc am hiểu **10 giải pháp Caching khác nhau** (Redis, Memcached, Hazelcast, Dragonfly, v.v.) với ưu nhược điểm và trade-off rõ ràng sẽ giúp kiến trúc sư chọn đúng giải pháp cho bài toán hơn là việc chỉ làm chủ duy nhất một công nghệ nhưng ở trình độ chuyên gia tuyệt đối.
 
 ---
 
@@ -259,24 +239,6 @@ graph TB
 
 > [!CAUTION]
 > Kiến trúc sư xuất thân từ developer thường quen với việc tự mình đưa ra quyết định code mà không cần hỏi ý kiến ai. Nhưng ở vị trí kiến trúc sư, bạn phải chấp nhận rằng **mọi quyết định kiến trúc lớn đều phải chiến đấu và đàm phán mới có được sự phê duyệt**.
-
----
-
-## Bảng Ma Trận Năng Lực Kiến Trúc Sư
-
-Bảng dưới đây tổng hợp 8 kỳ vọng và thách thức thực tế tương ứng đối với kiến trúc sư:
-
-| Kỳ vọng (Expectation) | Thách thức Thực tế (Challenge) |
-| :--- | :--- |
-| **1. Make Decisions** | Bị sa lầy vào chi tiết kỹ thuật quá sớm |
-| **2. Analyze Architecture** | Áp lực bàn giao ngắn hạn liên tục đè bẹp phân tích |
-| **3. Keep Current** | Bội thực trước quá nhiều công nghệ mới |
-| **4. Ensure Compliance** | Lập trình viên cố tình vi phạm quy định |
-| **5. Diverse Technologies** | Giới hạn kiến thức ở một vài công nghệ |
-| **6. Know Business** | Rào cản ngôn ngữ chuyên ngành nghiệp vụ |
-| **7. Interpersonal Skills** | Xung đột quan điểm kỹ thuật giữa các developer |
-| **8. Navigate Politics** | Sự phản đối từ các bên lợi ích chồng chéo |
-
 
 ---
 [← Back to README](README.md)
