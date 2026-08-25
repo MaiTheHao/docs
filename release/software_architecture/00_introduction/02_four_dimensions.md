@@ -84,28 +84,18 @@ graph TD
 
 Cần phân biệt rõ ràng giữa **Logical Component** và **Deployment Component**:
 
-```mermaid
-graph TB
-    accTitle: Phân biệt Logical Component và Deployment Component
-    accDescr: Sơ đồ thể hiện cùng một kiến trúc logic có thể triển khai thành Monolith hoặc Microservices
+- **Logical Component**: Đại diện cho sự phân chia trách nhiệm nghiệp vụ và thiết kế miền (*Domain Boundaries*). Đây là câu trả lời cho câu hỏi *"Hệ thống làm gì?"* và hoàn toàn độc lập với hạ tầng vật lý.
+- **Deployment Component**: Đại diện cho đơn vị đóng gói và phân phối vật lý khi triển khai thực tế (*Packaging & Runtime Unit*). Đây là câu trả lời cho câu hỏi *"Hệ thống được vận hành như thế nào?"*.
 
-    subgraph logicalView["Logical Architecture"]
-        logA["Identity Component"]
-        logB["Academic Component"]
-    end
+Bảng đối chiếu giữa Logical Component và các hình thái Deployment Component:
 
-    subgraph deployOption1["Deployment Option A: Monolith"]
-        monoApp["Single Spring Boot JAR<br/>(Tất cả components chung 1 process)"]
-    end
-
-    subgraph deployOption2["Deployment Option B: Microservices"]
-        serviceA["Identity Microservice"]
-        serviceB["Academic Microservice"]
-    end
-
-    logicalView --> deployOption1
-    logicalView --> deployOption2
-```
+| Khía cạnh | Logical Component | Deployment Option A: Monolith | Deployment Option B: Microservices |
+| :--- | :--- | :--- | :--- |
+| **Bản chất** | Khối logic nghiệp vụ (`Identity`, `Academic`) | Toàn bộ logic đóng gói chung vào một artifact duy nhất | Mỗi miền logic được tách thành một artifact và process riêng |
+| **Đơn vị Thực thi** | Packages, Namespaces, Modules trong codebase | Một tiến trình duy nhất (ví dụ: file JAR/Docker container chạy chung memory) | Nhiều tiến trình độc lập phân tán qua network (mỗi dịch vụ một container/VM) |
+| **Giao tiếp Nội bộ** | In-memory function call, method invocation | Giao tiếp cục bộ qua RAM, tốc độ cao, zero network overhead | Gọi qua giao thức mạng (HTTP/REST, gRPC, Message Broker) |
+| **Ranh giới Dữ liệu** | Logical schema hoặc Domain Models | Chung một cơ sở dữ liệu vật lý (Single Shared DB) | Cơ sở dữ liệu phân tán riêng biệt cho từng service (Database-per-service) |
+| **Tính Độc lập** | Độc lập về mặt khái niệm và thiết kế | Cùng scale, cùng deploy và cùng fail nếu process sập | Scale độc lập, deploy độc lập và cô lập lỗi giữa các miền |
 
 > [!IMPORTANT]
 > Cùng một mô hình phân rã logic có thể được hiện thực hóa bằng nhiều hình thái triển khai hạ tầng khác nhau. Điều này giúp tách biệt giữa **Hệ thống làm gì** và **Hệ thống được triển khai như thế nào**.
@@ -136,55 +126,43 @@ graph TD
 
 ## Dimension 4: Architecture Decisions
 
-Architecture style mới chỉ cung cấp hình thái cấu trúc ban đầu. **Architecture decisions** định nghĩa các quy tắc (rules) và ràng buộc (constraints) bắt buộc đội ngũ phát triển phải tuân theo.
+Architecture style mới chỉ cung cấp hình thái cấu trúc ban đầu.
 
-Ví dụ trong kiến trúc Layered Architecture (Presentation → Service → Business → Database), kiến trúc sư có thể đưa ra quyết định:
+**Architecture decisions** định nghĩa các quy tắc (*rules*) và ràng buộc (*constraints*) bắt buộc đội ngũ phát triển phải tuân theo nhằm bảo toàn tính toàn vẹn của hệ thống.
 
-```mermaid
-graph TD
-    accTitle: Quyết định Ràng buộc Truy cập trong Layered Architecture
-    accDescr: Sơ đồ thể hiện Presentation Layer bị cấm truy cập trực tiếp vào Database
+Một quyết định kiến trúc tiêu biểu thường nhằm ngăn chặn hiện tượng xói mòn cấu trúc (*architectural erosion*). 
 
-    presLayer["Presentation Layer (Controllers)"] --> servLayer["Application Service Layer"]
-    servLayer --> bizLayer["Business / Domain Layer"]
-    bizLayer --> dbLayer[("Database Layer")]
+Chẳng hạn trong mô hình **Layered Architecture**, luồng giao tiếp tiêu chuẩn bắt buộc phải đi tuần tự: `Presentation Layer` $\rightarrow$ `Application Service Layer` $\rightarrow$ `Business/Domain Layer` $\rightarrow$ `Database Layer`.
 
-    presLayer -.->|"Bị cấm truy cập trực tiếp"| dbLayer
-```
+Tại đây, một quy tắc bất biến (*architectural constraint*) được xác lập: **Presentation Layer bị cấm hoàn toàn việc gọi trực tiếp xuống Database Layer**. 
 
-Architecture decisions biến định hướng kiến trúc thành các quy tắc thực tế điều hướng hành vi của lập trình viên:
+Mọi truy vấn bắt buộc phải đi qua các lớp trung gian để đảm bảo validation, kiểm soát transaction và thực thi trọn vẹn business logic.
 
-```mermaid
-graph LR
-    accTitle: Chuỗi Tác động của Architecture Decisions
-    accDescr: Từ ý định kiến trúc tạo ra quyết định, ràng buộc, định hướng hành vi dev và tạo nên cấu trúc hệ thống
+Chuỗi chuyển hóa từ ý định kiến trúc sang cấu trúc thực tế của hệ thống diễn ra qua các giai đoạn sau:
 
-    intent["Architectural Intent"] --> decision["Architecture Decision"]
-    decision --> constraintRule["Constraint Rule"]
-    constraintRule --> devBehavior["Developer Behavior"]
-    devBehavior --> sysStructure["System Structure"]
-```
+| Giai đoạn chuyển hóa | Bản chất & Vai trò | Ví dụ thực tế |
+| :--- | :--- | :--- |
+| **Architectural Intent** | Định hướng chất lượng hoặc mục tiêu cần bảo vệ | Ngăn chặn rò rỉ logic nghiệp vụ và tối ưu hóa quản lý kết nối cơ sở dữ liệu. |
+| **Architecture Decision** | Lựa chọn giải pháp kỹ thuật cụ thể dưới dạng quy tắc | Ban hành quyết định đóng gói truy cập dữ liệu (Data Access Encapsulation). |
+| **Constraint Rule** | Ràng buộc kỹ thuật có thể đo lường và kiểm soát | Báo lỗi biên dịch hoặc CI check thất bại nếu Controller import trực tiếp Repository/DAO. |
+| **Developer Behavior** | Định hình thói quen và cách viết code của đội ngũ | Lập trình viên viết service interface và inject qua Dependency Injection thay vì truy vấn trực tiếp. |
+| **System Structure** | Cấu trúc hệ thống thực tế được hình thành nhất quán | Mã nguồn duy trì tính tách biệt lớp (*Layered Isolation*), dễ kiểm thử đơn vị và dễ tái cấu trúc. |
 
 ---
 
 ## Chuỗi Tương tác và Vòng lặp Suy luận Kiến trúc
 
-Bốn chiều không hoạt động cô lập mà tạo thành một chuỗi suy luận liên tục có tính vòng lặp (iterative refinement):
+Bốn chiều của kiến trúc phần mềm không vận hành như những khối độc lập mà kết nối chặt chẽ theo một quy trình suy luận liên tục có tính phản hồi và vòng lặp (*iterative refinement*).
 
-```mermaid
-graph TD
-    accTitle: Quy trình Suy luận và Đánh giá Kiến trúc Vòng lặp
-    accDescr: Sơ đồ luồng từ Characteristics qua Components, Style, Decisions và đánh giá Trade-offs
+Bảng ánh xạ luồng tương tác và tác động phản hồi giữa các Dimension:
 
-    step1["1. Identify Characteristics"] --> step2["2. Define Logical Components"]
-    step2 --> step3["3. Select Architecture Style"]
-    step3 --> step4["4. Formulate Architecture Decisions"]
-    step4 --> step5["5. Evaluate Trade-offs"]
-
-    step5 -->|"Phát hiện Trade-off Mới"| step6{"Cần điều chỉnh?"}
-    step6 -->|"Có"| step1
-    step6 -->|"Không"| stepDone(["Hoàn thiện Kiến trúc Concrete"])
-```
+| Bước Thực Hiện | Chiều Kiến Trúc Tương Ứng | Mục Tiêu & Trọng Tâm | Tác Động Đầu Ra Đến Chiều Tiếp Theo | Điểm Đánh Đổi / Vòng Lặp Phản Hồi |
+| :--- | :--- | :--- | :--- | :--- |
+| **Bước 1** | **Architecture Characteristics** | Xác định các chỉ số chất lượng và năng lực phi chức năng cốt lõi | Thiết lập tiêu chuẩn kỹ thuật và tiêu chí đánh giá thành công | Chi phí hạ tầng và độ phức tạp vận hành tăng theo chỉ số cam kết. |
+| **Bước 2** | **Logical Components** | Phân rã bài toán nghiệp vụ thành các miền logic và workflow | Xác định ranh giới module và trách nhiệm làm nền tảng tổ chức | Ranh giới thiết kế sai dẫn đến coupling chéo giữa các miền dữ liệu. |
+| **Bước 3** | **Architecture Style** | Lựa chọn hình thái cấu trúc tổng thể phù hợp với đặc tính hệ thống | Thiết lập khung cấu trúc và mô hình kết nối vật lý | Thay đổi phong cách cấu trúc làm thay đổi bản chất bài toán nhất quán dữ liệu. |
+| **Bước 4** | **Architecture Decisions** | Ban hành các quy tắc và ràng buộc kỹ thuật bắt buộc tuân thủ | Thiết lập rào chắn định hướng hành vi lập trình của đội ngũ | Ràng buộc quá mức có thể làm suy giảm tốc độ phát triển mã nguồn. |
+| **Bước 5** | **Trade-off Evaluation** | Đánh giá toàn diện các đánh đổi phát sinh trong thiết kế tổng thể | Phê duyệt kiến trúc hoàn chỉnh hoặc kích hoạt điều chỉnh | Kích hoạt lại vòng lặp từ Bước 1 hoặc Bước 3 nếu phát sinh trade-off vượt ngưỡng chấp nhận. |
 
 ---
 
