@@ -8,7 +8,6 @@
 - [Nguyên lý Dependency Inversion (DIP)](#nguyên-lý-dependency-inversion-dip)
 - [Phân tầng và ma trận quan hệ giữa IoC, DI và DIP](#phân-tầng-và-ma-trận-quan-hệ-giữa-ioc-di-và-dip)
 - [Hiện thực IoC Container: Spring và NestJS](#hiện-thực-ioc-container-spring-và-nestjs)
-- [Cơ chế vận hành của IoC Container hiện đại](#cơ-chế-vận-hành-của-ioc-container-hiện-đại)
 - [Tổng kết và định hướng áp dụng](#tổng-kết-và-định-hướng-áp-dụng)
 
 ---
@@ -401,45 +400,37 @@ So sánh kiến trúc IoC Container qua các hệ sinh thái công nghệ:
 
 ---
 
-## Cơ chế vận hành của IoC Container hiện đại
-
-Mọi IoC Container hiện đại đều tuân theo chu trình vận hành qua **5 giai đoạn tuần tự** từ lúc bootstrap ứng dụng đến khi sẵn sàng tiếp nhận xử lý:
-
-Bảng quy trình 5 giai đoạn khởi tạo và vận hành của IoC Container hiện đại:
-
-| Giai đoạn vòng đời | Mục tiêu kiến trúc | Thao tác kỹ thuật chi tiết | Cơ chế kiểm soát & Tối ưu | Kết quả đầu ra |
-| :--- | :--- | :--- | :--- | :--- |
-| **1. Metadata Scanning & Registration** | Thu thập và chuẩn hóa thông tin cấu hình ứng dụng | Quét các chú thích (`@Component`, `@Service`, `@Injectable`), tệp cấu hình hoặc Module Providers | Sử dụng ASM Bytecode Reader đọc metadata nhanh mà không cần nạp toàn bộ class | Danh sách `BeanDefinition` lưu trữ thông tin class, scope, dependency types |
-| **2. Dependency Graph Resolution** | Xác định trật tự phụ thuộc và bảo toàn tính toàn vẹn | Xây dựng đồ thị có hướng (**DAG**), phân tích quan hệ giữa các component | Áp dụng giải thuật **Sắp xếp Topo (*Topological Sorting*)**; phát hiện sớm **Phụ thuộc vòng (*Circular Dependency*)** | Đồ thị luồng khởi tạo chuẩn xác theo thứ tự từ node lá (leaf) lên node gốc (root) |
-| **3. Instantiation & Injection** | Tạo lập đối tượng và liên kết các phụ thuộc | Sử dụng Reflection / Factory Method gọi Constructor và truyền dependencies | Ưu tiên Constructor Injection để khởi tạo đối tượng bất biến (`final`) và an toàn đa luồng | Các instance cơ bản được tạo lập và liên kết chặt chẽ vào cây phụ thuộc |
-| **4. Post-Processing & Proxying** | Tích hợp các tính năng cắt ngang (*Cross-Cutting Concerns*) | Kích hoạt các `BeanPostProcessor`, bọc instance bằng **Dynamic Proxy (JDK)** hoặc **CGLIB** | Áp dụng cơ chế **AOP (*Aspect-Oriented Programming*)** trong suốt cho `@Transactional`, `@Security`, Metrics | Proxy instance hoàn chỉnh sẵn sàng can thiệp logic trước/sau phương thức |
-| **5. Application Ready & Runtime Serving** | Phục vụ request với hiệu năng tra cứu tối đa | Nạp các instance hoàn thiện vào **Bộ nhớ đệm đơn thể (*Singleton Cache Pool*)** | Duy trì tra cứu với độ phức tạp thời gian đạt mức $O(1)$ thông qua `ConcurrentHashMap` | Container chuyển sang trạng thái *Ready State*, sẵn sàng xử lý nghiệp vụ runtime |
-
-> [!WARNING]
-> **Hiện tượng Phụ thuộc Vòng (*Circular Dependency*)** (khi Bean A yêu cầu Bean B và Bean B lại yêu cầu Bean A) khiến Container không thể xác định điểm bắt đầu trên đồ thị topo, dẫn đến ngoại lệ `BeanCurrentlyInCreationException`. Giải pháp triệt để là tái cấu trúc tách rời nghiệp vụ hoặc đưa vào một đối tượng trung gian điều phối.
-
----
-
 ## Tổng kết và định hướng áp dụng
 
-Mối quan hệ phối hợp giữa **IoC**, **DI**, **DIP** và **IoC Container** phản ánh bước nhảy vọt về tư duy kiến trúc trong công nghệ phần mềm:
+Hiểu đúng bản chất của **IoC**, **DI**, **DIP** và **IoC Container** giúp lập trình viên xây dựng hệ thống có tính module hóa cao, dễ mở rộng và thuận tiện cho việc kiểm thử tự động.
+
+### 1. Bảng tóm tắt nhanh 4 khái niệm
+
+| Khái niệm | Định nghĩa ngắn gọn | Vai trò chính | Cách nhận diện trong mã nguồn |
+| :--- | :--- | :--- | :--- |
+| **IoC** *(Inversion of Control)* | Đảo ngược quyền điều khiển luồng thực thi | Trao quyền khởi tạo và kích hoạt cho framework | Framework gọi hàm/hook của ứng dụng thay vì ứng dụng tự chạy từ đầu đến cuối |
+| **DIP** *(Dependency Inversion)* | Phụ thuộc vào Abstraction thay vì Implementation | Giảm độ gắn kết giữa module nghiệp vụ và hạ tầng | Sử dụng `interface` / `abstract class` làm kiểu dữ liệu phụ thuộc |
+| **DI** *(Dependency Injection)* | Đưa dependency từ bên ngoài vào bên trong đối tượng | Loại bỏ lệnh `new` trực tiếp bên trong constructor | Khai báo dependency qua tham số của constructor (`Constructor Injection`) |
+| **IoC Container** | Công cụ quản lý vòng đời và tự động tiêm phụ thuộc | Tự động hóa việc tạo instance và giải quyết quan hệ phụ thuộc | Các decorator/annotation như `@Service`, `@Injectable`, `@Autowired` |
+
+Mối quan hệ phối hợp giữa các khái niệm:
 
 ```mermaid
 graph LR
-    accTitle: Tong ket quan he IoC, DIP, DI va Container
-    accDescr: So do the hien su ket hop giua IoC thay doi quyen kiem soat, DIP huong toi abstraction, DI truyen phu thuoc va Container tu dong hoa
+    accTitle: So do tong ket quan he giua IoC, DIP, DI va IoC Container
+    accDescr: Mo ta su phoi hop tu triet ly IoC, thiet ke DIP, ky thuat DI den cong cu IoC Container
 
-    goalIoc["IoC<br/>Đổi người kiểm soát"] --> archTarget["Kiến trúc linh hoạt<br/>Dễ bảo trì & Mở rộng"]
-    goalDip["DIP<br/>Hướng tới Abstraction"] --> archTarget
-    goalDi["DI<br/>Đưa phụ thuộc từ ngoài vào"] --> archTarget
-    containerTool["IoC Container<br/>Tự động hóa vòng đời"] --> archTarget
+    iocNode["1. IoC<br/>(Triết lý)"] -->|"Định hướng"| dipNode["2. DIP<br/>(Thiết kế)"]
+    dipNode -->|"Yêu cầu abstraction"| diNode["3. DI<br/>(Kỹ thuật)"]
+    diNode -->|"Cần tự động hóa"| containerNode["4. IoC Container<br/>(Công cụ)"]
 ```
 
-**Bốn nguyên tắc cốt lõi cần khắc ghi khi thiết kế hệ thống:**
-1. **Tách biệt mối quan tâm (*Separation of Concerns*)**: Một lớp nghiệp vụ chỉ nên tập trung tối đa vào business logic ([Single Responsibility Principle](./solid/single_responsibility_principle.md)), hoàn toàn không được gánh vác trách nhiệm tìm kiếm hay khởi tạo các phụ thuộc hạ tầng.
-2. **Lập trình theo giao diện (*Program to Interfaces*)**: Luôn định nghĩa abstraction cho các thành phần truy xuất dữ liệu, dịch vụ bên ngoài và giao tiếp mạng để đảm bảo tính độc lập và khả năng mở rộng ([Interface Segregation Principle](./solid/interface_segregation_principle.md)).
-3. **Tuyệt đối ưu tiên Constructor Injection**: Đảm bảo trạng thái bất biến (*Immutability*) và tính an toàn đa luồng (*Thread-safety*) thông qua từ khóa `final`, đồng thời giúp unit test dễ dàng mà không cần tới container.
-4. **Làm chủ bản chất công cụ**: Framework (Spring, NestJS) chỉ là phương tiện tự động hóa. Nắm vững bản chất vận hành giúp lập trình viên tối ưu hóa thời gian khởi động, kiểm soát mức tiêu thụ bộ nhớ và ngăn ngừa các lỗi kiến trúc tiềm ẩn.
+### 2. Checklist thực hành khi phát triển
+
+- [x] **Luôn ưu tiên Constructor Injection**: Giữ cho đối tượng có tính bất biến (`final`), an toàn đa luồng (*thread-safety*) và dễ dàng khởi tạo trong Unit Test mà không phụ thuộc vào framework.
+- [x] **Phụ thuộc vào Interface, không phụ thuộc vào Class cụ thể**: Đảm bảo nghiệp vụ lõi (`Service`) không bị khóa cứng vào hệ quản trị cơ sở dữ liệu hay thư viện bên thứ ba.
+- [x] **Không lạm dụng Field Injection**: Tránh dùng `@Autowired` trực tiếp trên thuộc tính vì gây khó khăn khi viết test và che giấu sự phình to của dependencies (vi phạm [Single Responsibility Principle](./solid/single_responsibility_principle.md)).
+- [x] **Xem Framework là công cụ hỗ trợ, không phải nền tảng cốt lõi**: Viết mã nghiệp vụ thuần túy (*Pure Business Logic*), chỉ để Container đảm nhiệm vai trò lắp ráp và cấu hình ở tầng ngoài cùng.
 
 ---
 [← Back to README](README.md)
