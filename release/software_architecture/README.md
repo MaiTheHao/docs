@@ -20,8 +20,8 @@ Phân nhánh tài liệu này tổng hợp toàn bộ các nguyên lý nền t�
 
 ## Danh mục Chương
 
-1. **[00. Introduction](00_introduction/)** - Bối cảnh kiến trúc, 4 chiều cấu thành, các quy luật Trade-off và 8 kỳ vọng vai trò đối với Kiến trúc sư.
-2. **[01. Architectural Thinking](01_architectual_thinking/)** - Tư duy kiến trúc: Quang phổ Architecture vs. Design, Bề rộng tri thức, Phân tích Trade-off, Ranh giới hệ thống và Thực hành ADR.
+1. **[00. Introduction](00_introduction/README.md)** - Bối cảnh kiến trúc, 4 chiều cấu thành, các quy luật Trade-off và 8 kỳ vọng vai trò đối với Kiến trúc sư.
+2. **[01. Architectural Thinking](01_architectual_thinking/README.md)** - Tư duy kiến trúc: Quang phổ Architecture vs. Design, Bề rộng tri thức, Phân tích Trade-off, Ranh giới hệ thống và Thực hành ADR.
 
 ---
 
