@@ -1,6 +1,6 @@
 # Release Docs - Tài liệu Đã Rà Soát
 
-Tài liệu nằm trong phân nhánh `/release` là những tài liệu đã qua rà soát và tinh chỉnh. Thích hợp dùng để học tập, tra cứu trực tiếp và áp dụng vào dự án thực tế.
+Phân nhánh `/release` chứa các tài liệu đã được bản thân tôi trực tiếp duyệt và tinh chỉnh. Dù độ chính xác không phải là tuyệt đối nhưng mức độ uy tín và tin cậy sẽ cao hơn phân nhánh `temporary`; hãy luôn lưu ý đọc và chọn lọc khi tham khảo.
 
 ---
 
@@ -12,11 +12,7 @@ Tài liệu nằm trong phân nhánh `/release` là những tài liệu đã qua
 4. [Security](security/) - Xác thực & Bảo mật (Encryption, JWT, OAuth)
 5. [Software Architecture](software_architecture/) - Kiến trúc phần mềm
 
-
 ---
 
-> [!NOTE]
-> Tất cả tài liệu tại đây đã qua rà soát kỹ càng hơn để phục vụ học tập và tra cứu cho cá nhân.
-
----
 [← Quay lại trang chủ](../README.md)
+

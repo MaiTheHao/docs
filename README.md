@@ -9,8 +9,8 @@ Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu**
 ## Cấu trúc Phân nhánh Tài liệu
 
 Repository được chia thành các phân nhánh chính:
-- **[Release Docs](release/README.md)**: Các tài liệu đã qua rà soát và tinh chỉnh, thích hợp để học tập và tra cứu cá nhân.
-- **[Temporary Docs](temporary/README.md)**: Các tài liệu tổng hợp, ghi chép nhanh chưa qua rà soát đối chứng, phù hợp để tham khảo.
+- **[Release Docs](release/README.md)**: Tài liệu đã được bản thân tự duyệt và tinh chỉnh, có độ uy tín và tin cậy cao hơn temporary (tuy vậy vẫn cần đọc và chọn lọc).
+- **[Temporary Docs](temporary/README.md)**: Tài liệu gen AI, tổng hợp nhanh chưa qua kiểm chứng nhằm tìm các góc khuất kiến thức (*stuff you don't know you don't know*) và khơi gợi ý tưởng viết bài; **không có giá trị dùng để học tập**.
 - **[Library](library/README.md)**: Thư viện tổng hợp sách kỹ thuật và các tài liệu văn bản/text do cá nhân tự tổng hợp.
 
 ---
