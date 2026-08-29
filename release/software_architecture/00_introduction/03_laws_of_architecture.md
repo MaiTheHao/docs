@@ -2,218 +2,179 @@
 
 ## Table of Contents
 
-- [Tổng quan về các Quy luật Kiến trúc](#tổng-quan-về-các-quy-luật-kiến-trúc)
-- [Quy luật Thứ nhất: Mọi thứ đều là Trade-off](#quy-luật-thứ-nhất-mọi-thứ-đều-là-trade-off)
-- [Hệ quả 1: Trade-off Ẩn giấu](#hệ-quả-1-trade-off-ẩn-giấu)
-- [Hệ quả 2: Phân tích Trade-off là Tiến trình Liên tục](#hệ-quả-2-phân-tích-trade-off-là-tiến-trình-liên-tục)
-- [Không có Lựa chọn Mặc định Tuyệt đối](#không-có-lựa-chọn-mặc-định-tuyệt-đối)
-- [Quy luật Thứ hai: Tại sao Quan trọng hơn Như thế nào](#quy-luật-thứ-hai-tại-sao-quan-trọng-hơn-như-thế-nào)
-- [Bảo tồn Lý do Ra Quyết định (Preserving the Why)](#bảo-tồn-lý-do-ra-quyết-định-preserving-the-why)
-- [Quy luật Thứ ba: Các Quyết định Tồn tại trên một Phổ Trung gian](#quy-luật-thứ-ba-các-quyết-định-tồn-tại-trên-một-phổ-trung-gian)
-- [Phổ Kiến trúc trong Thực tế Triển khai](#phổ-kiến-trúc-trong-thực-tế-triển-khai)
-- [Quy trình Phân tích và Đóng gói Quyết định](#quy-trình-phân-tích-và-đóng-gói-quyết-định)
+- [Tổng quan về Ba Quy Luật](#tổng-quan-về-ba-quy-luật)
+- [1. Mọi Thứ Đều Là Trade-off](#1-mọi-thứ-đều-là-trade-off)
+- [Trade-off Ẩn Giấu](#trade-off-ẩn-giấu)
+- [Trade-off Phải Được Đánh Giá Liên Tục](#trade-off-phải-được-đánh-giá-liên-tục)
+- [Không Có Lựa Chọn Mặc Định Tuyệt Đối](#không-có-lựa-chọn-mặc-định-tuyệt-đối)
+- [2. Tại Sao Quan Trọng Hơn Như Thế Nào](#2-tại-sao-quan-trọng-hơn-như-thế-nào)
+- [Bảo Tồn Lý Do Ra Quyết Định (Preserving the Why)](#bảo-tồn-lý-do-ra-quyết-định-preserving-the-why)
+- [3. Quyết Định Kiến Trúc Tồn Tại Trên Một Phổ](#3-quyết-định-kiến-trúc-tồn-tại-trên-một-phổ)
+- [Một Số Phổ Kiến Trúc Phổ Biến](#một-số-phổ-kiến-trúc-phổ-biến)
+- [Quy Trình Ra Quyết Định Kiến Trúc](#quy-trình-ra-quyết-định-kiến-trúc)
+- [Kết Luận](#kết-luận)
 
 ---
 
+## Tổng quan về Ba Quy Luật
 
-## Tổng quan về các Quy luật Kiến trúc
+Theo tài liệu kinh điển *Fundamentals of Software Architecture*, có 3 quy luật nền tảng giúp kiến trúc sư đánh giá hệ thống và ra quyết định chính xác:
 
-Kiến trúc phần mềm phụ thuộc rất mạnh vào bối cảnh (context), ràng buộc (constraints) và các Trade-off. Do đó, có rất ít nguyên lý có thể xem là quy luật phổ quát. Tuy nhiên, ba quy luật dưới đây được đúc kết bởi Mark Richards và Neal Ford nhằm định hướng cho mọi tư duy kiến trúc:
-
-1. **First Law:** Everything in software architecture is a trade-off. (Mọi thứ trong kiến trúc phần mềm đều là Trade-off).
-2. **Second Law:** Why is more important than how. (Tại sao lại quan trọng hơn Như thế nào).
-3. **Third Law:** Most architecture decisions aren't binary but rather exist on a spectrum between extremes. (Hầu hết các quyết định kiến trúc không phải là đúng/sai mà tồn tại trên một phổ giữa các thái cực).
+1. **First Law:** **"Everything in software architecture is a trade-off."** (*Mọi thứ trong kiến trúc phần mềm đều là một sự đánh đổi*).
+2. **Second Law:** **"Why is more important than how."** (*Tại sao lại quan trọng hơn như thế nào*).
+3. **Third Law:** **"Most architecture decisions exist on a spectrum between extremes."** (*Hầu hết các quyết định kiến trúc tồn tại trên một phổ trung gian giữa các cực*).
 
 ---
 
-## Quy luật Thứ nhất: Mọi thứ đều là Trade-off
+## 1. Mọi Thứ Đều Là Trade-off
+
+Không tồn tại giải pháp hoàn hảo tuyệt đối hay "viên đạn bạc" (**silver bullet**) trong kiến trúc phần mềm. Mọi quyết định đưa ra đều mang lại lợi ích nhất định, nhưng đồng thời tạo ra chi phí, ràng buộc hoặc rủi ro đối với các thuộc tính chất lượng khác.
+
+Một quyết định kiến trúc cần được phân tích toàn diện qua 4 thành tố:
+
+**Benefits → Costs → Constraints → Risks & Consequences**
+
+Ví dụ thực tế về sự đánh đổi trong thiết kế:
+- **Microservices:** Tăng khả năng mở rộng độc lập và cô lập lỗi, nhưng phải đánh đổi bằng độ phức tạp vận hành tăng cao, độ trễ mạng và thách thức quản lý dữ liệu phân tán.
+- **Point-to-Point Queue:** Tăng khả năng kiểm soát đích đến và bảo mật luồng thông tin thầu, nhưng kém linh hoạt khi cần mở rộng thêm các consumer mới.
+- **Pub-Sub Topic:** Giảm khớp nối (**coupling**) và dễ dàng gắn thêm consumer phân tích, nhưng tiềm ẩn rủi ro lộ dữ liệu hoặc bị nghe lén (*wiretap*).
 
 > [!IMPORTANT]
-> **First Law of Software Architecture:** Everything in software architecture is a trade-off.
-
-Không có quyết định kiến trúc nào hoàn toàn tốt hoặc hoàn toàn xấu. Mỗi quyết định đều tối ưu hóa một số thuộc tính chất lượng nhưng đồng thời bắt buộc phải chấp nhận chi phí, rủi ro hoặc sự suy giảm ở các khía cạnh khác.
-
-Sơ đồ phân tích thành tố của một quyết định kiến trúc:
-
-```mermaid
-graph TD
-    accTitle: Các Thành tố Phân tích Trade-off Kiến trúc
-    accDescr: Sơ đồ phân nhánh thể hiện Lợi ích, Chi phí, Ràng buộc và Rủi ro của một quyết định kiến trúc
-
-    decNode["Architectural Decision"] --> benefitNode["Benefits<br/>(Lợi ích mang lại)"]
-    decNode --> costNode["Costs<br/>(Chi phí & Phức tạp)"]
-    decNode --> constraintNode["Constraints<br/>(Ràng buộc áp đặt)"]
-    decNode --> riskNode["Risks & Consequences<br/>(Rủi ro & Hệ quả)"]
-```
-
-Ví dụ cụ thể khi đánh giá việc áp dụng Microservices:
-
-```mermaid
-graph TB
-    accTitle: Phân tích Trade-off của Microservices
-    accDescr: Sơ đồ so sánh hai mặt lợi ích và chi phí khi chuyển sang kiến trúc Microservices
-
-    microNode["Microservices Architecture"]
-
-    subgraph gains["Lợi ích đạt được (+)"]
-        g1["Independent Deployment"]
-        g2["Independent Scaling"]
-        g3["Team Autonomy"]
-    end
-
-    subgraph costs["Chi phí phải trả (-)"]
-        c1["Network Latency & Complexity"]
-        c2["Distributed Data Consistency"]
-        c3["Operational & Monitoring Overhead"]
-    end
-
-    microNode --> gains
-    microNode --> costs
-```
-
-Do đó, câu hỏi chuẩn xác của kiến trúc sư không phải là *"Công nghệ X có tốt không?"*, mà là: **"Trong bối cảnh hiện tại, lợi ích của X có đủ lớn để bù đắp cho chi phí và rủi ro mà nó tạo ra hay không?"**
+> Mục tiêu cốt lõi của kiến trúc sư không phải là tìm kiếm giải pháp hoàn mỹ trên lý thuyết, mà là lựa chọn phương án **"least worst"** phù hợp và tối ưu nhất với bối cảnh thực tế.
 
 ---
 
-## Hệ quả 1: Trade-off Ẩn giấu
+## Trade-off Ẩn Giấu
 
 > [!WARNING]
-> **Corollary 1:** If you think you've discovered something that isn't a trade-off, more likely you just haven't identified the trade-off yet.
+> Nếu một giải pháp có vẻ chỉ mang lại toàn bộ lợi ích mà không có khuyết điểm, khả năng cao là các trade-off và chi phí tiềm ẩn của nó chưa được nhận diện đầy đủ.
 
-Nếu một quyết định dường như chỉ mang lại lợi ích tuyệt đối mà không có điểm bất lợi, điều đó có nghĩa là các chi phí ẩn giấu chưa được phát hiện.
-
-Xem xét ví dụ về việc triển khai Caching để tăng tốc độ truy vấn:
-
-```mermaid
-graph LR
-    accTitle: Chi phí Ẩn giấu của Caching
-    accDescr: Sơ đồ dòng chảy thể hiện lợi ích giảm latency dẫn đến các độ phức tạp ẩn giấu về cache invalidation và stale data
-
-    cacheBenefit["Thêm Cache Layer<br/>(Giảm Latency, giảm DB Load)"] --> hiddenCosts["Chi phí Ẩn giấu"]
-
-    hiddenCosts --> invalidation["Cache Invalidation Complexity"]
-    hiddenCosts --> memoryCost["RAM Overhead & Infrastructure Cost"]
-    hiddenCosts --> staleData["Rủi ro Stale Data & Consistency"]
-```
+Trường hợp điển hình là **Tái sử dụng mã nguồn (Code Reuse)**:
+- Tái sử dụng code giúp tiết kiệm thời gian phát triển và tránh trùng lặp logic, nhưng cái giá phải trả là tạo ra **khớp nối (coupling)**.
+- Việc chia sẻ mã nguồn phù hợp và an toàn với các thành phần hạ tầng kỹ thuật ổn định (logging, utilities, framework), nhưng tiềm ẩn rủi ro cao nếu áp dụng cho **domain logic** có độ biến động lớn (*highly volatile*).
 
 ---
 
-## Hệ quả 2: Phân tích Trade-off là Tiến trình Liên tục
+## Trade-off Phải Được Đánh Giá Liên Tục
 
 > [!NOTE]
-> **Corollary 2:** You can't just do trade-off analysis once and be done with it.
+> Phân tích trade-off không phải là hoạt động chỉ làm một lần trong giai đoạn thiết kế ban đầu, mà là một **quá trình liên tục** xuyên suốt vòng đời phát triển phần mềm.
 
-Phân tích Trade-off không phải là công việc làm một lần rồi kết thúc. Theo thời gian, bối cảnh kinh doanh, quy mô người dùng, hạ tầng và năng lực đội ngũ đều thay đổi, làm thay đổi cán cân Trade-off.
-
-```mermaid
-graph TD
-    accTitle: Tiến trình Đánh giá lại Trade-off theo Thời gian
-    accDescr: Sơ đồ thể hiện sự dịch chuyển từ Modular Monolith sang Microservices theo sự phát triển quy mô qua các năm
-
-    year1["Năm 1: Team 4 người, Tải thấp<br/>Architecture: Modular Monolith<br/>(Trade-off tối ưu)"] --> contextChange["Tăng trưởng Người dùng & Team"]
-    contextChange --> year4["Năm 4: Team 50 người, Tải cao<br/>Architecture: Tách Microservices<br/>(Cân bằng Trade-off mới)"]
-```
+Một kiến trúc tối ưu ở thời điểm hiện tại hoàn toàn có thể biến thành một phản mẫu (*antipattern*) khi:
+- Quy mô hệ thống và lưu lượng tải tăng trưởng đột biến.
+- Số lượng người dùng mở rộng.
+- Đội ngũ kỹ sư phát triển thay đổi quy mô hoặc cơ cấu tổ chức.
+- Công nghệ nền tảng và mục tiêu kinh doanh dịch chuyển.
 
 ---
 
-## Không có Lựa chọn Mặc định Tuyệt đối
+## Không Có Lựa Chọn Mặc Định Tuyệt Đối
 
-Các tổ chức thường có xu hướng tạo ra các quy tắc áp đặt cứng nhắc như *"Luôn dùng Microservices"*, *"Luôn dùng Event-Driven"* hoặc *"Luôn dùng REST"*. Tuy nhiên, **Default không phải là Universal Law**.
+Tuyệt đối tránh áp đặt máy móc các quy tắc mặc định cho toàn bộ dự án, chẳng hạn như *"luôn dùng REST"* hay *"luôn dùng Choreography"*.
 
-Một pattern phù hợp trong bối cảnh A có thể gây ra thảm họa độ phức tạp trong bối cảnh B:
-
-```mermaid
-graph TD
-    accTitle: Đánh giá Sự phù hợp theo Context
-    accDescr: Sơ đồ phân nhánh cho thấy pattern Choreography chỉ phù hợp khi bối cảnh cho phép
-
-    patternNode["Workflow Choreography"] --> contextA["Context A: Ít service, luồng tuyến tính<br/>→ Phù hợp"]
-    patternNode --> contextB["Context B: 30+ services, luồng phức tạp<br/>→ Tăng mạnh độ phức tạp ẩn giấu"]
-```
+- **Kiến trúc phải thích ứng với bối cảnh (Context):** Mỗi bài toán nghiệp vụ đều có tập biến số và ràng buộc riêng biệt.
+- **Sẵn sàng thích ứng:** Ưu tiên xây dựng kiến trúc có khả năng lặp (*iterative architecture*) và dễ thay đổi để chủ động ứng phó trước các yếu tố chưa biết (**unknown unknowns**) trong tương lai.
 
 ---
 
-## Quy luật Thứ hai: Tại sao Quan trọng hơn Như thế nào
+## 2. Tại Sao Quan Trọng Hơn Như Thế Nào
 
 > [!IMPORTANT]
-> **Second Law of Software Architecture:** Why is more important than how.
+> **Second Law of Software Architecture:** **"Why is more important than how."**
 
-**Tại sao** hệ thống lại được thiết kế như vậy quan trọng hơn nhiều so với việc **nó được triển khai bằng công nghệ gì**.
+- **How (Như thế nào):** Cho biết hệ thống vận hành ra sao ở mức mã nguồn và cấu hình công nghệ.
+- **Why (Tại sao):** Giải thích bối cảnh, lý do và động lực kỹ thuật đằng sau quyết định đó.
 
-So sánh hai cách ghi nhận thông tin kiến trúc:
+Khi công nghệ thay đổi, nếu tài liệu chỉ ghi nhận *"Hệ thống sử dụng Apache Kafka"* (**How**), đội ngũ kế thừa sẽ gặp nhiều khó khăn khi cần đánh giá công nghệ thay thế tương đương.
 
-| Cách tiếp cận | Nội dung Ghi nhận | Giá trị Kiến trúc |
-| :--- | :--- | :--- |
-| **Chỉ ghi nhận "HOW"** | *"Hệ thống dùng Kafka."* | Rất thấp. Khi công nghệ thay đổi, đội ngũ không hiểu lý do thiết kế tồn tại. |
-| **Ghi nhận "WHY" & "HOW"** | *"Tách xử lý bất đồng bộ qua Message Queue để giảm latency phản hồi API cho người dùng và đảm bảo khả năng mở rộng độc lập."* | Rất cao. Bảo tồn được ý định kiến trúc (architectural intent) ngay cả khi thay thế Kafka bằng NATS hay RabbitMQ. |
+Ngược lại, khi nắm rõ lý do:
 
----
+> *"Sử dụng hàng đợi giao tiếp bất đồng bộ nhằm giảm tải trực tiếp cho cơ sở dữ liệu và đảm bảo thời gian phản hồi API ổn định dưới 200ms khi lưu lượng tăng đột biến."*
 
-## Bảo tồn Lý do Ra Quyết định (Preserving the Why)
-
-Công nghệ sẽ lỗi thời theo thời gian, nhưng các ràng buộc và ý định kiến trúc cốt lõi thường tồn tại lâu dài hơn:
-
-```mermaid
-graph TD
-    accTitle: Sự Tách biệt giữa Intent và Technology
-    accDescr: Sơ đồ thể hiện Intent bất đồng bộ được giữ nguyên khi thay đổi nền tảng công nghệ
-
-    intent["Architectural Intent:<br/>Asynchronous Processing & Decoupling"] --> techV1["Công nghệ 2020: Apache Kafka"]
-    intent --> techV2["Công nghệ 2026: Cloud Pub/Sub"]
-
-    noteNode["> [!TIP]<br/>Nếu chỉ lưu vết công nghệ, team tương lai sẽ mất dấu bối cảnh và lý do thiết kế ban đầu."]
-```
+thì ngay cả khi thay thế công nghệ sang `RabbitMQ`, `Cloud Pub/Sub` hay `NATS`, ý định kiến trúc (**architectural intent**) ban đầu vẫn được bảo toàn nguyên vẹn.
 
 ---
 
-## Quy luật Thứ ba: Các Quyết định Tồn tại trên một Phổ Trung gian
+## Bảo Tồn Lý Do Ra Quyết Định (Preserving the Why)
+
+Công cụ chuẩn mực và hiệu quả nhất để lưu trữ lý do ra quyết định là **Tài liệu Quyết định Kiến trúc (ADRs - Architecture Decision Records)**.
+
+ADRs ghi nhận tập trung:
+- **Context (Bối cảnh):** Hoàn cảnh thực tế và các ràng buộc kỹ thuật tại thời điểm ra quyết định.
+- **Decision (Quyết định):** Giải pháp kiến trúc được lựa chọn.
+- **Alternatives (Các phương án thay thế):** Các lựa chọn khác đã được cân nhắc và lý do bị loại bỏ.
+- **Consequences (Hệ quả & Trade-off):** Tác động tích cực cũng như hạn chế chấp nhận đánh đổi.
+
+Nhờ có ADRs, các thế hệ kỹ sư tiếp nối dễ dàng thấu hiểu ý định thiết kế ban đầu và giảm thiểu nguy cơ xói mòn kiến trúc (**architectural drift**).
+
+---
+
+## 3. Quyết Định Kiến Trúc Tồn Tại Trên Một Phổ
 
 > [!IMPORTANT]
-> **Third Law of Software Architecture:** Most architecture decisions aren't binary but rather exist on a spectrum between extremes.
+> **Third Law of Software Architecture:** **"Most architecture decisions exist on a spectrum between extremes."**
 
-Các quyết định kiến trúc hiếm khi chỉ đơn giản là sự lựa chọn nhị phân "đen hoặc trắng" (A hay B), mà tồn tại trên một phổ rộng gồm nhiều cấp độ và giải pháp trung gian giữa các thái cực.
+Hầu hết các quyết định trong thế giới thực không phải là những lựa chọn nhị phân tuyệt đối giữa hai thái cực (đen hoặc trắng):
+- **Monolith ↔ Microservices**
+- **REST ↔ Messaging**
+- **Choreography ↔ Orchestration**
 
-Minh họa khái niệm phổ kiến trúc giữa hai thái cực thiết kế:
+Thay vào đó, luôn tồn tại nhiều phương án cân bằng trung gian phù hợp với từng giai đoạn phát triển.
+
+Để định vị chính xác vị trí của một quyết định trên phổ thiết kế, cần phân tích 3 tiêu chí:
+1. **Tính chất tác động:** Mang tính chiến lược (**Strategic**) hay chiến thuật (**Tactical**).
+2. **Mức độ nỗ lực (Level of Effort):** Khối lượng công việc cần thiết để tái cấu trúc nếu đảo ngược quyết định.
+3. **Mức độ ảnh hưởng của Trade-off:** Tác động sâu rộng đến các thuộc tính chất lượng (**quality attributes**) của toàn hệ thống.
+
+---
+
+## Một Số Phổ Kiến Trúc Phổ Biến
+
+Trong thực tế thiết kế, các quyết định thường trải dài trên 3 dải phổ chính:
+
+| Dải phổ Kiến trúc | Thái cực A (Phi tập trung / Tách biệt) | Điểm Cân bằng Trung gian | Thái cực B (Tập trung / Gắn kết) |
+| :--- | :--- | :--- | :--- |
+| **Decoupling (Phân rã liên kết)** | **Source level:** Module hóa trong cùng bộ nhớ, gọi hàm nội bộ | **Deployment level:** Đóng gói thư viện chia sẻ hoặc shared packages | **Service level:** Tách thành các tiến trình chạy độc lập qua mạng |
+| **Distributed Workflow (Điều phối luồng)** | **Choreography:** Dựa trên sự kiện phân tán, khớp nối lỏng | **Hybrid Mediation:** Kết hợp Domain Events và bộ điều phối cục bộ | **Orchestration:** Quản lý tập trung qua Workflow Engine |
+| **Governance (Quản trị đội ngũ)** | **Kiểm soát quá mức:** Ràng buộc cứng nhắc mọi chi tiết triển khai | **Cân bằng & Trao quyền:** Thiết lập ranh giới rõ ràng, giữ quyền tự chủ | **Thiếu định hướng:** Tháp ngà lý thuyết hoặc buông lỏng chuẩn mực |
+
+> [!TIP]
+> Điểm tối ưu kiến trúc không nằm ở việc cố gắng tiến về một thái cực cực đoan, mà nằm tại **vị trí cân bằng phù hợp nhất với bối cảnh và ràng buộc hiện tại**.
+
+---
+
+## Quy Trình Ra Quyết Định Kiến Trúc
+
+Quy trình tư duy và đóng gói quyết định kiến trúc chuẩn mực được thực hiện qua 6 bước:
+
+**Business Goals → Trade-off Criteria → Comparison Matrix → Collaboration → ADR → Fitness Functions**
+
+1. **Dịch chuyển Mục tiêu Kinh doanh:** Chuyển hóa các yêu cầu kinh doanh thành đặc tính kỹ thuật cốt lõi.
+2. **Xác định Tiêu chí Trade-off theo Context:** Thiết lập thang đánh giá dựa trên nguồn lực, đội ngũ và hạ tầng hiện hữu.
+3. **Xây dựng Ma trận So sánh:** Đánh giá khách quan ưu/nhược điểm giữa các phương án khả thi.
+4. **Hợp tác và Thuyết phục:** Trình bày lý do kỹ thuật thay vì áp đặt mệnh lệnh, thúc đẩy văn hóa đồng thuận kỹ thuật.
+5. **Ghi nhận bằng ADR:** Lưu trữ bối cảnh, quyết định và các hệ quả vào tài liệu ADR chuẩn mực.
+6. **Tự động hóa bằng Fitness Functions:** Tích hợp các bài kiểm thử kiến trúc (như `ArchUnit`, `NetArchTest`) vào CI/CD để tự động giám sát tuân thủ.
+
+---
+
+## Kết Luận
+
+Một quyết định kiến trúc xuất sắc không bao giờ là một giải pháp hoàn hảo không tì vết trên lý thuyết. Trong thế giới kỹ thuật thực tế, đó luôn là quyết định mà mọi sự đánh đổi (**trade-off**) đã được nhận diện rõ ràng, phân tích thấu đáo và được toàn bộ đội ngũ chấp nhận một cách có chủ đích dựa trên bối cảnh và ràng buộc cụ thể của hệ thống.
+
+Để làm chủ vai trò kiến trúc sư, ba quy luật nền tảng cần được chuyển hóa thành một khung tư duy hành động xuyên suốt:
 
 ```mermaid
 graph LR
-    accTitle: Phổ Quyết định Kiến trúc giữa hai Thái cực
-    accDescr: Sơ đồ thể hiện phổ liên tục từ Thái cực A sang Thái cực B thông qua các phương án cân bằng trung gian
+    accTitle: Chuỗi Tư Duy Ba Quy Luật Kiến Trúc
+    accDescr: Sơ đồ luồng kết luận liên kết từ Nhận diện Trade-off đến Thấu hiểu Why và Định vị trên Phổ giải pháp
 
-    extremeA["Thái cực A<br/>(Extreme A)"] <--> midOption1["Phương án Trung gian 1"]
-    midOption1 <--> midOption2["Phương án Cân bằng<br/>(Balanced Compromise)"]
-    midOption2 <--> midOption3["Phương án Trung gian 2"]
-    midOption3 <--> extremeB["Thái cực B<br/>(Extreme B)"]
+    law1Node["1. Nhận diện Trade-off<br/>(Không có Silver Bullet)"] --> law2Node["2. Thấu hiểu & Bảo tồn Why<br/>(Đóng gói bối cảnh qua ADR)"]
+    law2Node --> law3Node["3. Định vị trên Phổ<br/>(Lựa chọn điểm cân bằng)"]
+    law3Node --> goalNode["Kiến Trúc Tối Ưu<br/>(Least Worst Solution)"]
 ```
 
----
-
-Thay vì chọn một trong hai cực đoan, kiến trúc sư cần xác định đúng vị trí phù hợp trên phổ thiết kế tùy thuộc vào mục tiêu hệ thống:
-
----
-
-## Quy trình Phân tích và Đóng gói Quyết định
-
-Để áp dụng 3 quy luật kiến trúc vào thực tế, mọi quyết định kiến trúc nên được đóng gói theo cấu trúc Architecture Decision Record (ADR) tiêu chuẩn:
-
-```mermaid
-graph LR
-    accTitle: Mẫu Quy trình Phân tích Quyết định Kiến trúc
-    accDescr: Sơ đồ các bước từ Bối cảnh, Ràng buộc, Phương án đến Trade-off và Lý do chọn lựa
-
-    ctxStep["Bối cảnh<br/>(Context)"] --> pbStep["Vấn đề<br/>(Problem)"]
-    pbStep --> optStep["Các Lựa chọn<br/>(Options)"]
-    optStep --> tradeStep["Phân tích Trade-off"]
-    tradeStep --> decStep["Quyết định & Lý do<br/>(Decision & Why)"]
-    decStep --> consStep["Hệ quả<br/>(Consequences)"]
-```
-
-### Nguyên tắc Kết luận
-
-Một quyết định kiến trúc tốt không phải là một quyết định không có nhược điểm. Một quyết định kiến trúc tốt là quyết định mà:
-
-> **Các Trade-off đã được nhận diện và chấp nhận một cách có chủ đích dựa trên bối cảnh thực tế.**
+Kiến trúc sư hiện đại không tìm kiếm sự bất biến, mà xây dựng một hệ thống có khả năng tiến hóa và thích ứng linh hoạt. Bằng cách thấu hiểu sâu sắc lý do đằng sau mỗi quyết định và luôn cân nhắc vị trí tối ưu trên dải quang phổ giải pháp, đội ngũ phát triển sẽ tự tin dẫn dắt hệ thống vượt qua mọi thách thức kỹ thuật và biến động kinh doanh trong tương lai.
 
 ---
 [← Back to README](README.md)
-

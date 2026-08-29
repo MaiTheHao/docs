@@ -65,7 +65,7 @@ nodeId["Node Label"]
 ```
 
 - Use `<br/>` for line breaks.
-- Declare graph direction (`TD`, `TB`, `LR`).
+- Declare graph direction (`LR`, `TD`, `TB`). **Prioritize `LR` (Left to Right)** whenever feasible to optimize vertical space and page compact flow.
 
 ## Accessibility
 
@@ -119,6 +119,26 @@ Prefer GitHub Alerts over blockquotes.
 - TIP
 - IMPORTANT
 - WARNING
+
+---
+
+# Typography & Special Content Formatting
+
+Emphasize special elements consistently to enhance readability and scannability:
+
+| Content Type | Formatting Style | Markdown Syntax | Examples |
+| :--- | :--- | :--- | :--- |
+| **Domain & Technical Terminology** | **Bold** | `**Terminology**` | **Trade-off**, **Coupling**, **Fitness Functions** |
+| **Authors & People** | Regular / Contextual | Plain text | Mark Richards, Neal Ford, Martin Fowler |
+| **Book Titles, Papers & Publications** | *Italics* | `*Title*` | *Fundamentals of Software Architecture*, *Clean Architecture* |
+| **Direct Quotes, Laws & Named Antipatterns** | Double Quotes `""` / **Bold Quotes** | `"Quote"` or `**"Law"**` | **"Why is more important than how"**, "One Big Trade-off Jamboree" |
+| **Foreign / Original Terms** (in Vietnamese text) | (*Italics in parentheses*) | `(*term*)` | thuộc tính chất lượng (*quality attributes*), xói mòn (*architectural drift*) |
+| **Code, Files, Commands, Tools & Metrics** | `Inline Code` | `` `code` `` | `archunit`, `03_laws_of_architecture.md`, `Kafka`, `latency` |
+
+Rules:
+- Never leave book or publication titles unstyled.
+- Highlight key takeaways, axioms, and laws using quotes and bold formatting.
+- Maintain consistent terminology styling across the entire document.
 
 ---
 
@@ -265,6 +285,7 @@ A document is valid only if all conditions hold.
 - Workflow tables provided where required.
 - Footer navigation exists.
 - Consistent terminology.
+- Special content formatting followed (Italic books, quoted laws/quotes, bold terminology, inline code symbols).
 - Transition repetition ≤ 2.
 - Diverse section layouts.
 - Context precedes definition.
