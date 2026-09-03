@@ -1,32 +1,31 @@
 ---
 name: standardize_doc_style
-description: Enforce consistent structure, formatting, naming, diagrams, tables, and natural technical writing for Markdown documentation.
+description: Enforce consistent structure, formatting, naming, diagrams, tables, and natural technical writing across Markdown documentation.
 ---
 
 # Purpose
-
 Apply this specification to every Markdown document created or modified.
 
+## Table of Contents
+- [Naming](#naming)
+- [Document Structure](#document-structure)
+- [Code Blocks](#code-blocks)
+- [Mermaid](#mermaid)
+- [Tables](#tables)
+- [GitHub Alerts](#github-alerts)
+- [Typography and Special Content Formatting](#typography-and-special-content-formatting)
+- [Natural Technical Writing](#natural-technical-writing)
+- [Validation Checklist](#validation-checklist)
+
 ---
 
-# Naming
-
-- Root directories: `##_snake_case`
-- Child directories/files: `snake_case`
-- Lowercase only.
-- No spaces or special characters.
-- Store static assets in `assets/`.
+## Naming
+Use `##_snake_case` for root directories and `snake_case` for child directories and files. Use lowercase only, with no spaces or special characters. Store static assets in `assets/`.
 
 ---
 
-# Document Structure
-
-- Exactly one `# H1`.
-- `## Table of Contents` immediately after H1.
-- TOC links only H2 sections.
-- Insert `---` before every H2.
-- Footer:
-
+## Document Structure
+Use exactly one `# H1`. Place `## Table of Contents` immediately after the H1 and include links only to H2 sections. Insert `---` before every H2. End the document with:
 ```markdown
 ---
 [← Back to README](README.md)
@@ -34,265 +33,97 @@ Apply this specification to every Markdown document created or modified.
 
 ---
 
-# Code Blocks
+## Code Blocks
 
-- Every code block requires a language tag.
-- Add a concise description before every code block.
-- **Vietnamese in code blocks**: All Vietnamese text, comments, and strings inside code blocks MUST use fully accented Vietnamese (`tiếng Việt có dấu đầy đủ`), never unaccented text.
+Every code block must include a language tag and a concise description immediately before it. All Vietnamese text, comments, and strings inside code blocks must use fully accented Vietnamese; never use unaccented Vietnamese.
 
 ---
 
-# Mermaid
+## Mermaid
 
-## Rendering
-
-- Plain Mermaid only.
-- No themes.
-- No colors.
-- No `style`.
-- No `classDef`.
-- No `linkStyle`.
-
-## Nodes
-
-- IDs use `camelCase`.
-- Never use reserved ID `end`.
-- Avoid IDs starting with `o` or `x`.
-- Quote every label.
+Use plain Mermaid only: no themes, colors, `style`, `classDef`, or `linkStyle`. Node IDs must use `camelCase`, must not be `end`, and should not start with `o` or `x`. Quote every node label, for example:
 
 ```mermaid
 nodeId["Node Label"]
 ```
 
-- Use `<br/>` for line breaks.
-- Declare graph direction (`LR`, `TD`, `TB`). **Prioritize `LR` (Left to Right)** whenever feasible to optimize vertical space and page compact flow.
-
-## Accessibility
-
-Every diagram includes
-
-```text
-accTitle:
-accDescr:
-```
-
-## Layout
-
-- Keep diagrams compact.
-- Preferred: 5-15 nodes.
-- Maximum: 25 nodes.
-
-## Shapes
-
-Use consistent semantics.
-
-| Shape | Meaning |
-|-------|---------|
-| `[...]` | Process |
-| `{...}` | Decision |
-| `[(...)]` | Database |
-| `([...])` | Start / End |
+Use `<br/>` for label line breaks and explicitly declare the graph direction as `LR`, `TD`, or `TB`; prefer `LR` whenever feasible to reduce vertical space and improve page flow. Every diagram must include `accTitle:` and `accDescr:` accessibility metadata. Keep diagrams compact: prefer 5–15 nodes and never exceed 25. Use shapes consistently: `[... ]` for processes, `{...}` for decisions, `[(...)]` for databases, and `([...])` for start/end nodes.
 
 ---
 
-# Tables
+## Tables
 
-Complex diagrams or workflows require an explanatory table.
+Complex diagrams and workflows must include an explanatory table:
 
 ```markdown
 | Component | Purpose | Details |
 | :--- | :--- | :--- |
 ```
 
-Rules
-
-- Bold for domain terminology.
-- Inline code for filenames, commands, classes, variables and types.
+Use bold formatting for domain terminology and inline code for filenames, commands, classes, variables, and types.
 
 ---
 
-# GitHub Alerts
+## GitHub Alerts
 
-Prefer GitHub Alerts over blockquotes.
-
-- NOTE
-- TIP
-- IMPORTANT
-- WARNING
+Prefer GitHub Alerts over blockquotes. Use `NOTE`, `TIP`, `IMPORTANT`, and `WARNING` when appropriate.
 
 ---
 
-# Typography & Special Content Formatting
+## Typography and Special Content Formatting
 
-Emphasize special elements consistently to enhance readability, clarity, and scannability:
+Apply terminology styling consistently throughout the document.
 
-| Content Type | Formatting Style | Markdown Syntax | Examples |
-| :--- | :--- | :--- | :--- |
-| **Domain & Technical Terminology** | **Bold** | `**Terminology**` | **Trade-off**, **Coupling**, **Cohesion**, **Fitness Functions**, **Architecture Quantum** |
-| **Authors & People** | Regular / Contextual | Plain text | Mark Richards, Neal Ford, Martin Fowler |
-| **Book Titles, Papers & Publications** | *Italics* | `*Title*` | *Fundamentals of Software Architecture*, *Clean Architecture* |
-| **Direct Quotes, Laws & Named Antipatterns** | Double Quotes `""` / **Bold Quotes** | `"Quote"` or `**"Law"**` | **"Why is more important than how"**, "Big Ball of Mud" |
-| **Code, Files, Commands, Tools & Metrics** | `Inline Code` | `` `code` `` | `archunit`, `02_laws_and_expectations.md`, `Kafka`, `latency`, `throughput` |
+| Content Type                                | Formatting                       | Markdown Syntax         | Examples                                                                                   |
+| :------------------------------------------ | :------------------------------- | :---------------------- | :----------------------------------------------------------------------------------------- |
+| Domain and technical terminology            | **Bold**                         | `**Terminology**`       | **Trade-off**, **Coupling**, **Cohesion**, **Fitness Functions**, **Architecture Quantum** |
+| Authors and people                          | Regular                          | Plain text              | Mark Richards, Neal Ford, Martin Fowler                                                    |
+| Book titles, papers, and publications       | *Italics*                        | `*Title*`               | *Fundamentals of Software Architecture*, *Clean Architecture*                              |
+| Direct quotes, laws, and named antipatterns | Double quotes or **bold quotes** | `"Quote"` / `**"Law"**` | **"Why is more important than how"**, "Big Ball of Mud"                                    |
+| Code, files, commands, tools, and metrics   | Inline code                      | `` `code` ``            | `archunit`, `02_laws_and_expectations.md`, `Kafka`, `latency`, `throughput`                |
 
-## Language & Terminology Rules
+### Language and Terminology Rules
 
-- **Hạn chế tối đa pattern `Tiếng Việt (tiếng Anh)`**: Tránh lối viết song ngữ kèm ngoặc đơn rườm rà (ví dụ: *"đặc tính kiến trúc (architecture characteristics)"*, *"sự đánh đổi (trade-offs)"*). Lối viết này làm câu văn dài dòng và đứt gãy mạch đọc.
-- **Dùng nguyên văn thuật ngữ chuyên ngành**: Các khái niệm kỹ thuật cốt lõi đã thành chuẩn mực quốc tế nên dùng nguyên bản tiếng Anh (**in đậm** hoặc `inline code`), ví dụ: **Trade-off**, **Fitness Functions**, **Technical Breadth**, **Elastic Leadership**, **Coupling**, **Cohesion**, **Microservices**, **Monolith**, **ADR**, **CI/CD**.
-- **Dùng tiếng Việt tự nhiên khi dịch đủ nghĩa**: Các từ có nghĩa tiếng Việt rõ ràng, quen thuộc và cô đọng thì dịch trực tiếp, không đính kèm từ tiếng Anh trong ngoặc (ví dụ: bối cảnh, ranh giới, quy luật, kiểm thử tự động, độ trễ, khả năng mở rộng, chi phí vận hành).
-- **Văn phong dứt khoát, trọng tâm**: Viết gãy gọn, truyền tải trực diện tư duy kỹ nghệ thay vì diễn giải dài dòng.
-- Highlight key takeaways, axioms, and laws using quotes and bold formatting.
-- Maintain consistent terminology styling across the entire document.
+Write technical documentation in natural English and avoid unnecessary bilingual constructions such as "architectural characteristics (đặc tính kiến trúc)" or "trade-offs (sự đánh đổi)". Use established technical terms in their original English form, especially **Trade-off**, **Fitness Functions**, **Technical Breadth**, **Elastic Leadership**, **Coupling**, **Cohesion**, **Microservices**, **Monolith**, **ADR**, and **CI/CD**. Translate concepts into concise natural English when a clear equivalent exists, rather than adding redundant parenthetical terminology. Write decisively and directly, favoring engineering reasoning over lengthy explanation. Highlight key takeaways, axioms, and laws with quotes and bold formatting, and maintain consistent terminology throughout the document.
 
 ---
 
-# Natural Technical Writing
+## Natural Technical Writing
 
-## Transition Diversity
+### Transition Diversity
 
-Avoid repeated transitions.
+Avoid repetitive transitions, especially "The diagram below...", "The table below...", and "The following diagram...". Any repeated transition pattern may appear at most twice per document.
 
-Forbidden patterns
+### Section Diversity
 
-- "The diagram below..."
-- "The table below..."
-- "The following diagram..."
+Avoid identical section structures. Vary patterns such as Context → Definition, Example → Definition, Diagram → Explanation, Table → Analysis, and Trade-off → Conclusion.
 
-A repeated transition may appear at most twice per document.
+### Context First
 
----
+Prefer `Context → Motivation → Definition` over `Definition → Explanation`. Every section should establish at least one relevant real-world context before presenting abstract concepts.
 
-## Section Diversity
+### Technical Storytelling
 
-Avoid identical section layouts.
+Prefer the flow `Why → How → Where → Trade-off`. Include at least one engineering observation per section, such as production behavior, common pitfalls, performance implications, architectural rationale, or implementation constraints.
 
-Mix structures such as
+### Sentence Rhythm
 
-- Context → Definition
-- Example → Definition
-- Diagram → Explanation
-- Table → Analysis
-- Tradeoff → Conclusion
+Mix short and long sentences. Avoid uniform paragraph lengths and repetitive sentence structures.
 
----
+### Quantitative Language
 
-## Context First
+Prefer measurable engineering language such as `latency`, `throughput`, `memory`, `complexity`, `benchmark`, and `percentage`. Avoid excessive use of vague modifiers such as "very", "extremely", "significant", "powerful", and "comprehensive".
 
-Present
+### Captions
 
-```
-Context
-→ Motivation
-→ Definition
-```
+Captions should communicate value or function rather than merely identify an artifact. Prefer "AES round transformation", "Mathematical foundation of RSA", and "TLS hybrid encryption workflow" over generic captions such as "Diagram", "Illustration", or "Overview".
 
-instead of
+### Engineering Insight
 
-```
-Definition
-→ Explanation
-```
-
-Every section should contain at least one real-world context.
+Each section should include one or two implementation-level insights beyond textbook definitions. Prioritize production behavior, common pitfalls, engineering trade-offs, performance implications, and architectural rationale.
 
 ---
 
-## Technical Storytelling
+## Validation Checklist
 
-Preferred flow
-
-```
-Why
-→ How
-→ Where
-→ Tradeoff
-```
-
-Include at least one engineering observation per section.
-
----
-
-## Sentence Rhythm
-
-Mix short and long sentences.
-
-Avoid uniform paragraph lengths.
-
----
-
-## Quantitative Language
-
-Prefer measurable statements over vague adjectives.
-
-Prefer
-
-- latency
-- throughput
-- memory
-- complexity
-- benchmark
-- percentage
-
-Avoid excessive use of
-
-- very
-- extremely
-- significant
-- powerful
-- comprehensive
-
----
-
-## Captions
-
-Captions should describe value, not existence.
-
-Prefer
-
-- AES round transformation
-- Mathematical foundation of RSA
-- TLS hybrid encryption workflow
-
-Avoid
-
-- Diagram
-- Illustration
-- Overview
-
----
-
-## Engineering Insight
-
-Each section should include one or two implementation insights beyond textbook definitions.
-
-Examples
-
-- production behavior
-- common pitfalls
-- engineering tradeoffs
-- performance implications
-- architectural rationale
-
----
-
-# Validation Checklist
-
-A document is valid only if all conditions hold.
-
-- One H1.
-- TOC immediately after H1.
-- Valid internal links.
-- Language tag on every code block.
-- Mermaid follows plain style.
-- Labels quoted.
-- Accessibility metadata present.
-- Workflow tables provided where required.
-- Footer navigation exists.
-- Consistent terminology.
-- Special content formatting followed (Italic books, quoted laws/quotes, bold terminology, inline code symbols).
-- Transition repetition ≤ 2.
-- Diverse section layouts.
-- Context precedes definition.
-- Mixed sentence rhythm.
-- Quantitative wording preferred.
-- Engineering insights included.
-- Vietnamese text and comments in code blocks are fully accented.
+A document is valid only when all applicable requirements are satisfied: exactly one H1; `## Table of Contents` immediately follows the H1; TOC links only to H2 sections; internal links are valid; every H2 is preceded by `---`; every code block has a language tag and concise description; Mermaid uses plain styling, quoted labels, valid IDs, explicit direction, accessibility metadata, compact layouts, and consistent shapes; required workflow tables are present; the footer navigation exists; terminology formatting is consistent; books and publications are italicized; laws and direct quotes use quotation marks or bold quotes; domain terminology is bold; code-related symbols use inline code; transition repetition does not exceed two occurrences; section layouts vary; context precedes definition; sentence rhythm is varied; quantitative language is preferred; each section contains engineering insight; and all Vietnamese text inside code blocks uses full diacritics.
