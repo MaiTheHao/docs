@@ -16,14 +16,14 @@ Trọng tâm cốt lõi của vai trò kiến trúc sư là khả năng phân t�
 
 Mọi kiến trúc phần mềm đều là sản phẩm của chính **bối cảnh** sinh ra nó. Những gì từng là bất khả thi hoặc quá đắt đỏ trong quá khứ – như việc vận hành các dịch vụ phân tán độc lập với database riêng vào những năm 2000 – ngày nay đã trở thành tiêu chuẩn nhờ vào sự trỗi dậy của **Open Source** và cuộc cách mạng thực hành **DevOps**.
 
-Để hiện thực hóa các quyết định kỹ thuật bền vững, kiến trúc sư phải vận hành trên nền tảng của **Ba Quy luật Kiến trúc** bất biến: nhận diện sâu sắc mọi **Trade-off** để tìm ra giải pháp tối ưu bối cảnh (**least worst architecture**), coi trọng lý do và động lực kỹ thuật hơn công nghệ triển khai (**Why > How**) thông qua **ADR**, và định vị điểm cân bằng thực tế trên dải quang phổ giải pháp. Những quy luật này được chuyển hóa thành hành động thông qua **8 Kỳ vọng Năng lực**—từ việc mở rộng **Technical Breadth**, tự động hóa kiểm thử ranh giới với **Fitness Functions** trên CI/CD, đến nghệ thuật **Elastic Leadership** và đàm phán bằng thực chứng: **"Demonstration Defeats Discussion"**.
+Để hiện thực hóa các quyết định kỹ thuật bền vững, kiến trúc sư phải vận hành trên nền tảng của **Ba Quy luật Kiến trúc** bất biến: nhận diện sâu sắc mọi **Trade-off** để tìm ra giải pháp tối ưu bối cảnh (**Least Worst Architecture**), coi trọng lý do và động lực kỹ thuật hơn công nghệ triển khai (**"Why is more important than how"**) thông qua **ADR**, và định vị điểm cân bằng thực tế trên dải quang phổ giải pháp thay vì áp đặt đúng/sai. Những quy luật này được chuyển hóa thành hành động thông qua **8 Kỳ vọng Năng lực**—từ việc mở rộng **Technical Breadth**, bảo vệ tính toàn vẹn cấu trúc với **Fitness Functions** trên `CI/CD`, đến nghệ thuật **Elastic Leadership** và đàm phán bằng thực chứng: **"Demonstration Defeats Discussion"**.
 
 ---
 
 ## Danh mục Tài liệu
 
 1. **[01. Bối cảnh Kiến trúc](01_architectural_context.md)**: Phân tích các ràng buộc kinh tế hạ tầng, cuộc cách mạng mã nguồn mở và DevOps đã biến các phong cách kiến trúc phân tán từ bất khả thi trở thành tiêu chuẩn hiện đại.
-2. **[02. Quy luật Kiến trúc & Kỳ vọng Năng lực](02_laws_and_expectations.md)**: Hệ thống 3 quy luật Trade-off bất biến, dải quang phổ quyết định kiến trúc, khung 8 kỳ vọng vai trò và cơ chế ngăn ngừa xói mòn cấu trúc bằng Fitness Functions.
+2. **[02. Quy luật Kiến trúc & Kỳ vọng Năng lực](02_laws_and_expectations.md)**: Hệ thống 3 quy luật Trade-off bất biến, dải quang phổ quyết định thực chiến (loại bỏ tư duy áp đặt đúng hoặc sai), khung 8 kỳ vọng vai trò cốt lõi và định nghĩa, mục đích, mục tiêu của Fitness Functions.
 
 ---
 
@@ -35,9 +35,13 @@ Mọi kiến trúc phần mềm đều là sản phẩm của chính **bối c�
 graph LR
     accTitle: Tiến trình Đọc và Học tập Fundamentals
     accDescr: Sơ đồ luồng thứ tự đọc tài liệu từ Bối cảnh đến Quy luật Kiến trúc và 8 Kỳ vọng đối với Kiến trúc sư
-
-    step1["01. Architectural Context<br/>(Hiểu bối cảnh & kinh tế)"] --> step2["02. Laws & Expectations<br/>(Làm chủ quy luật & 8 kỳ vọng vai trò)"]
+    contextStep["01. Architectural Context<br/>Hiểu bối cảnh & kinh tế hạ tầng"] --> lawsStep(["02. Laws & Expectations<br/>Làm chủ quy luật & 8 kỳ vọng vai trò"])
 ```
+
+| Thứ Tự | Tài Liệu | Trọng Tâm Kiến Thức |
+| :--- | :--- | :--- |
+| **Bước 1** | **[01. Bối cảnh Kiến trúc](01_architectural_context.md)** | Thấu hiểu các ràng buộc kinh tế hạ tầng, cuộc cách mạng mã nguồn mở và vai trò của tự động hóa định hình nên kiến trúc hiện đại. |
+| **Bước 2** | **[02. Quy luật Kiến trúc & Kỳ vọng Năng lực](02_laws_and_expectations.md)** | Làm chủ 3 quy luật Trade-off bất biến, dải quang phổ quyết định (tìm điểm cân bằng Sweet Spot), 8 kỳ vọng năng lực và kiểm soát xói mòn bằng Fitness Functions. |
 
 ---
 
