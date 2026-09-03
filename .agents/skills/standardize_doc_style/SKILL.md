@@ -124,19 +124,22 @@ Prefer GitHub Alerts over blockquotes.
 
 # Typography & Special Content Formatting
 
-Emphasize special elements consistently to enhance readability and scannability:
+Emphasize special elements consistently to enhance readability, clarity, and scannability:
 
 | Content Type | Formatting Style | Markdown Syntax | Examples |
 | :--- | :--- | :--- | :--- |
-| **Domain & Technical Terminology** | **Bold** | `**Terminology**` | **Trade-off**, **Coupling**, **Fitness Functions** |
+| **Domain & Technical Terminology** | **Bold** | `**Terminology**` | **Trade-off**, **Coupling**, **Cohesion**, **Fitness Functions**, **Architecture Quantum** |
 | **Authors & People** | Regular / Contextual | Plain text | Mark Richards, Neal Ford, Martin Fowler |
 | **Book Titles, Papers & Publications** | *Italics* | `*Title*` | *Fundamentals of Software Architecture*, *Clean Architecture* |
-| **Direct Quotes, Laws & Named Antipatterns** | Double Quotes `""` / **Bold Quotes** | `"Quote"` or `**"Law"**` | **"Why is more important than how"**, "One Big Trade-off Jamboree" |
-| **Foreign / Original Terms** (in Vietnamese text) | (*Italics in parentheses*) | `(*term*)` | thuộc tính chất lượng (*quality attributes*), xói mòn (*architectural drift*) |
-| **Code, Files, Commands, Tools & Metrics** | `Inline Code` | `` `code` `` | `archunit`, `03_laws_of_architecture.md`, `Kafka`, `latency` |
+| **Direct Quotes, Laws & Named Antipatterns** | Double Quotes `""` / **Bold Quotes** | `"Quote"` or `**"Law"**` | **"Why is more important than how"**, "Big Ball of Mud" |
+| **Code, Files, Commands, Tools & Metrics** | `Inline Code` | `` `code` `` | `archunit`, `02_laws_and_expectations.md`, `Kafka`, `latency`, `throughput` |
 
-Rules:
-- Never leave book or publication titles unstyled.
+## Language & Terminology Rules
+
+- **Hạn chế tối đa pattern `Tiếng Việt (tiếng Anh)`**: Tránh lối viết song ngữ kèm ngoặc đơn rườm rà (ví dụ: *"đặc tính kiến trúc (architecture characteristics)"*, *"sự đánh đổi (trade-offs)"*). Lối viết này làm câu văn dài dòng và đứt gãy mạch đọc.
+- **Dùng nguyên văn thuật ngữ chuyên ngành**: Các khái niệm kỹ thuật cốt lõi đã thành chuẩn mực quốc tế nên dùng nguyên bản tiếng Anh (**in đậm** hoặc `inline code`), ví dụ: **Trade-off**, **Fitness Functions**, **Technical Breadth**, **Elastic Leadership**, **Coupling**, **Cohesion**, **Microservices**, **Monolith**, **ADR**, **CI/CD**.
+- **Dùng tiếng Việt tự nhiên khi dịch đủ nghĩa**: Các từ có nghĩa tiếng Việt rõ ràng, quen thuộc và cô đọng thì dịch trực tiếp, không đính kèm từ tiếng Anh trong ngoặc (ví dụ: bối cảnh, ranh giới, quy luật, kiểm thử tự động, độ trễ, khả năng mở rộng, chi phí vận hành).
+- **Văn phong dứt khoát, trọng tâm**: Viết gãy gọn, truyền tải trực diện tư duy kỹ nghệ thay vì diễn giải dài dòng.
 - Highlight key takeaways, axioms, and laws using quotes and bold formatting.
 - Maintain consistent terminology styling across the entire document.
 

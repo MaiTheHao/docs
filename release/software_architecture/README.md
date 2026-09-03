@@ -10,18 +10,17 @@
 
 ## Abstract
 
-Kiến trúc phần mềm (*Software Architecture*) là bộ môn định hình cấu trúc, hành vi và các quy tắc quản trị của toàn bộ hệ thống. Không đơn thuần là việc vẽ các sơ đồ hộp và đường nối, kiến trúc là sự kết hợp có chủ đích giữa các đặc tính chất lượng (*-ilities*), phân rã thành phần logic (*Logical Components*), phong cách cấu trúc (*Architecture Style*) và các quyết định kiến trúc (*Architecture Decisions*).
+Kiến trúc phần mềm là bộ môn định hình cấu trúc, hành vi và các quy tắc quản trị của toàn bộ hệ thống. Không đơn thuần là việc vẽ các sơ đồ tĩnh, kiến trúc là sự kết hợp có chủ đích giữa các yêu cầu phi chức năng, phân rã ranh giới thành phần và các quyết định kỹ thuật mang tính chiến lược.
 
-Trọng tâm của kỹ nghệ kiến trúc nằm ở năng lực phân tích bối cảnh và làm chủ các sự đánh đổi (*Trade-offs*). Một giải pháp kiến trúc chỉ có giá trị thực tiễn khi những ưu điểm nó đem lại vượt trội hơn các chi phí và độ phức tạp phát sinh trong môi trường vận hành thực tế.
+Trọng tâm của kỹ nghệ kiến trúc nằm ở năng lực phân tích bối cảnh và làm chủ **Trade-off**. Một giải pháp kiến trúc chỉ có giá trị thực tiễn khi những ưu điểm nó đem lại vượt trội hơn chi phí vận hành và độ phức tạp phát sinh trong môi trường thực tế.
 
-Phân nhánh tài liệu này tổng hợp toàn bộ các nguyên lý nền tảng, các quy luật thiết kế bất biến, mẫu kiến trúc hiện đại và phương pháp rèn luyện tư duy chiến lược cho một kiến trúc sư phần mềm chuyên nghiệp.
+Phân nhánh tài liệu này tổng hợp các nguyên lý nền tảng, quy luật thiết kế bất biến và phương pháp rèn luyện tư duy chiến lược cho kiến trúc sư phần mềm.
 
 ---
 
 ## Danh mục Chương
 
-1. **[00. Introduction](00_introduction/README.md)** - Bối cảnh kiến trúc, 4 chiều cấu thành, các quy luật Trade-off và 8 kỳ vọng vai trò đối với Kiến trúc sư.
-2. **[01. Architectural Thinking](01_architectual_thinking/README.md)** - Tư duy kiến trúc: Quang phổ Architecture vs. Design, Bề rộng tri thức, Phân tích Trade-off, Ranh giới hệ thống và Thực hành ADR.
+1. **[00. Introduction](00_introduction/README.md)** - Bối cảnh kinh tế kỹ thuật, 3 quy luật Trade-off bất biến và 8 kỳ vọng năng lực đối với kiến trúc sư.
 
 ---
 
