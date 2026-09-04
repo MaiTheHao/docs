@@ -10,39 +10,16 @@
 
 ## Abstract
 
-Kiến trúc phần mềm là bước tiến tự nhiên cho bất kỳ ai muốn vượt qua ranh giới lập trình cục bộ để thấu hiểu bức tranh toàn cảnh của hệ thống. Dù bạn là một kỹ sư muốn nâng tầm sự nghiệp, một quản lý dự án cần hiểu cơ chế vận hành hệ thống, hay một "kiến trúc sư bất đắc dĩ" đang gánh vác các quyết định kỹ thuật quan trọng, việc làm chủ tư duy kiến trúc là chìa khóa để điều hướng sự phức tạp.
+Kiến trúc phần mềm là nghệ thuật định hình hệ thống dựa trên bối cảnh thực tế thay vì lý thuyết thuần túy, chịu sự chi phối chặt chẽ bởi các ràng buộc về kinh tế hạ tầng, công nghệ sẵn có và năng lực tổ chức. Sự chuyển dịch từ mô hình dùng chung sang các kiến trúc phân tán hiện đại là minh chứng rõ nét cho thấy tính khả thi của một giải pháp phụ thuộc phần lớn vào chi phí và sự phát triển của mã nguồn mở cùng văn hóa tự động hóa **DevOps**. 
 
-Trọng tâm cốt lõi của vai trò kiến trúc sư là khả năng phân tích sâu sắc các hệ thống phần mềm và đưa ra các quyết định **Trade-off** mang tính sống còn – ngay cả trong điều kiện thông tin không đầy đủ. Trong kỷ nguyên trí tuệ nhân tạo, kiến trúc sư giữ vững vị thế khó bị thay thế nhờ khả năng thấu hiểu bối cảnh đa biến và đưa ra những lựa chọn chiến lược mà máy móc không thể tự động hóa.
-
-Mọi kiến trúc phần mềm đều là sản phẩm của chính **bối cảnh** sinh ra nó. Những gì từng là bất khả thi hoặc quá đắt đỏ trong quá khứ – như việc vận hành các dịch vụ phân tán độc lập với database riêng vào những năm 2000 – ngày nay đã trở thành tiêu chuẩn nhờ vào sự trỗi dậy của **Open Source** và cuộc cách mạng thực hành **DevOps**.
-
-Để hiện thực hóa các quyết định kỹ thuật bền vững, kiến trúc sư phải vận hành trên nền tảng của **Ba Quy luật Kiến trúc** bất biến: nhận diện sâu sắc mọi **Trade-off** để tìm ra giải pháp tối ưu bối cảnh (**Least Worst Architecture**), coi trọng lý do và động lực kỹ thuật hơn công nghệ triển khai (**"Why is more important than how"**) thông qua **ADR**, và định vị điểm cân bằng thực tế trên dải quang phổ giải pháp thay vì áp đặt đúng/sai. Những quy luật này được chuyển hóa thành hành động thông qua **8 Kỳ vọng Năng lực**—từ việc mở rộng **Technical Breadth**, bảo vệ tính toàn vẹn cấu trúc với **Fitness Functions** trên `CI/CD`, đến nghệ thuật **Elastic Leadership** và đàm phán bằng thực chứng: **"Demonstration Defeats Discussion"**.
+Quá trình ra quyết định kiến trúc được dẫn dắt bởi ba quy luật nền tảng: mọi lựa chọn đều là sự đánh đổi (**Trade-off**) nhằm tìm ra phương án ít tệ nhất (**Least Worst Architecture**); lý do đằng sau quyết định (**"Why is more important than how"**) luôn quan trọng hơn công nghệ triển khai; và các giải pháp luôn nằm trên một dải quang phổ đòi hỏi người thiết kế phải định vị được điểm cân bằng (**Sweet Spot**) phù hợp. Để hiện thực hóa vai trò chiến lược, kiến trúc sư không chỉ cần đáp ứng toàn diện tám kỳ vọng năng lực—từ chiều rộng kỹ thuật (**Technical Breadth**), tư duy nghiệp vụ đến kỹ năng điều hướng tổ chức—mà còn phải duy trì sức sống cấu trúc thông qua các công cụ tự động hóa như **Fitness Functions**, bảo đảm hệ thống luôn vận hành bền vững trước áp lực biến đổi liên tục.
 
 ---
 
 ## Danh mục Tài liệu
 
-1. **[01. Bối cảnh Kiến trúc](01_architectural_context.md)**: Phân tích các ràng buộc kinh tế hạ tầng, cuộc cách mạng mã nguồn mở và DevOps đã biến các phong cách kiến trúc phân tán từ bất khả thi trở thành tiêu chuẩn hiện đại.
-2. **[02. Quy luật Kiến trúc & Kỳ vọng Năng lực](02_laws_and_expectations.md)**: Hệ thống 3 quy luật Trade-off bất biến, dải quang phổ quyết định thực chiến (loại bỏ tư duy áp đặt đúng hoặc sai), khung 8 kỳ vọng vai trò cốt lõi và định nghĩa, mục đích, mục tiêu của Fitness Functions.
+1. **[01. Bối cảnh Kiến trúc](01_architectural_context.md)**: Phân tích các ràng buộc kinh tế hạ tầng, cuộc cách mạng mã nguồn mở và **DevOps** đã biến các phong cách kiến trúc phân tán từ bất khả thi trở thành tiêu chuẩn hiện đại.
+2. **[02. Quy luật Kiến trúc & Kỳ vọng Năng lực](02_laws_and_expectations.md)**: Hệ thống 3 quy luật **Trade-off** bất biến, dải quang phổ quyết định thực chiến (loại bỏ tư duy áp đặt đúng hoặc sai), khung 8 kỳ vọng vai trò cốt lõi và định nghĩa, mục đích, mục tiêu của **Fitness Functions**.
 
----
-
-## Định hướng Học tập
-
-Để tiếp thu kiến thức nền tảng một cách hệ thống, khuyến nghị tiếp cận các chủ đề theo đúng tiến trình tư duy kiến trúc:
-
-```mermaid
-graph LR
-    accTitle: Tiến trình Đọc và Học tập Fundamentals
-    accDescr: Sơ đồ luồng thứ tự đọc tài liệu từ Bối cảnh đến Quy luật Kiến trúc và 8 Kỳ vọng đối với Kiến trúc sư
-    contextStep["01. Architectural Context<br/>Hiểu bối cảnh & kinh tế hạ tầng"] --> lawsStep(["02. Laws & Expectations<br/>Làm chủ quy luật & 8 kỳ vọng vai trò"])
-```
-
-| Thứ Tự | Tài Liệu | Trọng Tâm Kiến Thức |
-| :--- | :--- | :--- |
-| **Bước 1** | **[01. Bối cảnh Kiến trúc](01_architectural_context.md)** | Thấu hiểu các ràng buộc kinh tế hạ tầng, cuộc cách mạng mã nguồn mở và vai trò của tự động hóa định hình nên kiến trúc hiện đại. |
-| **Bước 2** | **[02. Quy luật Kiến trúc & Kỳ vọng Năng lực](02_laws_and_expectations.md)** | Làm chủ 3 quy luật Trade-off bất biến, dải quang phổ quyết định (tìm điểm cân bằng Sweet Spot), 8 kỳ vọng năng lực và kiểm soát xói mòn bằng Fitness Functions. |
-
----
 
 [← Quay lại Software Architecture](../README.md)
