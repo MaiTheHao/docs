@@ -24,6 +24,7 @@ Repository được chia thành các phân nhánh chính:
 4. [Programming Languages](release/programming_languages/) - Ngôn ngữ lập trình (Java, JavaScript)
 5. [Security](release/security/) - Xác thực & Bảo mật (JWT, OAuth)
 6. [Software Architecture](release/software_architecture/) - Kiến trúc phần mềm & Các quy luật thiết kế (Fundamentals, Characteristics, Styles)
+7. [Twelve-Factor App](release/twelve_factor/) - Phương pháp luận xây dựng ứng dụng SaaS / Cloud-native (nguyên văn tài liệu gốc, không qua chỉnh sửa)
 
 
 ### Phân nhánh Temporary (`/temporary`)
