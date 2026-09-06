@@ -1,3 +1,6 @@
+> **Lưu ý:** Đây là nguyên văn tài liệu gốc (The Twelve-Factor App), không qua chỉnh sửa.  
+> **Nguồn:** [twelve-factor/twelve-factor (branch: next)](https://github.com/twelve-factor/twelve-factor/tree/next)
+
 Introduction
 ============
 
