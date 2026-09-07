@@ -1,5 +1,8 @@
 # Mục Lục Tài Liệu Design Patterns & OOP
 
+> [!IMPORTANT]
+> Toàn bộ nội dung và kiến thức chuyên sâu trong tài liệu này được bản thân đúc kết trực tiếp từ cuốn sách kinh điển [*Design Patterns: Elements of Reusable Object-Oriented Software*](../../library/books/design_patterns.epub) (Gang of Four - GoF).
+
 ## Table of Contents
 
 - [Lập Trình Hướng Đối Tượng (OOP)](#lập-trình-hướng-đối-tượng-oop)
@@ -66,11 +69,6 @@
 - [Giới Thiệu Behavioral Patterns](./behavioral/README.md)
 - [Observer Pattern](./behavioral/observer.md)
 - [Strategy Pattern](./behavioral/strategy.md)
-- [Command Pattern](./behavioral/command.md)
-- [State Pattern](./behavioral/state.md)
-- [Template Method Pattern](./behavioral/template_method.md)
-- [Mediator Pattern](./behavioral/mediator.md)
-- [Chain of Responsibility Pattern](./behavioral/chain_of_responsibility.md)
 
 </details>
 

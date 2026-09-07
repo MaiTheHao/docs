@@ -1,12 +1,15 @@
 # Creational Patterns (Nhóm mẫu khởi tạo)
 
+> [!IMPORTANT]
+> Toàn bộ nội dung và phân tích trong tài liệu về các mẫu thiết kế Creational được bản thân đúc kết trực tiếp từ cuốn sách kinh điển [*Design Patterns: Elements of Reusable Object-Oriented Software*](../../../library/books/design_patterns.epub).
+
 Nhóm **Creational Patterns (Nhóm mẫu khởi tạo)** cung cấp các cơ chế khởi tạo đối tượng khác nhau, giúp tăng tính linh hoạt và khả năng tái sử dụng mã nguồn. Các mẫu này trừu tượng hóa quá trình tạo đối tượng, giúp hệ thống độc lập với cách các đối tượng của nó được tạo ra, cấu thành và biểu diễn.
 
 Chúng che giấu cách các cá thể (instances) của các lớp được tạo ra và kết hợp với nhau. Hệ thống chỉ biết đến giao diện của chúng chứ không cần biết đến lớp cụ thể, từ đó đem lại sự linh hoạt trong việc cấu hình đối tượng ở cả thời điểm biên dịch (compile-time) và thời điểm chạy (run-time).
 
 ---
 
-## Mục lục
+## Table of Contents
 
 -   [1. Abstract Factory](#1-abstract-factory)
 -   [2. Builder](#2-builder)

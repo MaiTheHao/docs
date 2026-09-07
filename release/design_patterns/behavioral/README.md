@@ -1,115 +1,41 @@
 # Behavioral Patterns (Nhóm mẫu hành vi)
 
-Nhóm **Behavioral Patterns (Nhóm mẫu hành vi)** tập trung vào việc phân bổ trách nhiệm giữa các đối tượng và cách các đối tượng liên lạc, tương tác với nhau. Các mẫu này không chỉ mô tả các thực thể (objects/classes) mà còn mô tả cả các mô hình truyền thông giữa chúng.
+> [!IMPORTANT]
+> Toàn bộ nội dung và phân tích trong tài liệu về các mẫu thiết kế Behavioral được bản thân đúc kết trực tiếp từ cuốn sách kinh điển [*Design Patterns: Elements of Reusable Object-Oriented Software*](../../../library/books/design_patterns.epub).
+
+## Table of Contents
+
+- [Tổng quan về Behavioral Patterns](#tổng-quan-về-behavioral-patterns)
+- [1. Observer](#1-observer)
+- [2. Strategy](#2-strategy)
 
 ---
 
-## Mục lục
+## Tổng quan về Behavioral Patterns
 
--   [1. Observer](#1-observer)
--   [2. Strategy](#2-strategy)
--   [3. Command](#3-command)
--   [4. State](#4-state)
--   [5. Template Method](#5-template-method)
--   [6. Mediator](#6-mediator)
--   [7. Chain of Responsibility](#7-chain-of-responsibility)
--   [Thảo luận chung về các mẫu Behavioral](#thảo-luận-chung-về-các-mẫu-behavioral)
+Nhóm **Behavioral Patterns** tập trung vào việc phân bổ trách nhiệm giữa các đối tượng và cách các đối tượng liên lạc, tương tác với nhau. Các mẫu này không chỉ mô tả các thực thể (objects/classes) mà còn mô tả mô hình truyền thông và phân tách phụ thuộc giữa chúng trong thời gian chạy (runtime).
 
 ---
 
 ## 1. Observer
 
-*   **Mục đích:** Định nghĩa mối phụ thuộc một-nhiều (one-to-many) giữa các đối tượng, sao cho khi một đối tượng thay đổi trạng thái, tất cả đối tượng phụ thuộc của nó đều được thông báo và cập nhật tự động.
+*   **Mục đích:** Định nghĩa mối quan hệ phụ thuộc một-nhiều (one-to-many) giữa các đối tượng, sao cho khi một đối tượng thay đổi trạng thái, tất cả đối tượng phụ thuộc đều nhận được thông báo và tự động cập nhật.
+*   **Đặc điểm và ứng dụng:** Thường được gọi là mô hình **Publish-Subscribe**. Được ứng dụng rộng rãi trong hệ thống xử lý sự kiện (event-driven systems), giao diện người dùng (UI event binding), lắng nghe thay đổi dữ liệu, và messaging queues.
+*   **Lợi ích:**
+    *   **Loose Coupling:** Đối tượng phát thông báo (**Subject**) không cần biết chi tiết triển khai cụ thể của từng đối tượng nhận (**Observer**).
+    *   Tuân thủ nguyên tắc **Open/Closed Principle (OCP)** khi dễ dàng thêm các observer mới mà không làm thay đổi subject.
 *   **Chi tiết tài liệu:** [Xem chi tiết Observer Pattern](./observer.md)
 
 ---
 
 ## 2. Strategy
 
-*   **Mục đích:** Định nghĩa một họ các thuật toán, đóng gói từng thuật toán lại và làm cho chúng có thể thay thế hoán đổi cho nhau linh hoạt tại runtime.
+*   **Mục đích:** Định nghĩa một họ thuật toán, đóng gói từng thuật toán lại thành các lớp riêng biệt và giúp chúng có thể hoán đổi linh hoạt cho nhau tại runtime.
+*   **Đặc điểm và ứng dụng:** Tách rời phần thuật toán hay xử lý nghiệp vụ cụ thể ra khỏi đối tượng ngữ cảnh (**Context**). Được dùng phổ biến trong tính toán giá/chiết khấu, các chiến lược thanh toán (payment methods), thuật toán định tuyến, nén tệp tin, hoặc sắp xếp dữ liệu.
+*   **Lợi ích:**
+    *   Loại bỏ các khối điều kiện `if-else` hoặc `switch-case` phức tạp khi lựa chọn thuật toán.
+    *   Tăng tính mở rộng và độc lập khi muốn bổ sung hoặc tinh chỉnh thuật toán mới mà không can thiệp vào mã nguồn gọi nó.
 *   **Chi tiết tài liệu:** [Xem chi tiết Strategy Pattern](./strategy.md)
 
 ---
-
-## 3. Command
-
-*   **Mục đích:** Đóng gói một yêu cầu dưới dạng một đối tượng độc lập, cho phép tham số hóa client với các yêu cầu khác nhau, hỗ trợ xếp hàng, ghi log và hoàn tác (undo).
-*   **Chi tiết tài liệu:** [Xem chi tiết Command Pattern](./command.md)
-
----
-
-## 4. State
-
-*   **Mục đích:** Cho phép một đối tượng thay đổi hành vi khi trạng thái nội bộ của nó thay đổi. Giao diện bên ngoài giữ nguyên nhưng đối tượng hoạt động như thể đổi lớp.
-*   **Chi tiết tài liệu:** [Xem chi tiết State Pattern](./state.md)
-
----
-
-## 5. Template Method
-
-*   **Mục đích:** Định nghĩa bộ khung (skeleton) của một thuật toán trong lớp cha và trì hoãn một số bước triển khai cụ thể xuống cho các lớp con mà không làm thay đổi cấu trúc thuật toán.
-*   **Chi tiết tài liệu:** [Xem chi tiết Template Method Pattern](./template_method.md)
-
----
-
-## 6. Mediator
-
-*   **Mục đích:** Định nghĩa một đối tượng đóng vai trò trung gian đóng gói cách tương tác của một tập hợp các đối tượng khác, giúp chúng liên kết lỏng lẻo (loose coupling) và dễ tương tác.
-*   **Chi tiết tài liệu:** [Xem chi tiết Mediator Pattern](./mediator.md)
-
----
-
-## 7. Chain of Responsibility
-
-*   **Mục đích:** Tránh liên kết chặt chẽ giữa người gửi yêu cầu và người nhận bằng cách kết nối các đối tượng nhận thành một chuỗi và truyền yêu cầu dọc theo chuỗi cho đến khi có đối tượng xử lý.
-*   **Chi tiết tài liệu:** [Xem chi tiết Chain of Responsibility Pattern](./chain_of_responsibility.md)
-
----
-
-## Thảo luận chung về các mẫu Behavioral
-
-*   **Sự giao tiếp và phân rã chức năng:** Nhóm mẫu Behavioral giúp các đối tượng phối hợp với nhau mà không cần biết quá rõ về nhau, thúc đẩy nguyên tắc lỏng lẻo (Loose Coupling).
-*   **Thay thế các câu lệnh rẽ nhánh phức tạp:** Các mẫu như *Strategy* và *State* giúp loại bỏ các cấu trúc `if-else` hoặc `switch-case` khổng lồ bằng cách đa hình hóa các thuật toán hoặc trạng thái thành các lớp riêng biệt.
-*   **Phân tách bên gửi và bên nhận:** Mẫu *Command* và *Chain of Responsibility* tách biệt hoàn toàn đối tượng gửi yêu cầu khỏi đối tượng thực thi, cho phép xếp hàng, thay đổi quy trình xử lý linh hoạt tại runtime.
-
----
-
-## Bảng So sánh Tổng quan 7 Behavioral Patterns
-
-| Pattern | Mục tiêu cốt lõi | Cấu trúc quan hệ | Khi nào dùng |
-| :--- | :--- | :--- | :--- |
-| **Observer** | Đồng bộ trạng thái 1-nhiều | Subject → nhiều Observer | Event system, UI data binding, pub-sub |
-| **Strategy** | Hoán đổi thuật toán tại runtime | Context → Strategy interface | Thay thế if-else về thuật toán |
-| **Command** | Đóng gói yêu cầu thành object | Invoker → Command → Receiver | Undo/Redo, Queue, Transaction log |
-| **State** | Thay đổi hành vi theo trạng thái | Context → State interface | State machine, vòng đời đối tượng |
-| **Template Method** | Cố định khung thuật toán, thay phần chi tiết | Abstract Class → Concrete subclass | Code reuse, framework hooks |
-| **Mediator** | Tập trung hóa giao tiếp nhiều-nhiều | Colleague → Mediator ← Colleague | Chat system, UI controller, Air traffic |
-| **Chain of Responsibility** | Truyền yêu cầu qua chuỗi handler | Handler → Handler → Handler | Middleware pipeline, logging, filter |
-
-### Sơ đồ phân loại theo cơ chế giao tiếp
-
-```mermaid
-graph TD
-    subgraph OneToMany ["Quan hệ 1 → Nhiều"]
-        Observer["Observer\n(Subject → Observers)"]
-    end
-
-    subgraph OneToOne ["Quan hệ 1 → 1 (với delegation)"]
-        Strategy["Strategy\n(Context → Strategy)"]
-        State["State\n(Context → State)"]
-        Command["Command\n(Invoker → Command → Receiver)"]
-        Template["Template Method\n(Parent → Child hooks)"]
-    end
-
-    subgraph Chain ["Quan hệ Chuỗi"]
-        CoR["Chain of Responsibility\n(Handler → Handler → ...)"]
-    end
-
-    subgraph Hub ["Quan hệ Hub (Trung tâm)"]
-        Mediator["Mediator\n(Colleagues → Mediator)"]
-    end
-```
-
----
-[← Quay lại trang chủ](../../README.md)
-
+[← Back to README](../../README.md)
