@@ -4,7 +4,6 @@
 
 - [Abstract](#abstract)
 - [Danh mục Tài liệu](#danh-mục-tài-liệu)
-- [Định hướng Học tập](#định-hướng-học-tập)
 
 ---
 

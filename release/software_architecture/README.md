@@ -21,6 +21,7 @@ Phân nhánh tài liệu này tổng hợp các nguyên lý nền tảng, quy lu
 ## Danh mục Chương
 
 1. **[00. Introduction](00_introduction/README.md)** - Bối cảnh kinh tế kỹ thuật, 3 quy luật Trade-off bất biến và 8 kỳ vọng năng lực đối với kiến trúc sư.
+2. **[01. Modularity](01_modularity/README.md)** - Bản chất mô-đun hóa, ranh giới độ mịn (Granularity) và ba trụ cột định lượng: Cohesion, Coupling, Connascence.
 
 ---
 
