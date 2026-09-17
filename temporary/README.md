@@ -4,12 +4,4 @@ Phân nhánh `/temporary` lưu trữ các tài liệu do AI tạo tự động (
 
 ---
 
-## Mục lục
-
-1. [Database Internals](database/) - Cơ sở dữ liệu (MVCC, Index, Case Studies)
-2. [NGINX](nginx/) - Web Server & Reverse Proxy
-3. [Version Control System](version_control_system/) - Git & GitHub
-
----
-
 [← Quay lại trang chủ](../README.md)
