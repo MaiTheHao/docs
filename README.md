@@ -1,45 +1,43 @@
 # REPO: Docs
 
-Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu** về lập trình, bảo mật, và công nghệ. Đây là những phần **cần thiết cho cá nhân**, không phải một kho kiến thức đầy đủ toàn bộ. Tài liệu được tổng hợp từ các nguồn mở trên Internet và được tùy chỉnh theo nhu cầu riêng.
+Kho lưu trữ tài liệu cá nhân chứa các **kiến thức thiết yếu** về lập trình, bảo mật, và kiến trúc hệ thống. Đây là không gian ghi chú và tổng hợp được chắt lọc theo góc nhìn, trải nghiệm thực tế cùng nhu cầu cá nhân, đóng vai trò như một cơ sở tri thức (second brain) hỗ trợ công việc và nghiên cứu dài hạn.
 
-> **Lưu ý:** Đây là **tài liệu cá nhân**, không phải hướng dẫn chính thức hay kho tham khảo đầy đủ. Nội dung chỉ bao gồm những phần cần thiết dựa trên kinh nghiệm cá nhân.
-
----
-
-## Cấu trúc Phân nhánh Tài liệu
-
-Repository được chia thành các phân nhánh chính:
-- **[Release Docs](release/README.md)**: Tài liệu đã được bản thân tự duyệt và tinh chỉnh, có độ uy tín và tin cậy cao hơn temporary (tuy vậy vẫn cần đọc và chọn lọc).
-- **[Temporary Docs](temporary/README.md)**: Tài liệu gen AI, tổng hợp nhanh chưa qua kiểm chứng nhằm tìm các góc khuất kiến thức (*stuff you don't know you don't know*) và khơi gợi ý tưởng viết bài; **không có giá trị dùng để học tập**.
-- **[Library](library/README.md)**: Thư viện tổng hợp sách kỹ thuật và các tài liệu văn bản/text do cá nhân tự tổng hợp.
+> [!IMPORTANT]
+> Đây là **tài liệu cá nhân**, không phải sách giáo trình chính thức hay kho bách khoa toàn thư. Nội dung được cá nhân hóa và tinh chọn dựa trên kinh nghiệm thực tế; người đọc nên chủ động đối chiếu và chọn lọc khi tham khảo.
 
 ---
 
-## Danh mục Tài liệu
+## Ý Nghĩa và Triết Lý Lưu Trữ
 
-### Phân nhánh Release (`/release`)
-1. [Books](release/books/) - Tài liệu & Sách tham khảo
-2. [Computer Networking](release/computer_networking/) - Mạng máy tính & Các giao thức
-3. [Design Patterns](release/design_patterns/) - Mẫu thiết kế phần mềm & OOP (OOP, SOLID, Creational, Behavioral)
-4. [Programming Languages](release/programming_languages/) - Ngôn ngữ lập trình (Java, JavaScript)
-5. [Security](release/security/) - Xác thực & Bảo mật (JWT, OAuth)
-6. [Software Architecture](release/software_architecture/) - Kiến trúc phần mềm & Các quy luật thiết kế (Fundamentals, Characteristics, Styles)
-7. [Twelve-Factor App](release/twelve_factor/) - Phương pháp luận xây dựng ứng dụng SaaS / Cloud-native (nguyên văn tài liệu gốc, không qua chỉnh sửa)
+Kho tài liệu này được xây dựng dựa trên mục tiêu tối ưu hóa việc quản lý tri thức và tư duy kỹ thuật:
 
-
-### Phân nhánh Temporary (`/temporary`)
-1. [Database Internals](temporary/database/) - Cơ sở Dữ liệu (MVCC, Index, Case Studies)
-2. [NGINX](temporary/nginx/) - Web Server & Reverse Proxy
-3. [Version Control System](temporary/version_control_system/) - Git & GitHub
-
-### Thư viện Tài liệu (`/library`)
-1. [Technical Books & Texts](library/README.md) - Thư viện sách kỹ thuật (Clean Architecture, Continuous Delivery, Microservices, SQL, Design Patterns,...) và tài liệu dạng văn bản do cá nhân tự tổng hợp.
+- **Chắt lọc có trọng tâm:** Tập trung vào bản chất nguyên lý, mô hình kiến trúc và các góc nhìn thực chiến thay vì sao chép tài liệu hướng dẫn (API docs) sẵn có trên mạng.
+- **Phân tách mức độ kiểm chứng:** Tách biệt rõ ràng giữa kiến thức đã qua thực nghiệm, tinh chỉnh với các tài liệu nháp tổng hợp nhanh nhằm giữ sự minh bạch về độ tin cậy.
+- **Học tập thông qua hệ thống hóa:** Việc cấu trúc lại kiến thức dưới dạng tài liệu nhất quán giúp củng cố tư duy kiến trúc và dễ dàng truy xuất khi cần thiết kế hoặc giải quyết bài toán kỹ thuật.
 
 ---
 
-## Liên hệ
+## Cấu Trúc Phân Nhánh Tài Liệu
 
--   **GitHub:** [MaiTheHao](https://github.com/MaiTheHao)
+Hệ thống tài liệu được tổ chức thành 3 phân vùng chính:
+
+- **[Release Docs](release/README.md)**: Chứa các tài liệu đã được rà soát, kiểm chứng và biên tập hoàn chỉnh. Có độ uy tín và tin cậy cao, phù hợp cho việc tham khảo chuyên sâu.
+- **[Temporary Docs](temporary/README.md)**: Khu vực nháp ghi nhận nhanh các chủ đề chưa qua kiểm chứng hoặc tổng hợp từ AI nhằm khám phá các góc khuất kiến thức (*"stuff you don't know you don't know"*) và khơi gợi ý tưởng viết bài mới.
+- **[Library](library/books/)**: Thư viện tài nguyên số lưu trữ sách kỹ thuật, bài báo khoa học và các tài liệu chuyên ngành.
+
+---
+
+## Điều Hướng Danh Mục
+
+Toàn bộ cây mục lục và danh sách các chủ đề chi tiết được quản lý tập trung tại tài liệu điều hướng:
+
+👉 **[Xem toàn bộ danh mục tài liệu tại OUTLINE.md](OUTLINE.md)**
+
+---
+
+## Liên Hệ
+
+- **GitHub:** [MaiTheHao](https://github.com/MaiTheHao)
 
 <p align="center">
     <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHk0OWNwb2J6bGl4NWpvYnQ5NXdtNGxjc2Fzb3VmcTJmYmhiZ2VjNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tHIRLHtNwxpjIFqPdV/giphy.gif" alt="Funny Emotion Gif" width="420" style="border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15);" />
