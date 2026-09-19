@@ -114,4 +114,11 @@ Giải pháp tối ưu là sử dụng kết hợp cả hai kênh:
 *   **Vá bảo mật:** Loại bỏ hoàn toàn *Implicit Flow* khỏi hệ thống và chuyển đổi sang *Authorization Code Flow kết hợp PKCE* để tận dụng tối đa sức mạnh bảo mật của Kênh sau trên môi trường trình duyệt hiện đại.
 
 ---
+
+## Liên quan
+
+*   [Authorization Code Flow cho Web Application](../oauth_for_server_side_app/authorization_code_flow_for_web_application.md) — ứng dụng cụ thể của **phân tách Front/Back Channel**: Authorization Code đi qua Front Channel, Access Token được bảo vệ trong Back Channel.
+*   [Bảo vệ Token trong Trình duyệt](../oauth_for_spa/protecting_token_in_browser.md) — **Front Channel** là nguồn gốc của bài toán: Token nằm trong JavaScript context mở không có bảo đảm của Back Channel, đòi hỏi chiến lược lưu trữ đặc biệt.
+
+---
 [← Quay lại mục lục](../README.md)

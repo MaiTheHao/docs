@@ -63,4 +63,11 @@ public class GamingComputerBuilder extends ComputerBuilder {
 -   Có thể dư thừa nếu đối tượng đơn giản.
 
 ---
+
+## Liên quan
+
+*   [Polymorphism](../oop/polymorphism.md) — cùng nguyên lý **Decoupling qua Abstract Interface**: Polymorphism dùng interface chung để tách phía gọi khỏi triển khai; Builder dùng interface/abstract class Builder làm hợp đồng xây dựng đối tượng.
+*   [Single Responsibility Principle](../solid/single_responsibility_principle.md) — Builder hiện thực hóa **Single Responsibility** ở cấp độ xây dựng đối tượng: tách trách nhiệm "biết cách lắp ghép" (Director/Builder) khỏi "biết mình là gì" (Product).
+
+---
 [← Quay lại mục lục Creational](README.md)

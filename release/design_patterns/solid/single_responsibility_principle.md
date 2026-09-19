@@ -75,4 +75,10 @@ public class UserManager {
 -   **Code rõ ràng, dễ hiểu**: Mỗi lớp có một mục đích duy nhất, giúp lập trình viên mới dễ dàng nắm bắt luồng hoạt động của chương trình.
 
 ---
+
+## Liên quan
+
+*   [Builder Pattern](../creational/builder.md) — Builder là ví dụ điển hình của **Single Responsibility** ở tầng tạo đối tượng: tách trách nhiệm "biết cách lắp ghép các bước" (Builder/Director) ra khỏi chính đối tượng kết quả (Product).
+
+---
 [← Quay lại mục lục SOLID](README.md)

@@ -52,4 +52,10 @@
 -   Mỗi host cần biết địa chỉ gateway để kết nối ra ngoài mạng
 
 ---
+
+## Liên quan
+
+*   [NAT — Network Address Translation](../02_routing/nat.md) — NAT vận hành trực tiếp trên **ranh giới Network/Host** mà Subnet Mask định nghĩa: router là điểm kiểm soát phân vùng Private ↔ Public, cùng tư duy **Boundary & Trust Zone** nhưng ở tầng định tuyến.
+
+---
 [← Quay lại mục lục](../README.md)

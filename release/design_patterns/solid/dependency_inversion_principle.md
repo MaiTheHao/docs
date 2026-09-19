@@ -171,4 +171,10 @@ graph TD
 - **Dễ dàng mở rộng (*Extensibility*)**: Thêm các kênh thông báo mới (Zalo, Telegram, Push Notification) chỉ bằng cách tạo class mới hiện thực interface mà không làm thay đổi tầng logic nghiệp vụ sẵn có.
 
 ---
+
+## Liên quan
+
+*   [Polymorphism](../oop/polymorphism.md) — DIP và Polymorphism là cặp bài trùng: DIP đặt ra nguyên lý **phụ thuộc vào Abstraction**, Polymorphism cung cấp cơ chế runtime để Abstraction đó được thay thế bởi nhiều triển khai khác nhau.
+
+---
 [← Quay lại mục lục SOLID](README.md)

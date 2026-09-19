@@ -100,4 +100,11 @@ Dưới đây là bảng đối chiếu chi tiết mức độ bảo mật và �
 *   **Bước phát triển tiếp theo:** Trong bài học kế tiếp, chúng ta sẽ khảo sát mô hình **Backend-for-Frontend (BFF)** - giải pháp giữ token 100% ngoài phạm vi của JavaScript bằng cách sử dụng HttpOnly Secure Cookie bảo mật tối đa.
 
 ---
+
+## Liên quan
+
+*   [Authorization Code Flow cho Web Application](../oauth_for_server_side_app/authorization_code_flow_for_web_application.md) — quan hệ nối tiếp: Authorization Code Flow là tiền đề phát hành Access Token; bài toán **lưu trữ Token an toàn** trong tài liệu này là bước downstream ngay sau đó.
+*   [Front Channel & Back Channel](../api_security_concepts/front_channel_&_back_channel.md) — **Front Channel** là lý do cốt lõi tại sao Token trong trình duyệt cần bảo vệ đặc biệt: Token nằm trong môi trường JavaScript mở, không có bảo đảm của Back Channel.
+
+---
 [← Quay lại mục lục](../README.md)

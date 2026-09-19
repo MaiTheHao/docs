@@ -12,6 +12,7 @@ Phân nhánh `/release` chứa các tài liệu đã được bản thân tôi t
 4. [Security](security/) - Xác thực & Bảo mật
 5. [Software Architecture](software_architecture/) - Kiến trúc phần mềm
 6. [Twelve-Factor App](twelve_factor/) - Phương pháp luận xây dựng ứng dụng SaaS / Cloud-native hiện đại (nguyên văn tài liệu gốc, không qua chỉnh sửa)
+7. [Web Servers](web_servers/) - Kiến trúc và vận hành Web Server hiệu năng cao (NGINX)
 
 ---
 

@@ -178,4 +178,11 @@ grant_type=refresh_token
 *   **Nhiệm vụ tiếp theo:** Trong bài học kế tiếp, chúng ta sẽ khảo sát cách thức điều chỉnh luồng này để chạy trực tiếp trên môi trường trình duyệt cho ứng dụng Single Page Application (SPA) khi hoàn toàn thiếu vắng Client Secret.
 
 ---
+
+## Liên quan
+
+*   [Bảo vệ Token trong Trình duyệt](../oauth_for_spa/protecting_token_in_browser.md) — quan hệ nối tiếp: sau khi Authorization Code Flow phát hành Access Token, bài toán **lưu trữ Token an toàn trong môi trường SPA** bắt đầu.
+*   [Front Channel & Back Channel](../api_security_concepts/front_channel_&_back_channel.md) — định nghĩa nền tảng cho khái niệm **phân tách kênh truyền** mà Authorization Code Flow vận dụng để bảo vệ Access Token.
+
+---
 [← Quay lại mục lục](../README.md)

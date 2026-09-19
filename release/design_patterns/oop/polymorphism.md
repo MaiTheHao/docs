@@ -81,4 +81,10 @@ public class NotificationManager {
 
 ---
 
+## Liên quan
+
+*   [Builder Pattern](../creational/builder.md) — cùng nguyên lý **Decoupling qua Abstract Interface**: Builder dùng interface/abstract class làm hợp đồng xây dựng, Polymorphism dùng interface chung để tách phía gọi khỏi phía triển khai.
+*   [Dependency Inversion Principle](../solid/dependency_inversion_principle.md) — Polymorphism là cơ chế runtime cho phép **Dependency Inversion** hoạt động: phụ thuộc vào Abstraction chỉ có nghĩa khi Abstraction đó có thể được đa hình hóa thành nhiều triển khai khác nhau.
+
+---
 [← Quay lại README OOP](README.md)

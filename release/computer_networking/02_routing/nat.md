@@ -327,4 +327,10 @@ Bằng cách này, bộ cân bằng tải sử dụng kỹ thuật NAT để ph�
 **NAT** là một kỹ thuật thiết yếu, giúp giải quyết vấn đề cạn kiệt địa chỉ **IPv4** và vô tình cung cấp một lớp bảo mật cơ bản. Tuy nhiên, nó phá vỡ nguyên tắc kết nối End-to-End, đặc biệt gây khó khăn cho các ứng dụng **P2P**. Để khắc phục, bộ ba **STUN**, **TURN**, và **ICE** được sử dụng để cho phép các thiết bị "vượt rào" NAT một cách thông minh, đảm bảo kết nối luôn được thiết lập theo cách tối ưu nhất.
 
 ---
+
+## Liên quan
+
+*   [IP Address, Subnet, và Default Gateway](../01_internet_protocol/the_ip_building_blocks.md) — nền tảng cho NAT: **Subnet Mask** định nghĩa ranh giới Network/Host mà NAT vận hành trên đó để phân vùng địa chỉ Private ↔ Public.
+
+---
 [← Quay lại mục lục](../README.md)

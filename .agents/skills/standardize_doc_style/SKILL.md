@@ -16,7 +16,8 @@ Tài liệu này định nghĩa toàn bộ quy chuẩn bắt buộc áp dụng k
 - [5. Quy Chuẩn Khối Mã Nguồn](#5-quy-chuẩn-khối-mã-nguồn)
 - [6. Bảng Biểu và GitHub Alerts](#6-bảng-biểu-và-github-alerts)
 - [7. Văn Phong Kỹ Thuật và Xử Lý Thuật Ngữ](#7-văn-phong-kỹ-thuật-và-xử-lý-thuật-ngữ)
-- [8. Checklist Kiểm Duyệt Hoàn Tất](#8-checklist-kiểm-duyệt-hoàn-tất)
+- [8. Skill Bổ Trợ: Giao Thoa Giữa Các Tài Liệu](#8-skill-bổ-trợ-giao-thoa-giữa-các-tài-liệu)
+- [9. Checklist Kiểm Duyệt Hoàn Tất](#9-checklist-kiểm-duyệt-hoàn-tất)
 
 ---
 
@@ -118,7 +119,16 @@ Mỗi tài liệu nội dung chi tiết cần có bố cục rõ ràng, mạch l
 
 ---
 
-## 8. Checklist Kiểm Duyệt Hoàn Tất
+## 8. Skill Bổ Trợ: Giao Thoa Giữa Các Tài Liệu
+
+Skill này chỉ chuẩn hóa **tài liệu đơn lẻ**: cấu trúc H1/TOC/`---`, văn phong, Mermaid, code block. Để dệt **mạng giao thoa ngữ nghĩa** giữa các tài liệu — section `## Liên quan`, liên kết hai chiều, tiêu chí khái niệm chung — sử dụng skill bổ trợ: **`crosslink_doc_style`**.
+
+*   **Điều kiện áp dụng `crosslink_doc_style`:** Tài liệu đã đạt chuẩn cấu trúc đơn lẻ theo skill này (một `# H1`, `## Table of Contents`, footer `[← Back to README]`).
+*   **Ranh giới rõ ràng:** `crosslink_doc_style` không đụng file `README.md` và không tự ý vẽ sơ đồ Mermaid — hai ràng buộc này kế thừa từ skill này.
+
+---
+
+## 9. Checklist Kiểm Duyệt Hoàn Tất
 
 Một tài liệu chỉ được coi là đạt chuẩn khi thỏa mãn toàn bộ các tiêu chí:
 
@@ -128,3 +138,4 @@ Một tài liệu chỉ được coi là đạt chuẩn khi thỏa mãn toàn b�
 - [ ] Mã nguồn: Hạn chế boilerplate code thừa; khối mã có khai báo ngôn ngữ và mô tả phía trước; tiếng Việt trong code có dấu đầy đủ.
 - [ ] Thuật ngữ & Hành văn: Sử dụng tiếng Việt tự nhiên; giữ nguyên thuật ngữ kỹ thuật tiếng Anh; không viết kiểu tiếng Việt mở ngoặc chú thích tiếng Anh thừa thãi.
 - [ ] Định dạng: Sử dụng đúng GitHub Alerts thay vì blockquote thông thường; bảng biểu căn chỉnh rõ ràng.
+- [ ] Giao thoa: Đã cân nhắc xem tài liệu này có cần section `## Liên quan` không (nếu có, áp dụng **`crosslink_doc_style`** để thêm và đảm bảo liên kết hai chiều).
